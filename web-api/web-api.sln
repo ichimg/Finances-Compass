@@ -1,0 +1,55 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.7.34009.444
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DebtsCompass", "DebtsCompass\DebtsCompass.csproj", "{053F9148-79BB-4BD7-BBEE-F42EF85188A1}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DebtsCompass.Application", "DebtsCompass.Application\DebtsCompass.Application.csproj", "{4F423A55-4F5A-4285-B4FB-A28017DADEB7}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DebtsCompass.Domain", "DebtsCompass.Domain\DebtsCompass.Domain.csproj", "{172B180C-6DC3-4F1C-8859-E9835AB21256}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DebtsCompass.DataAccess", "DebtsCompass.DataAccess\DebtsCompass.DataAccess.csproj", "{076BBF1C-13AC-42E8-8C7C-7850F4EFBC6B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DebtsCompass.Presentation", "DebtsCompass.Presentation\DebtsCompass.Presentation.csproj", "{D7BA8C86-D49A-4DAE-B9BC-30B67B9E9E4F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DebtsCompass.Tests", "DebtsCompass.Tests\DebtsCompass.Tests.csproj", "{9CBBF5B0-5918-4008-BA0D-3A3D83EC14B0}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{053F9148-79BB-4BD7-BBEE-F42EF85188A1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{053F9148-79BB-4BD7-BBEE-F42EF85188A1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{053F9148-79BB-4BD7-BBEE-F42EF85188A1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{053F9148-79BB-4BD7-BBEE-F42EF85188A1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4F423A55-4F5A-4285-B4FB-A28017DADEB7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4F423A55-4F5A-4285-B4FB-A28017DADEB7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4F423A55-4F5A-4285-B4FB-A28017DADEB7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4F423A55-4F5A-4285-B4FB-A28017DADEB7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{172B180C-6DC3-4F1C-8859-E9835AB21256}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{172B180C-6DC3-4F1C-8859-E9835AB21256}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{172B180C-6DC3-4F1C-8859-E9835AB21256}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{172B180C-6DC3-4F1C-8859-E9835AB21256}.Release|Any CPU.Build.0 = Release|Any CPU
+		{076BBF1C-13AC-42E8-8C7C-7850F4EFBC6B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{076BBF1C-13AC-42E8-8C7C-7850F4EFBC6B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{076BBF1C-13AC-42E8-8C7C-7850F4EFBC6B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{076BBF1C-13AC-42E8-8C7C-7850F4EFBC6B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D7BA8C86-D49A-4DAE-B9BC-30B67B9E9E4F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D7BA8C86-D49A-4DAE-B9BC-30B67B9E9E4F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D7BA8C86-D49A-4DAE-B9BC-30B67B9E9E4F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D7BA8C86-D49A-4DAE-B9BC-30B67B9E9E4F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9CBBF5B0-5918-4008-BA0D-3A3D83EC14B0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9CBBF5B0-5918-4008-BA0D-3A3D83EC14B0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9CBBF5B0-5918-4008-BA0D-3A3D83EC14B0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9CBBF5B0-5918-4008-BA0D-3A3D83EC14B0}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {08479AD4-CB72-490B-890F-490822C2FD3B}
+	EndGlobalSection
+EndGlobal

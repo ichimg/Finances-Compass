@@ -8,23 +8,25 @@ import { ViewDebtsComponent } from './view-debts/view-debts.component';
 import { LoginComponent } from './login/login.component';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { HeaderComponent } from './header/header.component';
-import {MatButtonModule} from '@angular/material/button'
-
+import { MatButtonModule } from '@angular/material/button';
+import { FormsModule } from '@angular/forms';
 
 @NgModule({
   declarations: [
     AppComponent,
     HeaderComponent,
     ViewDebtsComponent,
-    LoginComponent
+    LoginComponent,
   ],
   imports: [
     BrowserModule,
     AppRoutingModule,
     BrowserAnimationsModule,
-    MatSlideToggleModule, 
-    MatButtonModule ],
+    MatSlideToggleModule,
+    MatButtonModule,
+    FormsModule,
+  ],
   providers: [],
-  bootstrap: [AppComponent]
+  bootstrap: [AppComponent],
 })
-export class AppModule { }
+export class AppModule {}
