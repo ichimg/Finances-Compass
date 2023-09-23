@@ -1,0 +1,14 @@
+.logo {
+    display: flex;
+    justify-content: center; /* Horizontal centering */
+    align-items: center;
+    flex-direction: column;
+    height: 10vh;
+  }
+
+  header {
+    background-color: 	#3b444b; 
+    height: 75px; 
+    width: 100%; 
+  }
+
