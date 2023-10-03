@@ -1,14 +1,15 @@
 ﻿using DebtsCompass.Domain.Entities;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
 namespace DebtsCompass.DataAccess
 {
-    public class DebtsCompassDbContext : IdentityDbContext
+    public class DebtsCompassDbContext : IdentityDbContext<User>
     {
         public DbSet<Debt> Debts { get; set; }
         public DbSet<User> Users { get; set; }
-        public DebtsCompassDbContext(DbContextOptions<DebtsCompassDbContext> options)
+        public DebtsCompassDbContext(DbContextOptions options)
        : base(options)
         { }
 

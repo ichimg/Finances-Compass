@@ -2,23 +2,67 @@
   <app-header></app-header>
 
   <div class="center-container">
-    <div class="form-container">
-      <label for="email">Email:</label>
-      <input
-        type="text"
-        id="email"
-        name="email"
-        placeholder="Enter your email"
-      />
+    <form (ngSubmit)="onSubmitLogin()" #loginForm="ngForm" class="login-form">
+      <div class="form-group">
+        <mat-form-field appearance="fill">
+          <mat-label>Email:</mat-label>
+          <input
+            type="text"
+            id="email"
+            name="email"
+            placeholder="Enter your email"
+            [(ngModel)]="loginData.email"
+            required
+            matInput
+            [formControl]="emailFormControl"
+            [errorStateMatcher]="emailMatcher"
+          />
+          <mat-error
+            *ngIf="
+              emailFormControl.hasError('email') &&
+              !emailFormControl.hasError('required')
+            "
+          >
+            Please enter a valid email address</mat-error
+          >
+          <mat-error *ngIf="emailFormControl.hasError('required')">
+            Email is <strong>required</strong></mat-error
+          >
+          <mat-icon matSuffix></mat-icon>
+        </mat-form-field>
+      </div>
 
-      <label for="password">Password:</label>
-      <input
-        type="password"
-        id="password"
-        name="password"
-        placeholder="Enter your password"
-      />
-    </div>
-    <button mat-raised-button color="black">Login</button>
+      <div class="form-group">
+        <mat-form-field appearance="fill">
+          <mat-label>Password:</mat-label>
+          <input
+            type="{{ hidePassword ? 'password' : 'text' }}"
+            id="password"
+            name="password"
+            placeholder="Enter your password"
+            [(ngModel)]="loginData.password"
+            required
+            matInput
+            [formControl]="passwordFormControl"
+          />
+
+          <mat-error *ngIf="passwordFormControl.hasError('required')"
+            >Password is <strong>required</strong></mat-error
+          >
+          <mat-icon class="mat-icon-button" matSuffix (click)="togglePasswordVisibility()">
+            {{ hidePassword ? "visibility_off" : "visibility" }}
+          </mat-icon>
+        </mat-form-field>
+      </div>
+
+      <button
+        mat-raised-button
+        color="accent"
+        type="submit"
+        [disabled]="emailFormControl.invalid || passwordFormControl.invalid"
+      >
+        Login
+      </button>
+    </form>
   </div>
 </body>

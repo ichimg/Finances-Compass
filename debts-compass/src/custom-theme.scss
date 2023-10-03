@@ -12,11 +12,21 @@
 // Define the palettes for your theme using the Material Design palettes available in palette.scss
 // (imported above). For each palette, you can optionally specify a default, lighter, and darker
 // hue. Available color palettes: https://material.io/design/color/
-$debts-compass-primary: mat.define-palette(mat.$indigo-palette);
-$debts-compass-accent: mat.define-palette(mat.$pink-palette, A200, A100, A400);
+$debts-compass-primary: mat.define-palette(mat.$blue-grey-palette);
+$debts-compass-accent: mat.define-palette(mat.$red-palette, A200, A100, A400);
 
 // The warn palette is optional (defaults to red).
 $debts-compass-warn: mat.define-palette(mat.$red-palette);
+
+
+$my-custom-typography-config: mat.define-typography-config(
+  $headline-1: mat.define-typography-level(112px, 112px, 300, $letter-spacing: -0.05em),
+  $headline-2: mat.define-typography-level(56px, 56px, 400, $letter-spacing: -0.02em),
+  $headline-3: mat.define-typography-level(45px, 48px, 400, $letter-spacing: -0.005em),
+  $headline-4: mat.define-typography-level(34px, 40px, 400),
+  $headline-5: mat.define-typography-level(24px, 32px, 400),
+  // ...
+);
 
 // Create the theme object. A theme consists of configurations for individual
 // theming systems such as "color" or "typography".
@@ -25,7 +35,8 @@ $debts-compass-theme: mat.define-light-theme((
     primary: $debts-compass-primary,
     accent: $debts-compass-accent,
     warn: $debts-compass-warn,
-  )
+  ),
+  typography: $my-custom-typography-config
 ));
 
 // Include theme styles for core and each component used in your app.

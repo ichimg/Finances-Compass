@@ -6,6 +6,7 @@ namespace DebtsCompass.Domain.Entities
         public int Id { get; set; }
         public string CreatorUserId { get; set; }
         public User CreatorUser { get; set; } = null!;
+        public double Amount { get; set; }
         public string? PersonName { get; set; }
         public string? PersonEmail { get; set; }
         public string? SelectedUserId { get; set; }
