@@ -50,9 +50,13 @@ export class LoginComponent {
           localStorage.setItem('email', response.payload.email);
           localStorage.setItem('token', response.payload.token);
 
-          this.notificationService.openNotification("You're logged in!", 'success');
-          this.router.navigate(['']);
+          this.notificationService.openNotification("You're logged in", 'success');
+          this.router.navigate(['dashboard']);
           break;
+
+          case 404:
+            this.notificationService.openNotification("Account doesn't exist", 'error');
+            break;
 
           case 401:
           this.notificationService.openNotification('Invalid credentials', 'error');

@@ -5,11 +5,13 @@ import {HeaderComponent} from './header/header.component'
 import {LoginComponent} from './login/login.component'
 import { authGuard } from './guards/auth.guard';
 import { unauthGuard } from './guards/unauth.guard';
+import { RegisterComponent } from './register/register.component';
 
 
 const routes: Routes = [
-  { path: '', component: ViewDebtsComponent, canActivate: [authGuard]},
-  { path: 'login', component: LoginComponent, canActivate:[unauthGuard] },
+  { path: 'dashboard', component: ViewDebtsComponent, canActivate: [authGuard]},
+  { path: '', component: LoginComponent, canActivate:[unauthGuard] },
+  {path: 'register', component: RegisterComponent, canActivate: [unauthGuard]}
 ];
 
 @NgModule({

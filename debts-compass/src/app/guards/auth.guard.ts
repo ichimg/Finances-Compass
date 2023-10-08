@@ -14,5 +14,5 @@ export const authGuard: CanActivateFn = (route, state) => {
 
   authService.logout();
   notificationService.openNotification('You need to log in!', 'warning');
-  return router.parseUrl('/login');
+  return router.parseUrl('');
 };

@@ -8,6 +8,7 @@ namespace DebtsCompass.DataAccess
     public class DebtsCompassDbContext : IdentityDbContext<User>
     {
         public DbSet<Debt> Debts { get; set; }
+        public DbSet<DebtAssignment> DebtAssignments { get; set; }
         public DbSet<User> Users { get; set; }
         public DebtsCompassDbContext(DbContextOptions options)
        : base(options)
@@ -17,16 +18,30 @@ namespace DebtsCompass.DataAccess
         {
             base.OnModelCreating(modelBuilder);
 
-            modelBuilder.Entity<Debt>()
-                .HasOne(e => e.CreatorUser)
-                .WithMany(u => u.Debts)
-                .HasForeignKey(e => e.CreatorUserId)
+            modelBuilder.Entity<DebtAssignment>()
+                   .HasOne(da => da.CreatorUser)
+                   .WithMany(u => u.CreatedDebts)
+                   .HasForeignKey(da => da.CreatorUserId)
+                   .OnDelete(DeleteBehavior.NoAction);
+
+            modelBuilder.Entity<DebtAssignment>()
+                .HasOne(da => da.SelectedUser)
+                .WithMany(u => u.DebtsAssigned)
+                .HasForeignKey(da => da.SelectedUserId)
+                .IsRequired(false)
                 .OnDelete(DeleteBehavior.NoAction);
 
-            modelBuilder.Entity<Debt>()
-                .HasOne(e => e.SelectedUser)
+            modelBuilder.Entity<DebtAssignment>()
+                .HasOne(da => da.NonUserDebtAssignment)
                 .WithMany()
-                .HasForeignKey(e => e.SelectedUserId)
+                .HasForeignKey(da => da.NonUserDebtAssignmentId)
+                .IsRequired(false)
+                .OnDelete(DeleteBehavior.NoAction);
+
+            modelBuilder.Entity<DebtAssignment>()
+                .HasOne(da => da.Debt)
+                .WithMany(d => d.DebtAssignments)
+                .HasForeignKey(da => da.DebtId)
                 .OnDelete(DeleteBehavior.NoAction);
         }
     }

@@ -24,5 +24,16 @@ namespace DebtsCompass.DataAccess.Repositories
 
             return userFromDb;
         }
+
+        public async Task Add(User user)
+        {
+            if(user is null)
+            {
+                throw new ArgumentNullException(nameof(user));
+            }
+
+            await dbContext.Users.AddAsync(user);
+            await dbContext.SaveChangesAsync();
+        }
     }
 }

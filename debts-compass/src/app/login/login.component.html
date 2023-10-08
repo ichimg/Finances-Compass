@@ -60,6 +60,7 @@
         color="accent"
         type="submit"
         [disabled]="emailFormControl.invalid || passwordFormControl.invalid"
+        (keyup.enter)="onSubmitLogin()"
       >
         Login
       </button>

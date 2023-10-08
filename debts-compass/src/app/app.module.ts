@@ -10,7 +10,7 @@ import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { HeaderComponent } from './header/header.component';
 import { MatButtonModule } from '@angular/material/button';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { HttpClientModule } from '@angular/common/http';
+import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
 import { MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
@@ -20,6 +20,9 @@ import { ToastrModule } from 'ngx-toastr';
 import { MatTableModule } from '@angular/material/table';
 import { MatSortModule } from '@angular/material/sort';
 import { JWT_OPTIONS, JwtHelperService } from '@auth0/angular-jwt';
+import { JwtInterceptor } from './interceptor/interceptor';
+import { RegisterComponent } from './register/register.component';
+import { MatCardModule } from '@angular/material/card';
 
 @NgModule({
   declarations: [
@@ -27,6 +30,7 @@ import { JWT_OPTIONS, JwtHelperService } from '@auth0/angular-jwt';
     HeaderComponent,
     ViewDebtsComponent,
     LoginComponent,
+    RegisterComponent,
   ],
   imports: [
     BrowserModule,
@@ -44,10 +48,17 @@ import { JWT_OPTIONS, JwtHelperService } from '@auth0/angular-jwt';
     MatSnackBarModule,
     ToastrModule.forRoot(),
     MatTableModule,
-    MatSortModule
+    MatSortModule,
+    MatCardModule
   ],
   providers: [ { provide: JWT_OPTIONS, useValue: JWT_OPTIONS },
-    JwtHelperService],
+    JwtHelperService,
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: JwtInterceptor, // Use your interceptor here
+      multi: true
+    }
+    ],
   bootstrap: [AppComponent],
 })
 export class AppModule {}

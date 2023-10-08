@@ -12,6 +12,22 @@ namespace DebtsCompass.DataAccess.Migrations
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
+                name: "Address",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Country = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    County = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    City = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    StreetAddress = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    PostalCode = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Address", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "AspNetRoles",
                 columns: table => new
                 {
@@ -26,30 +42,53 @@ namespace DebtsCompass.DataAccess.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "AspNetUsers",
+                name: "Debts",
                 columns: table => new
                 {
-                    Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    Discriminator = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Name = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    UserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
-                    NormalizedUserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
-                    Email = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
-                    NormalizedEmail = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
-                    EmailConfirmed = table.Column<bool>(type: "bit", nullable: false),
-                    PasswordHash = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    SecurityStamp = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    ConcurrencyStamp = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    PhoneNumber = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    PhoneNumberConfirmed = table.Column<bool>(type: "bit", nullable: false),
-                    TwoFactorEnabled = table.Column<bool>(type: "bit", nullable: false),
-                    LockoutEnd = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
-                    LockoutEnabled = table.Column<bool>(type: "bit", nullable: false),
-                    AccessFailedCount = table.Column<int>(type: "int", nullable: false)
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Amount = table.Column<decimal>(type: "decimal(18,4)", nullable: false),
+                    BorrowReason = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    DateOfBorrowing = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    DeadlineDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    IsPaid = table.Column<bool>(type: "bit", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_AspNetUsers", x => x.Id);
+                    table.PrimaryKey("PK_Debts", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "NonUserDebtAssignment",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    PersonName = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    PersonEmail = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_NonUserDebtAssignment", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "UserInfo",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    FirstName = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    LastName = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    AddressId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Iban = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_UserInfo", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_UserInfo_Address_AddressId",
+                        column: x => x.AddressId,
+                        principalTable: "Address",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -69,6 +108,38 @@ namespace DebtsCompass.DataAccess.Migrations
                         name: "FK_AspNetRoleClaims_AspNetRoles_RoleId",
                         column: x => x.RoleId,
                         principalTable: "AspNetRoles",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "AspNetUsers",
+                columns: table => new
+                {
+                    Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    UserInfoId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    UserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
+                    NormalizedUserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
+                    Email = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
+                    NormalizedEmail = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
+                    EmailConfirmed = table.Column<bool>(type: "bit", nullable: false),
+                    PasswordHash = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    SecurityStamp = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    ConcurrencyStamp = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    PhoneNumber = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    PhoneNumberConfirmed = table.Column<bool>(type: "bit", nullable: false),
+                    TwoFactorEnabled = table.Column<bool>(type: "bit", nullable: false),
+                    LockoutEnd = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
+                    LockoutEnabled = table.Column<bool>(type: "bit", nullable: false),
+                    AccessFailedCount = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_AspNetUsers", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_AspNetUsers_UserInfo_UserInfoId",
+                        column: x => x.UserInfoId,
+                        principalTable: "UserInfo",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -159,34 +230,37 @@ namespace DebtsCompass.DataAccess.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Debts",
+                name: "DebtAssignment",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     CreatorUserId = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    Amount = table.Column<double>(type: "float", nullable: false),
-                    PersonName = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    PersonEmail = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     SelectedUserId = table.Column<string>(type: "nvarchar(450)", nullable: true),
-                    DateOfBorrowing = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    BorrowReason = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    BorrowingType = table.Column<int>(type: "int", nullable: false),
-                    DeadlineDate = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    IsPaid = table.Column<bool>(type: "bit", nullable: false)
+                    NonUserDebtAssignmentId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    DebtId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Debts", x => x.Id);
+                    table.PrimaryKey("PK_DebtAssignment", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Debts_AspNetUsers_CreatorUserId",
+                        name: "FK_DebtAssignment_AspNetUsers_CreatorUserId",
                         column: x => x.CreatorUserId,
                         principalTable: "AspNetUsers",
                         principalColumn: "Id");
                     table.ForeignKey(
-                        name: "FK_Debts_AspNetUsers_SelectedUserId",
+                        name: "FK_DebtAssignment_AspNetUsers_SelectedUserId",
                         column: x => x.SelectedUserId,
                         principalTable: "AspNetUsers",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_DebtAssignment_Debts_DebtId",
+                        column: x => x.DebtId,
+                        principalTable: "Debts",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_DebtAssignment_NonUserDebtAssignment_NonUserDebtAssignmentId",
+                        column: x => x.NonUserDebtAssignmentId,
+                        principalTable: "NonUserDebtAssignment",
                         principalColumn: "Id");
                 });
 
@@ -223,6 +297,11 @@ namespace DebtsCompass.DataAccess.Migrations
                 column: "NormalizedEmail");
 
             migrationBuilder.CreateIndex(
+                name: "IX_AspNetUsers_UserInfoId",
+                table: "AspNetUsers",
+                column: "UserInfoId");
+
+            migrationBuilder.CreateIndex(
                 name: "UserNameIndex",
                 table: "AspNetUsers",
                 column: "NormalizedUserName",
@@ -230,14 +309,29 @@ namespace DebtsCompass.DataAccess.Migrations
                 filter: "[NormalizedUserName] IS NOT NULL");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Debts_CreatorUserId",
-                table: "Debts",
+                name: "IX_DebtAssignment_CreatorUserId",
+                table: "DebtAssignment",
                 column: "CreatorUserId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Debts_SelectedUserId",
-                table: "Debts",
+                name: "IX_DebtAssignment_DebtId",
+                table: "DebtAssignment",
+                column: "DebtId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_DebtAssignment_NonUserDebtAssignmentId",
+                table: "DebtAssignment",
+                column: "NonUserDebtAssignmentId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_DebtAssignment_SelectedUserId",
+                table: "DebtAssignment",
                 column: "SelectedUserId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_UserInfo_AddressId",
+                table: "UserInfo",
+                column: "AddressId");
         }
 
         /// <inheritdoc />
@@ -259,13 +353,25 @@ namespace DebtsCompass.DataAccess.Migrations
                 name: "AspNetUserTokens");
 
             migrationBuilder.DropTable(
-                name: "Debts");
+                name: "DebtAssignment");
 
             migrationBuilder.DropTable(
                 name: "AspNetRoles");
 
             migrationBuilder.DropTable(
                 name: "AspNetUsers");
+
+            migrationBuilder.DropTable(
+                name: "Debts");
+
+            migrationBuilder.DropTable(
+                name: "NonUserDebtAssignment");
+
+            migrationBuilder.DropTable(
+                name: "UserInfo");
+
+            migrationBuilder.DropTable(
+                name: "Address");
         }
     }
 }

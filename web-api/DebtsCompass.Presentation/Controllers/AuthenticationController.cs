@@ -13,11 +13,6 @@ namespace DebtsCompass.Presentation.Controllers
     {
         private readonly IJwtService jwtService;
         private readonly IAuthenticationService authenticationService;
-
-        private static readonly string[] Summaries = new[]
-        {
-        "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
-    };
         public AuthenticationController(IJwtService jwtService, IAuthenticationService authenticationService)
         {
             this.jwtService = jwtService;
@@ -44,18 +39,6 @@ namespace DebtsCompass.Presentation.Controllers
                 Payload = loginResponse,
                 StatusCode = HttpStatusCode.OK
             });
-        }
-
-        [HttpGet(Name = "GetWeatherForecast")]
-        public IEnumerable<WeatherForecast> Get()
-        {
-            return Enumerable.Range(1, 5).Select(index => new WeatherForecast
-            {
-                Date = DateTime.Now.AddDays(index),
-                TemperatureC = Random.Shared.Next(-20, 55),
-                Summary = Summaries[Random.Shared.Next(Summaries.Length)]
-            })
-            .ToArray();
         }
     }
 

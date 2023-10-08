@@ -1,0 +1,24 @@
+.registration-container {
+    display: flex;
+    justify-content: space-between;
+  }
+  
+  mat-card {
+    width: 45%;
+    border-radius: 15px;
+    margin: 10px;
+  }
+  
+  .full-width {
+    width: 100%;
+  }
+
+  .btn-container {
+    text-align: right;
+  }
+
+  .title-font {
+    font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif; 
+    font-size: 1.5rem; 
+    margin-bottom: 10px;
+  }
