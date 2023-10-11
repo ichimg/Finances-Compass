@@ -1,5 +1,5 @@
 import { LiveAnnouncer } from '@angular/cdk/a11y';
-import { AfterViewInit, Component, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, OnInit, ViewChild } from '@angular/core';
 import { MatSort, Sort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
 import { DebtsService } from '../services/debts.service';
@@ -11,7 +11,7 @@ import { Debt } from '../interfaces/debt';
   styleUrls: ['./view-debts.component.css'],
   providers: [DebtsService],
 })
-export class ViewDebtsComponent implements AfterViewInit {
+export class ViewDebtsComponent implements AfterViewInit, OnInit {
   debts!: Debt[];
   displayedColumns: string[] = [
     'name',
@@ -26,10 +26,11 @@ export class ViewDebtsComponent implements AfterViewInit {
   constructor(
     private liveAnnouncer: LiveAnnouncer,
     private debtsService: DebtsService
-  ) {
-    debtsService.getAll().subscribe((response) => {
+  ) {}
+  
+  ngOnInit(): void {
+    this.debtsService.getAll().subscribe((response) => {
       this.dataSource.data = response.payload;
-      console.log(this.dataSource.data);
     });
   }
 

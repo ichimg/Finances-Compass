@@ -19,7 +19,7 @@ namespace DebtsCompass.Application.Services
         }
 
         public async Task<bool> IsValidLogin(LoginRequest loginRequest)
-        {
+        { 
             if (!emailValidator.IsValid(loginRequest.Email))
             {
                 return false;

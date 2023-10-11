@@ -10,3 +10,10 @@ table {
     width:92%;
     margin: 70px 10px 0px 4%;
   }
+
+  @media screen and (max-width: 520px) {
+
+  .table-size {
+    overflow-x: auto;
+}
+  }

@@ -12,7 +12,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
 import { MatInputModule } from '@angular/material/input';
-import { MatFormFieldModule } from '@angular/material/form-field';
+import { MAT_FORM_FIELD, MAT_FORM_FIELD_DEFAULT_OPTIONS, MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { RouterModule } from '@angular/router';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
@@ -23,6 +23,15 @@ import { JWT_OPTIONS, JwtHelperService } from '@auth0/angular-jwt';
 import { JwtInterceptor } from './interceptor/interceptor';
 import { RegisterComponent } from './register/register.component';
 import { MatCardModule } from '@angular/material/card';
+import {MatSelectModule} from '@angular/material/select';
+import {NgFor, AsyncPipe} from '@angular/common';
+import {MatAutocompleteModule} from '@angular/material/autocomplete';
+
+const OPTIONS = {
+  appereance: 'outline',
+  floatLabel: 'always',
+  hideRequiredMarker: false
+}
 
 @NgModule({
   declarations: [
@@ -34,29 +43,38 @@ import { MatCardModule } from '@angular/material/card';
   ],
   imports: [
     BrowserModule,
+    FormsModule,
+    MatCardModule,
+    ReactiveFormsModule,
     AppRoutingModule,
     BrowserAnimationsModule,
     MatSlideToggleModule,
     MatButtonModule,
-    FormsModule,
     HttpClientModule,
     MatInputModule,
     MatFormFieldModule,
-    ReactiveFormsModule,
     MatIconModule,
     RouterModule,
     MatSnackBarModule,
     ToastrModule.forRoot(),
     MatTableModule,
     MatSortModule,
-    MatCardModule
+
+    MatSelectModule,
+    NgFor,
+    AsyncPipe,
+    MatAutocompleteModule,
   ],
   providers: [ { provide: JWT_OPTIONS, useValue: JWT_OPTIONS },
     JwtHelperService,
     {
       provide: HTTP_INTERCEPTORS,
-      useClass: JwtInterceptor, // Use your interceptor here
+      useClass: JwtInterceptor, 
       multi: true
+    },
+    {
+      provide: MAT_FORM_FIELD_DEFAULT_OPTIONS,
+      useValue: {OPTIONS}
     }
     ],
   bootstrap: [AppComponent],
