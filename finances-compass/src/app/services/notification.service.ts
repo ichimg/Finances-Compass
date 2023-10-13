@@ -20,64 +20,64 @@ export class NotificationService {
     this.toastr.toastrConfig.enableHtml = true;
   }
 
-  // Toast types: success, error, warning, info
-  openNotification(message: string, notificationType: string) {
-
-    switch(notificationType)
-    {
-      case 'success':
+  showSuccess(message: string){
     this.toast = {
       message: message,
-      title: notificationType.charAt(0).toUpperCase() + notificationType.slice(1),
-      type: notificationType,
+      title: 'Success',
+      type: 'success',
       ic: {
         timeOut: 3000,
         closeButton: true
       } as IndividualConfig,
     };
-    break;
 
-    case 'error':
-    this.toast = {
-      message: message,
-      title: notificationType.charAt(0).toUpperCase() + notificationType.slice(1),
-      type: notificationType,
-      ic: {
-        timeOut: 3000,
-        closeButton: true
-      } as IndividualConfig,
-    };
-    break;
-
-    case 'warning':
-    this.toast = {
-      message: message,
-      title: notificationType.charAt(0).toUpperCase() + notificationType.slice(1),
-      type: notificationType,
-      ic: {
-        timeOut: 3000,
-        closeButton: true
-      } as IndividualConfig,
-    };
-    break;
-
-    case 'info':
-    this.toast = {
-      message: message,
-      title: notificationType.charAt(0).toUpperCase() + notificationType.slice(1),
-      type: notificationType,
-      ic: {
-        timeOut: 3000,
-        closeButton: true
-      } as IndividualConfig,
-    };
-    break;
-
-    default:
-      console.log('WRONG NOTIFICATION TYPE!!');
-      break;
+    this.displayNotification();
   }
 
+  showWarning(message: string){
+    this.toast = {
+      message: message,
+      title: 'Warning',
+      type: 'warning',
+      ic: {
+        timeOut: 3000,
+        closeButton: true
+      } as IndividualConfig,
+    };
+
+    this.displayNotification();
+  }
+
+  showError(message: string){
+    this.toast = {
+      message: message,
+      title: 'Error',
+      type: 'error',
+      ic: {
+        timeOut: 3000,
+        closeButton: true
+      } as IndividualConfig,
+    };
+
+    this.displayNotification();
+  }
+
+    showInfo(message: string){
+      this.toast = {
+        message: message,
+        title: 'Info',
+        type: 'info',
+        ic: {
+          timeOut: 3000,
+          closeButton: true
+        } as IndividualConfig,
+      };
+    
+
+    this.displayNotification();
+    }
+
+  private displayNotification(): void {
     this.toastr.show(
       this.toast.message,
       this.toast.title,
@@ -85,4 +85,6 @@ export class NotificationService {
       'toast-' + this.toast.type
     );
   }
+  
 }
+

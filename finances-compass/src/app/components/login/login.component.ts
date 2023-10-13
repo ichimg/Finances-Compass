@@ -1,9 +1,9 @@
-import { NotificationService } from './../services/notification.service';
+import { NotificationService } from '../../services/notification.service';
 import { Component } from '@angular/core';
-import { AuthenticationService } from '../services/authentication.service';
+import { AuthenticationService } from '../../services/authentication.service';
 import { FormControl, Validators } from '@angular/forms';
-import { EmailMatcher } from 'src/app/error-matchers/email-matcher';
-import { passwordValidator } from '../validators/password-validator';
+import { EmailMatcher } from '../../error-matchers/email-matcher';
+import { passwordValidator } from '../../validators/password-validator';
 import { Router } from '@angular/router';
 
 @Component({
@@ -50,26 +50,26 @@ export class LoginComponent {
           localStorage.setItem('email', response.payload.email);
           localStorage.setItem('token', response.payload.token);
 
-          this.notificationService.openNotification("You're logged in", 'success');
+          this.notificationService.showSuccess("You're logged in");
           this.router.navigate(['dashboard']);
           break;
 
           case 404:
-            this.notificationService.openNotification("Account doesn't exist", 'error');
+            this.notificationService.showError("Account doesn't exist");
             break;
 
           case 401:
-          this.notificationService.openNotification('Invalid credentials', 'error');
+          this.notificationService.showError('Invalid credentials');
           break;
 
           default:
-          this.notificationService.openNotification('Something went wrong', 'error');
+          this.notificationService.showError('Something went wrong');
           break;
         }
         
       },
       (error) => {
-        this.notificationService.openNotification('Something went wrong', 'error');
+        this.notificationService.showError('Something went wrong');
       })
 
       }

@@ -13,6 +13,6 @@ export const authGuard: CanActivateFn = (route, state) => {
   }
 
   authService.logout();
-  notificationService.openNotification('You need to log in!', 'warning');
+  notificationService.showWarning('You need to log in!');
   return router.parseUrl('');
 };

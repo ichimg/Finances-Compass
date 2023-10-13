@@ -1,5 +1,6 @@
 ﻿using DebtsCompass.Application.Exceptions;
 using DebtsCompass.Domain;
+using DebtsCompass.Domain.DtoResponses;
 using DebtsCompass.Domain.Interfaces;
 using DebtsCompass.Domain.Requests;
 using Microsoft.AspNetCore.Mvc;
@@ -37,6 +38,19 @@ namespace DebtsCompass.Presentation.Controllers
             {
                 Message = null,
                 Payload = loginResponse,
+                StatusCode = HttpStatusCode.OK
+            });
+        }
+
+        [HttpPost("register")]
+        public async Task<ActionResult<Response<object>>> Register([FromBody] RegisterRequest registerRequest)
+        {
+            await authenticationService.Register(registerRequest);
+
+            return Ok(new Response<object>
+            {
+                Message = null,
+                Payload = null,
                 StatusCode = HttpStatusCode.OK
             });
         }

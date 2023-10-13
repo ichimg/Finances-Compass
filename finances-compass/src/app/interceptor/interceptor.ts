@@ -20,7 +20,7 @@ export class JwtInterceptor implements HttpInterceptor {
   intercept(request: HttpRequest<any>, next: HttpHandler) {
     if (this.authService.isAuthenticated()) {
       if (this.authService.isTokenExpired()) {
-        this.notificationService.openNotification("Session expired. Please log in again.", 'error');
+        this.notificationService.showError("Session expired. Please log in again.");
         this.router.navigate(['']);
 
         return EMPTY;

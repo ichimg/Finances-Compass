@@ -1,5 +1,4 @@
 ﻿using DebtsCompass.Application.Exceptions;
-using DebtsCompass.DataAccess.Exceptions;
 using DebtsCompass.Domain;
 using System.Net;
 
@@ -33,9 +32,9 @@ namespace DebtsCompass
             HttpStatusCode statusCode;
             string message;
 
-            switch(ex)
+            switch (ex)
             {
-                case EntityNotFoundException:
+                case UserNotFoundException:
                     statusCode = HttpStatusCode.NotFound;
                     message = ex.Message;
                     logger.LogError(message);
@@ -49,6 +48,20 @@ namespace DebtsCompass
 
                 case ForbiddenRequestException:
                     statusCode = HttpStatusCode.Forbidden;
+                    message = ex.Message;
+                    logger.LogError(message);
+                    break;
+
+                case EmailAlreadyExistsException:
+                    statusCode = HttpStatusCode.Conflict;
+                    message = ex.Message;
+                    logger.LogError(message);
+                    break;
+
+                case InvalidEmailException:
+                case InvalidPasswordException:
+                case PasswordMismatchException:
+                    statusCode = HttpStatusCode.BadRequest;
                     message = ex.Message;
                     logger.LogError(message);
                     break;

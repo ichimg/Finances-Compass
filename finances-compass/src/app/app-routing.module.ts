@@ -1,11 +1,11 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-import {ViewDebtsComponent} from './view-debts/view-debts.component'
-import {HeaderComponent} from './header/header.component'
-import {LoginComponent} from './login/login.component'
+import {ViewDebtsComponent} from './components/view-debts/view-debts.component'
+import {HeaderComponent} from './components/header/header.component'
+import {LoginComponent} from './components/login/login.component'
 import { authGuard } from './guards/auth.guard';
 import { unauthGuard } from './guards/unauth.guard';
-import { RegisterComponent } from './register/register.component';
+import { RegisterComponent } from './components/register/register.component';
 
 
 const routes: Routes = [

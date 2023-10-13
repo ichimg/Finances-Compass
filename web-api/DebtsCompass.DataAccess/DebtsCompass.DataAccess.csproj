@@ -20,4 +20,8 @@
     <ProjectReference Include="..\DebtsCompass.Domain\DebtsCompass.Domain.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Exceptions\" />
+  </ItemGroup>
+
 </Project>

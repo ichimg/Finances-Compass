@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
-import { AuthenticationService } from '../services/authentication.service';
+import { AuthenticationService } from '../../services/authentication.service';
 import { Router } from '@angular/router';
-import { NotificationService } from '../services/notification.service';
+import { NotificationService } from '../../services/notification.service';
 
 @Component({
   selector: 'app-header',
@@ -19,7 +19,11 @@ export class HeaderComponent {
   logout(): void{
     this.authService.logout();
     this.router.navigate(['']);
-    this.notificationService.openNotification('Logout successful!', 'success');
+    this.notificationService.showSuccess('Logout successful!');
+  }
+
+  onLogoClick(): void {
+    this.router.navigate(['']);
   }
 
 }
