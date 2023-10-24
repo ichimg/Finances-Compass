@@ -48,7 +48,8 @@ export class LoginComponent {
 
           case 200:
           localStorage.setItem('email', response.payload.email);
-          localStorage.setItem('token', response.payload.token);
+          localStorage.setItem('accessToken', response.payload.accessToken);
+          localStorage.setItem('refreshToken', response.payload.refreshToken);
 
           this.notificationService.showSuccess("You're logged in");
           this.router.navigate(['dashboard']);

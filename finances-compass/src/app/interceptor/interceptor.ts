@@ -18,19 +18,12 @@ export class JwtInterceptor implements HttpInterceptor {
   ) {}
 
   intercept(request: HttpRequest<any>, next: HttpHandler) {
-    if (this.authService.isAuthenticated()) {
-      if (this.authService.isTokenExpired()) {
-        this.notificationService.showError("Session expired. Please log in again.");
-        this.router.navigate(['']);
-
-        return EMPTY;
-      }
-      request = request.clone({
+        request = request.clone({
         setHeaders:{
-        Authorization: `Bearer ${localStorage.getItem('token')}`
+        Authorization: `Bearer ${localStorage.getItem('accessToken')}`
         }
       });
-    }
+    
 
     return next.handle(request);
   }

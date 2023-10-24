@@ -6,5 +6,6 @@ namespace DebtsCompass.Domain.Interfaces
     {
         Task<User> GetUserByEmail(string email);
         Task Add(User user);    
+        Task Update(User user);
     }
 }

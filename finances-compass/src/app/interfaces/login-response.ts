@@ -2,7 +2,8 @@ export interface LoginResponse{
     message: string | null;
     payload: {
       email: string;
-      token: string;
+      accessToken: string;
+      refreshToken: string;
     };
     statusCode: number;
 }

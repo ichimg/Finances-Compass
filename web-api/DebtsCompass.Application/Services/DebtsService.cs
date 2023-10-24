@@ -16,11 +16,22 @@ namespace DebtsCompass.Application.Services
             this.debtAssignmentRepository = debtAssignmentRepository;
         }
 
-        public async Task<List<DebtDto>> GetAll(string email)
+        public async Task<List<DebtDto>> GetAllReceivingDebts(string email)
         {
-            var debtsFromDb = await debtAssignmentRepository.GetAllByEmailForExistingUsers(email);
+            var debtsFromDb = await debtAssignmentRepository.GetAllReceivingDebtsByEmail(email);
 
-            List<DebtDto> debts = debtsFromDb.Select(d => Mapper.DebtAssignmentDbModelToDebtDto(d)).ToList();
+            List<DebtDto> debts = debtsFromDb
+                    .Select(d => Mapper.ReceivingDebtAssignmentDbModelToDebtDto(d))
+                    .ToList();
+
+            return debts;
+        }
+
+        public async Task<List<DebtDto>> GetAllUserDebts(string email)
+        {
+            var debtsFromDb = await debtAssignmentRepository.GetAllUserDebtsByEmail(email);
+
+            List<DebtDto> debts = debtsFromDb.Select(d => Mapper.UserDebtAssignmentDbModelToDebtDto(d)).ToList();
 
             return debts;
         }

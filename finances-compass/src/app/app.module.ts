@@ -59,11 +59,11 @@ const OPTIONS = {
     ToastrModule.forRoot(),
     MatTableModule,
     MatSortModule,
-
     MatSelectModule,
     NgFor,
     AsyncPipe,
     MatAutocompleteModule,
+    MatIconModule
   ],
   providers: [ { provide: JWT_OPTIONS, useValue: JWT_OPTIONS },
     JwtHelperService,

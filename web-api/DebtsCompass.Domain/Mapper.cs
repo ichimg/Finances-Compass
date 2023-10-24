@@ -6,16 +6,33 @@ namespace DebtsCompass.Domain
 {
     public static class Mapper
     {
-        public static DebtDto DebtAssignmentDbModelToDebtDto(DebtAssignment debtAssignment)
+        public static DebtDto ReceivingDebtAssignmentDbModelToDebtDto(DebtAssignment debtAssignment)
         {
             return new DebtDto
             {
-                Name = $"{debtAssignment.SelectedUser.UserInfo.FirstName}  {debtAssignment.SelectedUser.UserInfo.LastName}",
-                Email = debtAssignment.SelectedUser.Email,
+                Name = debtAssignment.SelectedUser != null ? 
+                $"{debtAssignment.SelectedUser.UserInfo.FirstName}  {debtAssignment.SelectedUser.UserInfo.LastName}" : 
+                $"{debtAssignment.NonUserDebtAssignment.PersonFirstName} {debtAssignment.NonUserDebtAssignment.PersonLastName}",
+                Email = debtAssignment.SelectedUser != null ? debtAssignment.SelectedUser.Email : debtAssignment.NonUserDebtAssignment.PersonEmail,
                 Amount = debtAssignment.Debt.Amount,
                 BorrowingDate = debtAssignment.Debt.DateOfBorrowing,
                 Deadline = debtAssignment.Debt.DeadlineDate,
-                Reason = debtAssignment.Debt.BorrowReason
+                Reason = debtAssignment.Debt.BorrowReason,
+                IsUserAccount = debtAssignment.NonUserDebtAssignment != null
+            };
+        }
+
+        public static DebtDto UserDebtAssignmentDbModelToDebtDto(DebtAssignment debtAssignment)
+        {
+            return new DebtDto
+            {
+                Name = $"{debtAssignment.CreatorUser.UserInfo.FirstName} {debtAssignment.CreatorUser.UserInfo.LastName}",
+                Email = debtAssignment.CreatorUser.Email,
+                Amount = debtAssignment.Debt.Amount,
+                BorrowingDate = debtAssignment.Debt.DateOfBorrowing,
+                Deadline = debtAssignment.Debt.DeadlineDate,
+                Reason = debtAssignment.Debt.BorrowReason,
+                IsUserAccount = debtAssignment.NonUserDebtAssignment != null
             };
         }
 

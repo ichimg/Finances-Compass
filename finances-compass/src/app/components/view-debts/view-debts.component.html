@@ -1,13 +1,26 @@
 <body>
   <app-header></app-header>
+
+  <div class="icon" *ngIf="areDebtsToReceive()">
+    <img src="../../assets/images/money-note-icon.png" alt="" width="30" height="20" class="icon">
+    <h2 class="to-be-collected" >Debts to be collected:</h2>
+  </div>
+  <div class="icon" *ngIf="!areDebtsToReceive() && isReceivingDebtsLoaded">
+    <img src="../../assets/images/money-note-icon.png" alt="" width="50" height="30" class="icon">
+    <h3 class="to-be-collected" >
+      You don't have any debts to be collected.
+    </h3>
+  </div>
+
   <div class="table-size">
     <table
       mat-table
-      [dataSource]="dataSource"
+      [dataSource]="dataReceivingDebtsSource"
       matSort
       #debtTbSort="matSort"
-      (matSortChange)="announceSortChange($event)"
+      (matSortChange)="announceReceivingSortChange($event)"
       class="mat-elevation-z8"
+      *ngIf="areDebtsToReceive()"
     >
       <ng-container matColumnDef="name">
         <th
@@ -42,7 +55,9 @@
         >
           Amount
         </th>
-        <td mat-cell *matCellDef="let element">{{ element.amount + ' RON'}}</td>
+        <td mat-cell *matCellDef="let element">
+          {{ element.amount + " RON" }}
+        </td>
       </ng-container>
 
       <ng-container matColumnDef="borrowingDate">
@@ -54,7 +69,9 @@
         >
           Borrowing date
         </th>
-        <td mat-cell *matCellDef="let element">{{ element.borrowingDate | date:'dd MMM yyyy'}}</td>
+        <td mat-cell *matCellDef="let element">
+          {{ element.borrowingDate | date : "dd MMM yyyy" }}
+        </td>
       </ng-container>
 
       <ng-container matColumnDef="deadline">
@@ -66,7 +83,9 @@
         >
           Deadline
         </th>
-        <td mat-cell *matCellDef="let element">{{ element.deadline  | date:'dd MMM yyyy'}}</td>
+        <td mat-cell *matCellDef="let element">
+          {{ element.deadline | date : "dd MMM yyyy" }}
+        </td>
       </ng-container>
 
       <ng-container matColumnDef="reason">
@@ -82,17 +101,121 @@
       </ng-container>
 
       <ng-container matColumnDef="action">
+        <th mat-header-cell *matHeaderCellDef>Action</th>
+        <td mat-cell *matCellDef="let element"></td
+      ></ng-container>
+
+      <tr mat-header-row *matHeaderRowDef="displayedReceivingColumns"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedReceivingColumns"></tr>
+    </table>
+  </div>
+
+  <div class="icon" *ngIf="areDebts()">
+    <img src="../../assets/images/money-note-giving-dollar-icon.png" alt="" width="30" height="40" class="icon">
+    <h2 class="to-be-collected" >Your pending debts:</h2>
+  </div>
+  <div class="icon" *ngIf="!areDebts() && isUserDebtsLoaded">
+    <img src="../../assets/images/money-note-giving-dollar-icon.png" alt="" width="30" height="40" class="icon">
+    <h3 class="to-be-collected" >
+      You don't have any debts.
+    </h3>
+  </div>
+
+  <div class="table-size">
+    <table
+      mat-table
+      [dataSource]="dataUserDebtsSource"
+      matSort
+      #debtTbSort="matSort"
+      (matSortChange)="announceUserSortChange($event)"
+      class="mat-elevation-z8"
+      *ngIf="areDebts()"
+    >
+      <ng-container matColumnDef="name">
         <th
           mat-header-cell
           *matHeaderCellDef
+          mat-sort-header
+          sortActionDescription="Sort by name"
         >
-          Action
+          Name
         </th>
-        <td mat-cell *matCellDef="let element">
+        <td mat-cell *matCellDef="let element">{{ element.name }}</td>
       </ng-container>
 
-      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-      <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+      <ng-container matColumnDef="email">
+        <th
+          mat-header-cell
+          *matHeaderCellDef
+          mat-sort-header
+          sortActionDescription="Sort by e-mail"
+        >
+          E-mail
+        </th>
+        <td mat-cell *matCellDef="let element">{{ element.email }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="amount">
+        <th
+          mat-header-cell
+          *matHeaderCellDef
+          mat-sort-header
+          sortActionDescription="Sort by amount"
+        >
+          Amount
+        </th>
+        <td mat-cell *matCellDef="let element">
+          {{ element.amount + " RON" }}
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="borrowingDate">
+        <th
+          mat-header-cell
+          *matHeaderCellDef
+          mat-sort-header
+          sortActionDescription="Sort by borrowingDate"
+        >
+          Borrowing date
+        </th>
+        <td mat-cell *matCellDef="let element">
+          {{ element.borrowingDate | date : "dd MMM yyyy" }}
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="deadline">
+        <th
+          mat-header-cell
+          *matHeaderCellDef
+          mat-sort-header
+          sortActionDescription="Sort by deadline"
+        >
+          Deadline
+        </th>
+        <td mat-cell *matCellDef="let element">
+          {{ element.deadline | date : "dd MMM yyyy" }}
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="reason">
+        <th
+          mat-header-cell
+          *matHeaderCellDef
+          mat-sort-header
+          sortActionDescription="Sort by reason"
+        >
+          Reason
+        </th>
+        <td mat-cell *matCellDef="let element">{{ element.reason }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="action">
+        <th mat-header-cell *matHeaderCellDef>Action</th>
+        <td mat-cell *matCellDef="let element"></td
+      ></ng-container>
+
+      <tr mat-header-row *matHeaderRowDef="displayedReceivingColumns"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedReceivingColumns"></tr>
     </table>
   </div>
 </body>

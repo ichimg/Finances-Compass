@@ -75,5 +75,7 @@ namespace DebtsCompass.Application.Services
 
             await userRepository.Add(user);
         }
+
+
     }
 }

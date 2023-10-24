@@ -1,19 +1,45 @@
 table {
-    width: 100%;
-  }
-  
-  th.mat-sort-header-sorted {
-    color: black;
-  }
+  width: 100%;
+}
 
-  .table-size{
-    width:92%;
-    margin: 70px 10px 0px 4%;
-  }
+th.mat-sort-header-sorted {
+  color: black;
+}
 
-  @media screen and (max-width: 520px) {
+.table-size {
+  width: 92%;
+  margin: 5px 10px 0px 4%;
+}
 
+.to-be-collected {
+  padding: 10px;
+  margin-top: 50px;
+  font-family: "Trebuchet MS", "Lucida Sans Unicode", "Lucida Grande",
+    "Lucida Sans", Arial, sans-serif;
+  display: inline-block;
+  font-weight: lighter;
+}
+
+.icon-title {
+  display: flex;
+  justify-content: space-between;
+}
+
+.icon {
+  display: inline-block;
+  margin-left: 30px;
+
+}
+
+@media screen and (max-width: 520px) {
   .table-size {
     overflow-x: auto;
-}
   }
+}
+
+@media screen and (max-width: 360px) {
+  .to-be-collected {
+    font-size: 15px;
+  }
+
+}

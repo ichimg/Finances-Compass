@@ -1,5 +1,6 @@
 ﻿using DebtsCompass.Application.Exceptions;
 using DebtsCompass.Domain;
+using Microsoft.IdentityModel.Tokens;
 using System.Net;
 
 namespace DebtsCompass
@@ -61,6 +62,7 @@ namespace DebtsCompass
                 case InvalidEmailException:
                 case InvalidPasswordException:
                 case PasswordMismatchException:
+                case SecurityTokenException:
                     statusCode = HttpStatusCode.BadRequest;
                     message = ex.Message;
                     logger.LogError(message);

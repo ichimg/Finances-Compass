@@ -12,26 +12,28 @@ namespace DebtsCompass.DataAccess.Repositories
             this.dbContext = dbContext;
         }
 
-        public async Task<List<DebtAssignment>> GetAllByEmailForExistingUsers(string email)
+        public async Task<List<DebtAssignment>> GetAllReceivingDebtsByEmail(string email)
         {
             return await dbContext.DebtAssignments
                 .Include(da => da.Debt)
                 .Include(da => da.CreatorUser)
+                .Include(da => da.NonUserDebtAssignment)
                 .Include(da => da.SelectedUser)
                 .ThenInclude(u => u.UserInfo)
                 .Where(da => da.CreatorUser.Email == email)
                 .ToListAsync();
         }
 
-        public async Task<List<DebtAssignment>> GetAllByEmailForNotExistingUsers(string email)
+        public async Task<List<DebtAssignment>> GetAllUserDebtsByEmail(string email)
         {
             return await dbContext.DebtAssignments
-               .Include(da => da.Debt)
-               .Include(da => da.CreatorUser)
-               .Include(da => da.NonUserDebtAssignment)
-               .Where(da => da.CreatorUser.Email == email && da.NonUserDebtAssignment != null)
-               .ToListAsync();
+                .Include(da => da.Debt)
+                .Include(da => da.CreatorUser)
+                .ThenInclude(u => u.UserInfo)
+                .Include(da => da.SelectedUser)
+                .ThenInclude(u => u.UserInfo)
+                .Where(da => da.SelectedUser.Email == email)
+                .ToListAsync();
         }
-
     }
 }

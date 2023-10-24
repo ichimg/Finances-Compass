@@ -5,6 +5,7 @@ using DebtsCompass.Domain.Interfaces;
 using DebtsCompass.Domain.Requests;
 using Microsoft.AspNetCore.Mvc;
 using System.Net;
+using System.Security.Claims;
 
 namespace DebtsCompass.Presentation.Controllers
 {
@@ -28,11 +29,16 @@ namespace DebtsCompass.Presentation.Controllers
                 throw new InvalidCredentialsException();
             }
 
+            string refreshToken = jwtService.GenerateRefreshToken();
+            await jwtService.UpdateRefreshToken(loginRequest.Email, refreshToken);
+
             LoginResponse loginResponse = new LoginResponse
             {
                 Email = loginRequest.Email,
-                Token = jwtService.GenerateToken(loginRequest.Email)
+                AccessToken = jwtService.GenerateToken(loginRequest.Email),
+                RefreshToken = refreshToken
             };
+
 
             return Ok(new Response<LoginResponse>
             {
@@ -54,7 +60,30 @@ namespace DebtsCompass.Presentation.Controllers
                 StatusCode = HttpStatusCode.OK
             });
         }
+
+        [HttpPost]
+        [Route("refresh-token")]
+        public async Task<ActionResult<Response<RefreshTokenResponse>>> RefreshToken(RefreshTokenRequest refreshTokenRequest)
+        {
+            if (refreshTokenRequest is null)
+            {
+                return BadRequest("Invalid request");
+            }
+
+            var userIdentity = User.Identity as ClaimsIdentity;
+            var userEmailClaim = userIdentity.FindFirst(ClaimTypes.Email)?.Value;
+
+            var refreshTokenResponse = await jwtService.GetRefreshToken(userEmailClaim, refreshTokenRequest);
+            await jwtService.UpdateRefreshToken(userEmailClaim, refreshTokenResponse.RefreshToken);
+
+            return Ok(new Response<RefreshTokenResponse>
+            {
+                Message = null,
+                Payload = refreshTokenResponse,
+                StatusCode = HttpStatusCode.OK
+            });
+        }
+
+
     }
-
-
 }

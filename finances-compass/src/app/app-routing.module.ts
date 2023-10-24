@@ -1,7 +1,6 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import {ViewDebtsComponent} from './components/view-debts/view-debts.component'
-import {HeaderComponent} from './components/header/header.component'
 import {LoginComponent} from './components/login/login.component'
 import { authGuard } from './guards/auth.guard';
 import { unauthGuard } from './guards/unauth.guard';

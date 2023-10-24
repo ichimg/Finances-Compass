@@ -3,16 +3,23 @@ import { inject } from '@angular/core';
 import { CanActivateFn, Router } from '@angular/router';
 import { NotificationService } from '../services/notification.service';
 
-export const authGuard: CanActivateFn = (route, state) => {
+export const authGuard: CanActivateFn = async (_route, _state) => {
   const authService = inject(AuthenticationService);
   const router = inject(Router);
   const notificationService = inject(NotificationService)
+  const token = localStorage.getItem('accessToken');
 
-  if (authService.isAuthenticated() && !authService.isTokenExpired()) {
+  if (token && !authService.isTokenExpired()) {
     return true;
   }
 
-  authService.logout();
-  notificationService.showWarning('You need to log in!');
-  return router.parseUrl('');
+  const isRefreshSuccess = await authService.refreshTokens(token!);
+  if (!isRefreshSuccess) {
+    authService.logout();
+    notificationService.showWarning('You need to log in!');
+    return router.parseUrl('');
+  }
+
+  console.log('a fost un succes!')
+  return isRefreshSuccess;
 };

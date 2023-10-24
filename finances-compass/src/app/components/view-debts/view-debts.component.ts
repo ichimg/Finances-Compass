@@ -12,8 +12,7 @@ import { Debt } from '../../interfaces/debt';
   providers: [DebtsService],
 })
 export class ViewDebtsComponent implements AfterViewInit, OnInit {
-  debts!: Debt[];
-  displayedColumns: string[] = [
+  displayedReceivingColumns: string[] = [
     'name',
     'email',
     'amount',
@@ -22,29 +21,58 @@ export class ViewDebtsComponent implements AfterViewInit, OnInit {
     'reason',
     'action',
   ];
-  dataSource = new MatTableDataSource();
+  dataReceivingDebtsSource = new MatTableDataSource();
+  dataUserDebtsSource = new MatTableDataSource();
+
+  isReceivingDebtsLoaded: boolean = false;
+  isUserDebtsLoaded: boolean = false;
+
   constructor(
     private liveAnnouncer: LiveAnnouncer,
     private debtsService: DebtsService
   ) {}
   
   ngOnInit(): void {
-    this.debtsService.getAll().subscribe((response) => {
-      this.dataSource.data = response.payload;
+    this.debtsService.getAllReceivingDebts().subscribe((response) => {
+      this.dataReceivingDebtsSource.data = response.payload;
+      this.isReceivingDebtsLoaded = true;
+    });
+
+    this.debtsService.getAllUserDebts().subscribe((response) => {
+      this.dataUserDebtsSource.data = response.payload;
+      this.isUserDebtsLoaded = true;
     });
   }
 
-  @ViewChild('debtTbSort') debtTbSort: MatSort = new MatSort();
+  @ViewChild('debtReceivingTbSort') debtReceivingTbSort: MatSort = new MatSort();
+  @ViewChild('debtUserTbSort') debtUserTbSort: MatSort = new MatSort();
 
   ngAfterViewInit() {
-    this.dataSource.sort = this.debtTbSort;
+    this.dataReceivingDebtsSource.sort = this.debtReceivingTbSort;
+    this.dataUserDebtsSource.sort = this.debtUserTbSort;
   }
 
-  announceSortChange(sortState: Sort) {
+  announceReceivingSortChange(sortState: Sort) {
     if (sortState.direction) {
       this.liveAnnouncer.announce(`Sorted ${sortState.direction} ending`);
     } else {
       this.liveAnnouncer.announce('Sorting cleared');
     }
+  }
+
+  announceUserSortChange(sortState: Sort) {
+    if (sortState.direction) {
+      this.liveAnnouncer.announce(`Sorted ${sortState.direction} ending`);
+    } else {
+      this.liveAnnouncer.announce('Sorting cleared');
+    }
+  }
+
+  areDebtsToReceive(): boolean{
+    return this.dataReceivingDebtsSource.data.length > 0;
+  }
+
+  areDebts(): boolean{
+    return this.dataUserDebtsSource.data.length > 0;
   }
 }

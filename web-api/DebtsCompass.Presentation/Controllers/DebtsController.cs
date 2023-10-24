@@ -1,7 +1,6 @@
 ﻿using DebtsCompass.Application.Exceptions;
 using DebtsCompass.Domain;
 using DebtsCompass.Domain.DtoResponses;
-using DebtsCompass.Domain.Interfaces;
 using DebtsCompass.Domain.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -21,9 +20,9 @@ namespace DebtsCompass.Presentation.Controllers
         }
 
         [HttpGet]
-        [Route("view-debts")]
+        [Route("view-receiving-debts")]
         [Authorize]
-        public async Task<ActionResult<List<DebtDto>>> GetDebts([FromHeader] string email)
+        public async Task<ActionResult<List<DebtDto>>> GetReceivingDebts([FromHeader] string email)
         {
             var userIdentity = User.Identity as ClaimsIdentity;
             var userEmailClaim = userIdentity.FindFirst(ClaimTypes.Email)?.Value;
@@ -33,7 +32,32 @@ namespace DebtsCompass.Presentation.Controllers
                 throw new ForbiddenRequestException();
             }
 
-            var debts = await debtsService.GetAll(email);
+            var debts = await debtsService.GetAllReceivingDebts(email);
+
+            Response<List<DebtDto>> response = new Response<List<DebtDto>>
+            {
+                Message = null,
+                Payload = debts,
+                StatusCode = HttpStatusCode.OK
+            };
+
+            return Ok(response);
+        }
+
+        [HttpGet]
+        [Route("view-user-debts")]
+        [Authorize]
+        public async Task<ActionResult<List<DebtDto>>> GetUserDebts([FromHeader] string email)
+        {
+            var userIdentity = User.Identity as ClaimsIdentity;
+            var userEmailClaim = userIdentity.FindFirst(ClaimTypes.Email)?.Value;
+
+            if (!string.Equals(userEmailClaim, email, StringComparison.OrdinalIgnoreCase))
+            {
+                throw new ForbiddenRequestException();
+            }
+
+            var debts = await debtsService.GetAllUserDebts(email);
 
             Response<List<DebtDto>> response = new Response<List<DebtDto>>
             {

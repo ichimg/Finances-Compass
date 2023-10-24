@@ -9,8 +9,19 @@ export class DebtsService {
 
   constructor(private httpClient: HttpClient) {}
 
-  getAll() {
-    const getAllEndpoint = `${this.apiUrl}/view-debts`;
+  getAllReceivingDebts() {
+    const getAllEndpoint = `${this.apiUrl}/view-receiving-debts`;
+
+    const email = localStorage.getItem('email') || ''; 
+    const headers = new HttpHeaders({
+      'Content-Type': 'application/json',
+    }).set('email', email);
+
+    return this.httpClient.get<ViewDebtsResponse>(getAllEndpoint, { headers: headers });
+  }
+
+  getAllUserDebts() {
+    const getAllEndpoint = `${this.apiUrl}/view-user-debts`;
 
     const email = localStorage.getItem('email') || ''; 
     const headers = new HttpHeaders({

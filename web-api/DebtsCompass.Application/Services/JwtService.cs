@@ -1,8 +1,13 @@
-﻿using DebtsCompass.Domain.Interfaces;
+﻿using DebtsCompass.Application.Exceptions;
+using DebtsCompass.Domain.DtoResponses;
+using DebtsCompass.Domain.Entities;
+using DebtsCompass.Domain.Interfaces;
+using DebtsCompass.Domain.Requests;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
+using System.Security.Cryptography;
 using System.Text;
 
 namespace DebtsCompass.Application.Services
@@ -11,9 +16,11 @@ namespace DebtsCompass.Application.Services
     {
         private readonly IConfigurationSection configurationSection;
 
-        public JwtService(IConfiguration configuration)
+        private readonly IUserRepository userRepository;
+        public JwtService(IConfiguration configuration, IUserRepository userRepository)
         {
             this.configurationSection = configuration.GetSection("JwtConfig");
+            this.userRepository = userRepository;
         }
 
         public string GenerateToken(string email)
@@ -26,6 +33,50 @@ namespace DebtsCompass.Application.Services
             SecurityToken token = jwtTokenHandler.CreateToken(tokenDescriptor);
 
             return jwtTokenHandler.WriteToken(token);
+        }
+
+        public async Task<RefreshTokenResponse> GetRefreshToken(string email, RefreshTokenRequest refreshTokenRequest)
+        {
+            User user = await userRepository.GetUserByEmail(email);
+
+            if (user == null)
+            {
+                throw new UserNotFoundException(email);
+            }
+
+            if (user.RefreshToken != refreshTokenRequest.RefreshToken || user.RefreshTokenExpireTime <= DateTime.UtcNow)
+            {
+                throw new SecurityTokenException("Invalid token");
+            }
+
+            string accesToken = GenerateToken(email);
+            string refreshToken = GenerateRefreshToken();
+
+            user.RefreshToken = refreshToken;
+
+            return new RefreshTokenResponse
+            {
+                AccessToken = GenerateToken(email),
+                RefreshToken = GenerateRefreshToken()
+            };
+
+        }
+        public string GenerateRefreshToken()
+        {
+            var randomNumber = new byte[64];
+            using var rng = RandomNumberGenerator.Create();
+            rng.GetBytes(randomNumber);
+            return Convert.ToBase64String(randomNumber);
+        }
+
+        public async Task UpdateRefreshToken(string email, string token)
+        {
+            User user = await userRepository.GetUserByEmail(email);
+
+            user.RefreshToken = token;
+            user.RefreshTokenExpireTime = DateTime.UtcNow.AddDays(Convert.ToDouble(configurationSection["RefreshTokenValidityInDays"]));
+
+            await userRepository.Update(user);
         }
 
         private SecurityTokenDescriptor GenerateTokenDescriptor(SigningCredentials signingCredentials, List<Claim> claims)
@@ -56,5 +107,8 @@ namespace DebtsCompass.Application.Services
 
             return signingCredentials;
         }
+
+
+
     }
 }
