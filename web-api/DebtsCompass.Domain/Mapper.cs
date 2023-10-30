@@ -1,6 +1,8 @@
-﻿using DebtsCompass.Domain.DtoResponses;
-using DebtsCompass.Domain.Entities;
-using DebtsCompass.Domain.Requests;
+﻿using DebtsCompass.Domain.Entities;
+using DebtsCompass.Domain.Entities.DtoResponses;
+using DebtsCompass.Domain.Entities.Dtos;
+using DebtsCompass.Domain.Entities.Models;
+using DebtsCompass.Domain.Entities.Requests;
 
 namespace DebtsCompass.Domain
 {
@@ -18,6 +20,8 @@ namespace DebtsCompass.Domain
                 BorrowingDate = debtAssignment.Debt.DateOfBorrowing,
                 Deadline = debtAssignment.Debt.DeadlineDate,
                 Reason = debtAssignment.Debt.BorrowReason,
+                Status = debtAssignment.Debt.Status.ToString(),
+                IsPaid = debtAssignment.Debt.IsPaid,
                 IsUserAccount = debtAssignment.NonUserDebtAssignment != null
             };
         }
@@ -32,6 +36,8 @@ namespace DebtsCompass.Domain
                 BorrowingDate = debtAssignment.Debt.DateOfBorrowing,
                 Deadline = debtAssignment.Debt.DeadlineDate,
                 Reason = debtAssignment.Debt.BorrowReason,
+                Status = debtAssignment.Debt.Status.ToString(),
+                IsPaid = debtAssignment.Debt.IsPaid,
                 IsUserAccount = debtAssignment.NonUserDebtAssignment != null
             };
         }
@@ -56,7 +62,18 @@ namespace DebtsCompass.Domain
                 },
                 Email = registerRequest.Email,
                 PasswordHash = BCrypt.Net.BCrypt.HashPassword(registerRequest.Password),
-                PhoneNumber = registerRequest.PhoneNumber
+                PhoneNumber = registerRequest.PhoneNumber,
+                UserName = registerRequest.Email
+            };
+        }
+
+        public static ReceiverInfoDto UserToReceiverInfoDto(User user)
+        {
+            return new ReceiverInfoDto
+            {
+                Firstname = user.UserInfo.FirstName,
+                Lastname = user.UserInfo.LastName,
+                Email = user.Email
             };
         }
     }

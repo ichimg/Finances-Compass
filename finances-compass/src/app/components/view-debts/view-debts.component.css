@@ -28,7 +28,37 @@ th.mat-sort-header-sorted {
 .icon {
   display: inline-block;
   margin-left: 30px;
+}
 
+.action-icons{
+  padding: 15px;
+  display:inline-block;
+}
+
+.edit-icon {
+  cursor: pointer;
+  margin-left: -20px;
+
+}
+
+.edit-icon:hover {
+  color: #3b444b;
+}
+
+.delete-icon {
+  cursor: pointer;
+  color: #a6120d;
+}
+
+.delete-icon:hover {
+  color: #7d0f0b;
+}
+
+@media screen and (max-width: 930px) {
+  .action-icons{
+    display:flex;
+    flex-direction: column;
+  }
 }
 
 @media screen and (max-width: 520px) {
@@ -41,5 +71,10 @@ th.mat-sort-header-sorted {
   .to-be-collected {
     font-size: 15px;
   }
+}
 
+@media screen and (max-width: 360px) {
+  img {
+    visibility: hidden;
+  }
 }

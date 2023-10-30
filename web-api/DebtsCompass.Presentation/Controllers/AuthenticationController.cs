@@ -1,11 +1,16 @@
 ﻿using DebtsCompass.Application.Exceptions;
 using DebtsCompass.Domain;
-using DebtsCompass.Domain.DtoResponses;
 using DebtsCompass.Domain.Interfaces;
-using DebtsCompass.Domain.Requests;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using System.Net;
 using System.Security.Claims;
+using DebtsCompass.Domain.Entities.DtoResponses;
+using DebtsCompass.Domain.Entities.Models;
+using DebtsCompass.Domain.Entities.Requests;
+using Microsoft.AspNetCore.WebUtilities;
+using DebtsCompass.Domain.Entities.Dtos;
+using EmailSender;
 
 namespace DebtsCompass.Presentation.Controllers
 {
@@ -13,17 +18,22 @@ namespace DebtsCompass.Presentation.Controllers
     [Route("api")]
     public class AuthenticationController : ControllerBase
     {
+        private readonly UserManager<User> userManager;
         private readonly IJwtService jwtService;
         private readonly IAuthenticationService authenticationService;
-        public AuthenticationController(IJwtService jwtService, IAuthenticationService authenticationService)
+        private readonly IEmailService emailService;
+        public AuthenticationController(IJwtService jwtService, IAuthenticationService authenticationService, UserManager<User> userManager, IEmailService emailService)
         {
             this.jwtService = jwtService;
             this.authenticationService = authenticationService;
+            this.userManager = userManager;
+            this.emailService = emailService;
         }
 
         [HttpPost("login")]
         public async Task<ActionResult<Response<LoginResponse>>> Login([FromBody] LoginRequest loginRequest)
         {
+            User user = await userManager.FindByEmailAsync(loginRequest.Email);
             if (!await authenticationService.IsValidLogin(loginRequest))
             {
                 throw new InvalidCredentialsException();
@@ -39,7 +49,6 @@ namespace DebtsCompass.Presentation.Controllers
                 RefreshToken = refreshToken
             };
 
-
             return Ok(new Response<LoginResponse>
             {
                 Message = null,
@@ -51,7 +60,18 @@ namespace DebtsCompass.Presentation.Controllers
         [HttpPost("register")]
         public async Task<ActionResult<Response<object>>> Register([FromBody] RegisterRequest registerRequest)
         {
-            await authenticationService.Register(registerRequest);
+            User user = await authenticationService.Register(registerRequest);
+
+            var token = await userManager.GenerateEmailConfirmationTokenAsync(user);
+            var param = new Dictionary<string, string?>
+                        {
+                            {"token", token },
+                            {"email", user.Email }
+                        };
+
+            var callback = QueryHelpers.AddQueryString(registerRequest.ClientURI, param);
+            ReceiverInfoDto receiverInfoDto = Mapper.UserToReceiverInfoDto(user);
+            await emailService.SendEmailConfirmationNotification(receiverInfoDto, callback);
 
             return Ok(new Response<object>
             {
@@ -80,6 +100,35 @@ namespace DebtsCompass.Presentation.Controllers
             {
                 Message = null,
                 Payload = refreshTokenResponse,
+                StatusCode = HttpStatusCode.OK  
+            });
+        }
+
+        [HttpGet("email-confirmation")]
+        public async Task<ActionResult<Response<object>>> EmailConfirmation([FromQuery] string email, [FromQuery] string token)
+        {
+            User user = await userManager.FindByEmailAsync(email);
+
+            if(user.EmailConfirmed == true)
+            {
+                throw new EmailAlreadyConfirmedException(email);
+            }
+
+            var confirmResult = await userManager.ConfirmEmailAsync(user, token);
+            if (!confirmResult.Succeeded)
+            {
+                return BadRequest(new Response<object>
+                {
+                    Message = null,
+                    Payload = null,
+                    StatusCode = HttpStatusCode.BadRequest
+                });
+            }
+
+            return Ok(new Response<object>
+            {
+                Message = null,
+                Payload = null,
                 StatusCode = HttpStatusCode.OK
             });
         }

@@ -1,5 +1,5 @@
-﻿using DebtsCompass.Domain.DtoResponses;
-using DebtsCompass.Domain.Requests;
+﻿using DebtsCompass.Domain.Entities.DtoResponses;
+using DebtsCompass.Domain.Entities.Requests;
 
 namespace DebtsCompass.Domain.Interfaces
 {

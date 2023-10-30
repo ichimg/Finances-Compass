@@ -1,4 +1,4 @@
-﻿using DebtsCompass.Domain.DtoResponses;
+﻿using DebtsCompass.Domain.Entities.DtoResponses;
 
 namespace DebtsCompass.Domain.Services
 {

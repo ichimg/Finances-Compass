@@ -102,8 +102,15 @@
 
       <ng-container matColumnDef="action">
         <th mat-header-cell *matHeaderCellDef>Action</th>
-        <td mat-cell *matCellDef="let element"></td
-      ></ng-container>
+        <td mat-cell *matCellDef="let element">
+          <div class="action-icons">
+          <mat-icon matTooltip="Edit"  matTooltipPosition="left" class="edit-icon">edit</mat-icon>
+          <mat-icon matTooltip="Delete"  matTooltipPosition="right" class="delete-icon">delete_forever</mat-icon>
+        </div>
+          </td
+      >
+    
+    </ng-container>
 
       <tr mat-header-row *matHeaderRowDef="displayedReceivingColumns"></tr>
       <tr mat-row *matRowDef="let row; columns: displayedReceivingColumns"></tr>

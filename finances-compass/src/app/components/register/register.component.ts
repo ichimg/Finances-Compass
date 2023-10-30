@@ -77,6 +77,7 @@ export class RegisterComponent implements OnInit {
       password: this.registerForm.value.password,
       confirmPassword: this.registerForm.value.confirmPassword,
       iban: this.registerForm.value.iban,
+      clientURI: 'http://localhost:4200/emailconfirmation'
     });
 
     console.log(registerRequest);
@@ -90,6 +91,10 @@ export class RegisterComponent implements OnInit {
 
         case 400:
           this.notificationService.showError('Register failed');
+          break;
+
+        case 409:
+          this.notificationService.showError('Account e-mail already exists');
           break;
 
         default:

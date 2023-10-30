@@ -1,4 +1,5 @@
 ﻿using DebtsCompass.Application.Exceptions;
+using DebtsCompass.Application.Services;
 using DebtsCompass.Domain;
 using Microsoft.IdentityModel.Tokens;
 using System.Net;
@@ -48,6 +49,7 @@ namespace DebtsCompass
                     break;
 
                 case ForbiddenRequestException:
+                case EmailNotConfirmedException:
                     statusCode = HttpStatusCode.Forbidden;
                     message = ex.Message;
                     logger.LogError(message);
@@ -64,6 +66,12 @@ namespace DebtsCompass
                 case PasswordMismatchException:
                 case SecurityTokenException:
                     statusCode = HttpStatusCode.BadRequest;
+                    message = ex.Message;
+                    logger.LogError(message);
+                    break;
+
+                case EmailAlreadyConfirmedException:
+                    statusCode = HttpStatusCode.Gone;
                     message = ex.Message;
                     logger.LogError(message);
                     break;

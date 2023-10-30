@@ -1,9 +1,9 @@
 ﻿using DebtsCompass.Domain;
-using DebtsCompass.Domain.DtoResponses;
 using DebtsCompass.Domain.Entities;
 using DebtsCompass.Domain.Interfaces;
 using System.Security.Claims;
 using DebtsCompass.Domain.Services;
+using DebtsCompass.Domain.Entities.DtoResponses;
 
 namespace DebtsCompass.Application.Services
 {

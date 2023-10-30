@@ -20,6 +20,7 @@
     <ProjectReference Include="..\DebtsCompass.DataAccess\DebtsCompass.DataAccess.csproj" />
     <ProjectReference Include="..\DebtsCompass.Domain\DebtsCompass.Domain.csproj" />
     <ProjectReference Include="..\DebtsCompass.Presentation\DebtsCompass.Presentation.csproj" />
+    <ProjectReference Include="..\EmailSender\EmailSender.csproj" />
   </ItemGroup>
 
 </Project>

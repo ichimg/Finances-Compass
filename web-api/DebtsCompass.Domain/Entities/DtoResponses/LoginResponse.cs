@@ -1,4 +1,4 @@
-﻿namespace DebtsCompass.Domain.DtoResponses
+﻿namespace DebtsCompass.Domain.Entities.DtoResponses
 {
     public class LoginResponse
     {

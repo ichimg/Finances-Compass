@@ -1,4 +1,4 @@
-﻿namespace DebtsCompass.Domain.Entities
+﻿namespace DebtsCompass.Domain.Enums
 {
     public enum CurrencyPreference
     {

@@ -1,8 +1,8 @@
 ﻿using DebtsCompass.Application.Exceptions;
-using DebtsCompass.Domain.DtoResponses;
-using DebtsCompass.Domain.Entities;
+using DebtsCompass.Domain.Entities.DtoResponses;
+using DebtsCompass.Domain.Entities.Models;
+using DebtsCompass.Domain.Entities.Requests;
 using DebtsCompass.Domain.Interfaces;
-using DebtsCompass.Domain.Requests;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;

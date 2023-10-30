@@ -1,4 +1,4 @@
-﻿using DebtsCompass.Domain.Entities;
+﻿using DebtsCompass.Domain.Entities.Models;
 
 namespace DebtsCompass.Domain.Interfaces
 {

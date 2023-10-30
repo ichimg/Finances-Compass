@@ -1,6 +1,6 @@
 ﻿using DebtsCompass.Application.Exceptions;
 using DebtsCompass.Domain;
-using DebtsCompass.Domain.DtoResponses;
+using DebtsCompass.Domain.Entities.DtoResponses;
 using DebtsCompass.Domain.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;

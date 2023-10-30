@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace DebtsCompass.Domain.Requests
+namespace DebtsCompass.Domain.Entities.Requests
 {
     public class RegisterRequest
     {
@@ -40,5 +40,6 @@ namespace DebtsCompass.Domain.Requests
         [MaxLength(100)]
         [Required]
         public string Iban { get; set; }
+        public string ClientURI { get; set; }
     }
 }

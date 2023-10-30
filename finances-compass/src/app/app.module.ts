@@ -14,7 +14,7 @@ import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
 import { MatInputModule } from '@angular/material/input';
 import { MAT_FORM_FIELD, MAT_FORM_FIELD_DEFAULT_OPTIONS, MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
-import { RouterModule } from '@angular/router';
+import { ActivatedRoute, RouterModule } from '@angular/router';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { ToastrModule } from 'ngx-toastr';
 import { MatTableModule } from '@angular/material/table';
@@ -26,6 +26,8 @@ import { MatCardModule } from '@angular/material/card';
 import {MatSelectModule} from '@angular/material/select';
 import {NgFor, AsyncPipe} from '@angular/common';
 import {MatAutocompleteModule} from '@angular/material/autocomplete';
+import { EmailConfirmationComponent } from './components/email-confirmation/email-confirmation.component';
+import { MatTooltip, MatTooltipModule } from '@angular/material/tooltip';
 
 const OPTIONS = {
   appereance: 'outline',
@@ -40,6 +42,7 @@ const OPTIONS = {
     ViewDebtsComponent,
     LoginComponent,
     RegisterComponent,
+    EmailConfirmationComponent,
   ],
   imports: [
     BrowserModule,
@@ -63,7 +66,8 @@ const OPTIONS = {
     NgFor,
     AsyncPipe,
     MatAutocompleteModule,
-    MatIconModule
+    MatIconModule,
+    MatTooltipModule
   ],
   providers: [ { provide: JWT_OPTIONS, useValue: JWT_OPTIONS },
     JwtHelperService,

@@ -5,5 +5,7 @@ export interface Debt {
     borrowingDate: Date;
     deadline: Date;
     reason: string;
+    status: string;
+    isPaid: boolean;
     isUserAccount: boolean;
 }

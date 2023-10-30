@@ -1,4 +1,4 @@
-﻿using DebtsCompass.Domain.Entities;
+﻿using DebtsCompass.Domain.Entities.Models;
 using DebtsCompass.Domain.Interfaces;
 using Microsoft.EntityFrameworkCore;
 

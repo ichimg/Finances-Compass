@@ -2,9 +2,10 @@
 using DebtsCompass.Application.Exceptions;
 using DebtsCompass.Application.Validators;
 using DebtsCompass.Domain;
-using DebtsCompass.Domain.Entities;
+using DebtsCompass.Domain.Entities.Models;
+using DebtsCompass.Domain.Entities.Requests;
 using DebtsCompass.Domain.Interfaces;
-using DebtsCompass.Domain.Requests;
+using Microsoft.AspNetCore.Identity;
 
 namespace DebtsCompass.Application.Services
 {
@@ -44,10 +45,15 @@ namespace DebtsCompass.Application.Services
                 return false;
             }
 
+            if(userFromDb.EmailConfirmed is false)
+            {
+                throw new EmailNotConfirmedException(userFromDb.Email);
+            }
+
             return true;
         }
 
-        public async Task Register(RegisterRequest registerRequest)
+        public async Task<User> Register(RegisterRequest registerRequest)
         {
             if (!emailValidator.IsValid(registerRequest.Email))
             {
@@ -74,8 +80,8 @@ namespace DebtsCompass.Application.Services
             User user = Mapper.RegisterRequestToUserDbModel(registerRequest);
 
             await userRepository.Add(user);
+
+            return user;
         }
-
-
     }
 }

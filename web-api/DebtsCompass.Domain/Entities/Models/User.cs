@@ -1,6 +1,7 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using DebtsCompass.Domain.Enums;
+using Microsoft.AspNetCore.Identity;
 
-namespace DebtsCompass.Domain.Entities
+namespace DebtsCompass.Domain.Entities.Models
 {
     public class User : IdentityUser
     {

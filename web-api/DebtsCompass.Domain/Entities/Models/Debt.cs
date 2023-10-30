@@ -1,7 +1,7 @@
-﻿
+﻿using DebtsCompass.Domain.Enums;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace DebtsCompass.Domain.Entities
+namespace DebtsCompass.Domain.Entities.Models
 {
     public class Debt
     {
@@ -11,6 +11,7 @@ namespace DebtsCompass.Domain.Entities
         public string BorrowReason { get; set; }
         public DateTime DateOfBorrowing { get; set; }
         public DateTime DeadlineDate { get; set; }
+        public Status Status { get; set; }
         public bool IsPaid { get; set; }
         public ICollection<DebtAssignment> DebtAssignments { get; set; }
     }

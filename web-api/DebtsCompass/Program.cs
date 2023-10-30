@@ -3,12 +3,13 @@ using DebtsCompass.Application.Services;
 using DebtsCompass.Application.Validators;
 using DebtsCompass.DataAccess;
 using DebtsCompass.DataAccess.Repositories;
+using DebtsCompass.Domain.Entities.Models;
 using DebtsCompass.Domain.Interfaces;
 using DebtsCompass.Domain.Services;
+using EmailSender;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System.Text;
@@ -23,6 +24,10 @@ builder.Services.Configure<IdentityOptions>(opts =>
 {
     opts.SignIn.RequireConfirmedEmail = true;
 });
+
+builder.Services.AddIdentity<User, IdentityRole>()
+               .AddEntityFrameworkStores<DebtsCompassDbContext>()
+               .AddDefaultTokenProviders();
 
 builder.Services.AddAuthentication();
 
@@ -88,6 +93,12 @@ builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IDebtAssignmentRepository, DebtAssignmentRepository>();
 
 
+// Email
+var emailConfig = builder.Configuration.GetSection("EmailConfiguration").Get<EmailConfiguration>();
+builder.Services.AddSingleton(emailConfig);
+builder.Services.AddScoped<IEmailService, EmailService>();  
+
+
 //Allow CORS
 
 var allowedOrigins = builder.Configuration.GetSection("AllowedOrigins").Get<string[]>();
@@ -98,11 +109,13 @@ builder.Services.AddCors(options =>
         builder.WithOrigins(allowedOrigins)
                .AllowAnyHeader()
                .AllowAnyMethod();
+
     });
 });
 
 builder.Services.AddDbContext<DebtsCompassDbContext>(options =>
 options.UseSqlServer(builder.Configuration.GetConnectionString("DebtsCompassConnectionString")));
+
 
 var app = builder.Build();
 

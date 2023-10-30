@@ -1,4 +1,6 @@
-﻿namespace DebtsCompass.Domain.DtoResponses
+﻿using DebtsCompass.Domain.Enums;
+
+namespace DebtsCompass.Domain.Entities.DtoResponses
 {
     public class DebtDto
     {
@@ -8,6 +10,9 @@
         public DateTime BorrowingDate { get; set; }
         public DateTime Deadline { get; set; }
         public string Reason { get; set; }
+        public string Status { get; set; }
+        public bool IsPaid { get; set; }
         public bool IsUserAccount { get; set; }
+
     }
 }

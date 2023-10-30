@@ -38,6 +38,19 @@ mat-form-field {
   padding: 5px;
 }
 
+@media screen and (max-width: 940px) {
+  mat-hint{
+    font-size: 10px;
+  }
+}
+
+@media screen and (max-width: 860px) {
+  mat-hint{
+    visibility: hidden;
+  }
+}
+
+
 @media screen and (max-width: 480px) {
 
   .row {

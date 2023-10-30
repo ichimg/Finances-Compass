@@ -35,6 +35,7 @@ export class ViewDebtsComponent implements AfterViewInit, OnInit {
   ngOnInit(): void {
     this.debtsService.getAllReceivingDebts().subscribe((response) => {
       this.dataReceivingDebtsSource.data = response.payload;
+      console.log(this.dataReceivingDebtsSource.data);
       this.isReceivingDebtsLoaded = true;
     });
 

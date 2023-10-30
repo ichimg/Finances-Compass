@@ -1,10 +1,11 @@
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { environment } from './../../environments/environment';
+import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { LoginResponse } from '../interfaces/login-response';
 import {JwtHelperService} from '@auth0/angular-jwt';
-import { environment } from '../../environments/environment';
 import { RegisterRequest } from '../interfaces/register-request';
 import { lastValueFrom } from 'rxjs';
+import { CustomEncoder } from '../custom-encoder';
 
 @Injectable({
   providedIn: 'root'
@@ -49,8 +50,6 @@ export class AuthenticationService {
   async refreshTokens(token: string): Promise<boolean>  {
     const refreshToken: string | null = localStorage.getItem('refreshToken');
   
-    console.log(`token: ${token}`)
-    console.log(`refreshToken: ${refreshToken}`)
       if (!token || !refreshToken) {
         return false;
       }
@@ -76,5 +75,16 @@ export class AuthenticationService {
       }
       return isRefreshSuccess;
   };
+
+  public confirmEmail = (route: string, token: string, email: string) => {
+    let params = new HttpParams({ encoder: new CustomEncoder() })
+    params = params.append('token', token);
+    params = params.append('email', email);
+    return this.httpClient.get(this.createCompleteRoute(route, this.apiUrl), { params: params });
+  }
+
+  private createCompleteRoute = (route: string, envAddress: string) => {
+    return `${envAddress}/${route}`;
+  }
   
 }

@@ -1,10 +1,11 @@
-﻿using DebtsCompass.Domain.Requests;
+﻿using DebtsCompass.Domain.Entities.Models;
+using DebtsCompass.Domain.Entities.Requests;
 
 namespace DebtsCompass.Domain.Interfaces
 {
     public interface IAuthenticationService
     {
         Task<bool> IsValidLogin(LoginRequest loginRequest);
-        Task Register(RegisterRequest registerRequest);
+        Task<User> Register(RegisterRequest registerRequest);
     }
 }

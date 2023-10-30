@@ -1,4 +1,4 @@
-﻿namespace DebtsCompass.Domain.Requests
+﻿namespace DebtsCompass.Domain.Entities.Requests
 {
     public class RefreshTokenRequest
     {
