@@ -4,8 +4,8 @@ import { countries } from '../../country-data-store';
 import { OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { Observable, map, startWith } from 'rxjs';
-import { Countries } from '../../interfaces/country.model';
-import { RegisterRequest } from '../../interfaces/register-request';
+import { Countries } from '../../entities/country.model';
+import { RegisterRequest } from '../../entities/register.request';
 import { AuthenticationService } from '../../services/authentication.service';
 import { NotificationService } from '../../services/notification.service';
 import { Router } from '@angular/router';
@@ -80,13 +80,11 @@ export class RegisterComponent implements OnInit {
       clientURI: 'http://localhost:4200/emailconfirmation'
     });
 
-    console.log(registerRequest);
-
     this.authService.register(registerRequest).subscribe((response) => {
       switch (response.statusCode) {
         case 200:
           this.notificationService.showSuccess('You are now registered!');
-          this.router.navigate(['']);
+          this.router.navigateByUrl('login', { state: { isRedirectFromRegister: true } });
           break;
 
         case 400:
@@ -104,3 +102,5 @@ export class RegisterComponent implements OnInit {
     });
   }
 }
+
+

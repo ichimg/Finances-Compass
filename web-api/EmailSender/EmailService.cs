@@ -1,4 +1,5 @@
 ﻿using DebtsCompass.Domain.Entities.Dtos;
+using DebtsCompass.Domain.Entities.EmailDtos;
 using MailKit.Net.Smtp;
 using MimeKit;
 using MimeKit.Text;
@@ -44,6 +45,12 @@ namespace EmailSender
             await SendEmail(receiverInfoDto, html, "E-mail confirmation");
         }
 
+        public async Task SendNoAccountDebtCreatedNotification(ReceiverInfoDto receiverInfoDto, CreatedDebtEmailInfoDto createdDebtEmailInfoDto)
+        {
+            string html = GetNoAccountDebtCreatedHtml(createdDebtEmailInfoDto);
+            await SendEmail(receiverInfoDto, html, "Join Finances Compass to see what you owe to your friends!");
+        }
+
         private string ReadHtmlTemplate(string templatePath)
         {
             string emailTemplatesFolderPath = EmailConfiguration.GetEmailTemplatesFolderPath();
@@ -55,6 +62,13 @@ namespace EmailSender
         {
             string html = ReadHtmlTemplate(@"EmailConfirmationEmailTemplate.html");
             html = html.Replace("{link}", callback);
+            return html;
+        }
+
+        private string GetNoAccountDebtCreatedHtml(CreatedDebtEmailInfoDto createdDebtEmailInfoDto)
+        {
+            string html = ReadHtmlTemplate(@"NoAccountDebtCreatedEmailTemplate.html");
+            html = html.Replace("{creatorName}", $"{createdDebtEmailInfoDto.CreatorFirstName} {createdDebtEmailInfoDto.CreatorLastName}");
             return html;
         }
     }

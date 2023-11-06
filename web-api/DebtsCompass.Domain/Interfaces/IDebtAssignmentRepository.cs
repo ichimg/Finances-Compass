@@ -6,5 +6,8 @@ namespace DebtsCompass.Domain.Interfaces
     {
         Task<List<DebtAssignment>> GetAllReceivingDebtsByEmail(string email);
         Task<List<DebtAssignment>> GetAllUserDebtsByEmail(string email);
+        Task CreateDebt(DebtAssignment debtAssignment);
+        Task<List<DebtAssignment>> GetAllNonUserDebtsByEmail(string email);
+        Task UpdateRange(IEnumerable<DebtAssignment> debtAssignments);
     }
 }

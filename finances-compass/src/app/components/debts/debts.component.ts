@@ -3,22 +3,24 @@ import { AfterViewInit, Component, OnInit, ViewChild } from '@angular/core';
 import { MatSort, Sort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
 import { DebtsService } from '../../services/debts.service';
-import { Debt } from '../../interfaces/debt';
+import { MatDialog } from '@angular/material/dialog';
+import { AddDebtDialog } from 'src/app/dialogs/add-debt-dialog/add-debt.dialog';
+import { UsersService } from 'src/app/services/users.service';
+import { UserFriend } from 'src/app/entities/user-friend.model';
+
 
 @Component({
-  selector: 'app-view-debts',
-  templateUrl: './view-debts.component.html',
-  styleUrls: ['./view-debts.component.css'],
-  providers: [DebtsService],
+  selector: 'app-debts',
+  templateUrl: './debts.component.html',
+  styleUrls: ['./debts.component.css'],
 })
-export class ViewDebtsComponent implements AfterViewInit, OnInit {
+export class DebtsComponent implements OnInit, AfterViewInit {
   displayedReceivingColumns: string[] = [
-    'name',
     'email',
     'amount',
-    'borrowingDate',
     'deadline',
     'reason',
+    'status',
     'action',
   ];
   dataReceivingDebtsSource = new MatTableDataSource();
@@ -26,16 +28,19 @@ export class ViewDebtsComponent implements AfterViewInit, OnInit {
 
   isReceivingDebtsLoaded: boolean = false;
   isUserDebtsLoaded: boolean = false;
+  userFriends!: UserFriend[];
 
   constructor(
     private liveAnnouncer: LiveAnnouncer,
-    private debtsService: DebtsService
+    private debtsService: DebtsService,
+    private dialog: MatDialog,
+    private usersService: UsersService
   ) {}
-  
   ngOnInit(): void {
     this.debtsService.getAllReceivingDebts().subscribe((response) => {
-      this.dataReceivingDebtsSource.data = response.payload;
-      console.log(this.dataReceivingDebtsSource.data);
+      this.dataReceivingDebtsSource.data = response.payload.sort((a, b) => {
+        return new Date(b.deadline).getTime() - new Date(a.deadline).getTime();
+      })
       this.isReceivingDebtsLoaded = true;
     });
 
@@ -43,14 +48,23 @@ export class ViewDebtsComponent implements AfterViewInit, OnInit {
       this.dataUserDebtsSource.data = response.payload;
       this.isUserDebtsLoaded = true;
     });
+
+    this.usersService.getAllFriends().subscribe((response) => {
+      this.userFriends = response.payload;
+    });
   }
 
-  @ViewChild('debtReceivingTbSort') debtReceivingTbSort: MatSort = new MatSort();
-  @ViewChild('debtUserTbSort') debtUserTbSort: MatSort = new MatSort();
+  @ViewChild('debtReceivingTbSort') set debtReceivingTbSort(sort: MatSort) {
+    this.dataReceivingDebtsSource.sort = sort;
+  }
+  @ViewChild('debtUserTbSort') set debtUserTbSort(sort: MatSort) {
+    this.dataUserDebtsSource.sort = sort;
+    
+  }
 
   ngAfterViewInit() {
-    this.dataReceivingDebtsSource.sort = this.debtReceivingTbSort;
-    this.dataUserDebtsSource.sort = this.debtUserTbSort;
+
+
   }
 
   announceReceivingSortChange(sortState: Sort) {
@@ -69,11 +83,27 @@ export class ViewDebtsComponent implements AfterViewInit, OnInit {
     }
   }
 
-  areDebtsToReceive(): boolean{
+  areDebtsToReceive(): boolean {
     return this.dataReceivingDebtsSource.data.length > 0;
   }
 
-  areDebts(): boolean{
+  areDebts(): boolean {
     return this.dataUserDebtsSource.data.length > 0;
+  }
+
+  addDebt(): void {
+    const dialogRef = this.dialog
+      .open(AddDebtDialog, {
+        data: {
+          userFriends: this.userFriends,
+          debts: this.dataReceivingDebtsSource.data,
+        },
+      })
+      .afterClosed()
+      .subscribe((response) => {
+        if (response) {
+          this.dataReceivingDebtsSource.data = response;
+        }
+      });
   }
 }

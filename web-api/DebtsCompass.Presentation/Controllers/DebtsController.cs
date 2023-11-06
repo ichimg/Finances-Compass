@@ -1,7 +1,8 @@
 ﻿using DebtsCompass.Application.Exceptions;
 using DebtsCompass.Domain;
 using DebtsCompass.Domain.Entities.DtoResponses;
-using DebtsCompass.Domain.Services;
+using DebtsCompass.Domain.Entities.Requests;
+using DebtsCompass.Domain.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Net;
@@ -67,6 +68,22 @@ namespace DebtsCompass.Presentation.Controllers
             };
 
             return Ok(response);
+        }
+
+        [HttpPost]
+        [Route("create-debt")]
+        [Authorize]
+        public async Task<ActionResult<object>> CreateDebt([FromBody] CreateDebtRequest createDebtRequest,
+            [FromQuery(Name = "email")] string email)
+        {
+            await debtsService.CreateDebt(createDebtRequest, email);
+
+            return Ok(new Response<object>
+            {
+                Message = null,
+                Payload = null,
+                StatusCode = HttpStatusCode.Created
+            });
         }
     }
 }

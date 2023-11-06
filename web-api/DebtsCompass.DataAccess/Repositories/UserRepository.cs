@@ -14,7 +14,8 @@ namespace DebtsCompass.DataAccess.Repositories
 
         public async Task<User> GetUserByEmail(string email)
         {
-            User userFromDb = await dbContext.Users.Where(u => u.Email.Equals(email)).FirstOrDefaultAsync();
+            User userFromDb = await dbContext.Users
+                .Include(u => u.UserInfo).Where(u => u.Email.Equals(email)).FirstOrDefaultAsync();
 
             return userFromDb;
         }

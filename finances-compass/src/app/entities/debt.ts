@@ -1,7 +1,8 @@
 export interface Debt {
-    name: string;
+    firstName: string;
+    lastName: string;
     email: string;
-    amount: number;
+    amount: string;
     borrowingDate: Date;
     deadline: Date;
     reason: string;

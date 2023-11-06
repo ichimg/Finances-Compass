@@ -1,4 +1,4 @@
-import { Countries } from "./interfaces/country.model";
+import { Countries } from "./entities/country.model";
 
 
 export var countries: Countries [] = [

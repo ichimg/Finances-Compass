@@ -10,6 +10,9 @@ namespace DebtsCompass.DataAccess
         public DbSet<Debt> Debts { get; set; }
         public DbSet<DebtAssignment> DebtAssignments { get; set; }
         public DbSet<User> Users { get; set; }
+        public DbSet<Friendship> Friendships { get; set; }
+
+        public DbSet<NonUser> NonUsers { get; set; }
         public DebtsCompassDbContext(DbContextOptions options)
        : base(options)
         { }
@@ -32,7 +35,7 @@ namespace DebtsCompass.DataAccess
                 .OnDelete(DeleteBehavior.NoAction);
 
             modelBuilder.Entity<DebtAssignment>()
-                .HasOne(da => da.NonUserDebtAssignment)
+                .HasOne(da => da.NonUser)
                 .WithMany()
                 .HasForeignKey(da => da.NonUserDebtAssignmentId)
                 .IsRequired(false)
@@ -43,6 +46,20 @@ namespace DebtsCompass.DataAccess
                 .WithMany(d => d.DebtAssignments)
                 .HasForeignKey(da => da.DebtId)
                 .OnDelete(DeleteBehavior.NoAction);
+
+            modelBuilder.Entity<Friendship>().HasKey(f => new { f.UserOneId, f.UserTwoId });
+
+            modelBuilder.Entity<Friendship>()
+                .HasOne(f => f.UserOne)
+                .WithMany()
+                .HasForeignKey(f => f.UserOneId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<Friendship>()
+                .HasOne(f => f.UserTwo)
+                .WithMany()
+                .HasForeignKey(f => f.UserTwoId)
+                .OnDelete(DeleteBehavior.Restrict);
         }
     }
 }

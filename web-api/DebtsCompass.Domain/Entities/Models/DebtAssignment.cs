@@ -8,7 +8,7 @@
         public string? SelectedUserId { get; set; } // key for user with an account
         public User SelectedUser { get; set; }
         public Guid? NonUserDebtAssignmentId { get; set; } // key for user without an account
-        public NonUserDebtAssignment NonUserDebtAssignment { get; set; }
+        public NonUser NonUser { get; set; }
         public Guid DebtId { get; set; }
         public Debt Debt { get; set; }
     }

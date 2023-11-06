@@ -1,23 +1,26 @@
 import { NotificationService } from '../../services/notification.service';
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { AuthenticationService } from '../../services/authentication.service';
 import { FormControl, Validators } from '@angular/forms';
 import { EmailMatcher } from '../../error-matchers/email-matcher';
 import { passwordValidator } from '../../validators/password-validator';
-import { Router } from '@angular/router'; 
+import { Router } from '@angular/router';
+import { MatDialog } from '@angular/material/dialog';
+import { EmailConfirmationDialog } from 'src/app/dialogs/email-confirmation-dialog/email-confirmation.dialog';
 
 @Component({
   selector: 'app-login',
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.css'],
 })
-export class LoginComponent {
+export class LoginComponent implements OnInit {
   loginData = {
     email: '',
     password: '',
   };
 
   hidePassword: boolean = true;
+  isRedirectFromRegister: boolean = false;
 
   emailFormControl = new FormControl('', [
     Validators.required,
@@ -33,9 +36,13 @@ export class LoginComponent {
   constructor(
     private authService: AuthenticationService,
     private router: Router,
-    private notificationService: NotificationService
-  ) {}
+    private notificationService: NotificationService,
+    public dialog: MatDialog
+  ) {
+    this.openEmailConfirmDialog();
+  }
 
+  ngOnInit(): void {}
   togglePasswordVisibility() {
     this.hidePassword = !this.hidePassword;
   }
@@ -55,7 +62,7 @@ export class LoginComponent {
               );
 
               this.notificationService.showSuccess("You're logged in");
-              this.router.navigate(['dashboard']);
+              this.router.navigate(['debts']);
               break;
 
             case 404:
@@ -68,7 +75,7 @@ export class LoginComponent {
 
             case 403:
               this.notificationService.showWarning(
-                'Please confirm yor e-mail before login'
+                'Please confirm your e-mail before login'
               );
               break;
 
@@ -81,5 +88,16 @@ export class LoginComponent {
           this.notificationService.showError('Something went wrong');
         }
       );
+  }
+
+  openEmailConfirmDialog(): void {
+    const navigation = this.router.getCurrentNavigation();
+    if (navigation!.extras.state) {
+      this.isRedirectFromRegister =
+        navigation!.extras.state['isRedirectFromRegister'];
+    }
+    if (this.isRedirectFromRegister) {
+      const dialogRef = this.dialog.open(EmailConfirmationDialog);
+    }
   }
 }

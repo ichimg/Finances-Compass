@@ -22,7 +22,7 @@ namespace DebtsCompass.DataAccess.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
-            modelBuilder.Entity("DebtsCompass.Domain.Entities.Address", b =>
+            modelBuilder.Entity("DebtsCompass.Domain.Entities.Models.Address", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -53,7 +53,7 @@ namespace DebtsCompass.DataAccess.Migrations
                     b.ToTable("Address");
                 });
 
-            modelBuilder.Entity("DebtsCompass.Domain.Entities.Debt", b =>
+            modelBuilder.Entity("DebtsCompass.Domain.Entities.Models.Debt", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -83,7 +83,7 @@ namespace DebtsCompass.DataAccess.Migrations
                     b.ToTable("Debts");
                 });
 
-            modelBuilder.Entity("DebtsCompass.Domain.Entities.DebtAssignment", b =>
+            modelBuilder.Entity("DebtsCompass.Domain.Entities.Models.DebtAssignment", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -115,7 +115,25 @@ namespace DebtsCompass.DataAccess.Migrations
                     b.ToTable("DebtAssignments");
                 });
 
-            modelBuilder.Entity("DebtsCompass.Domain.Entities.NonUserDebtAssignment", b =>
+            modelBuilder.Entity("DebtsCompass.Domain.Entities.Models.Friendship", b =>
+                {
+                    b.Property<string>("UserOneId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("UserTwoId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
+
+                    b.HasKey("UserOneId", "UserTwoId");
+
+                    b.HasIndex("UserTwoId");
+
+                    b.ToTable("Friendships");
+                });
+
+            modelBuilder.Entity("DebtsCompass.Domain.Entities.Models.NonUser", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -135,10 +153,10 @@ namespace DebtsCompass.DataAccess.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("NonUserDebtAssignment");
+                    b.ToTable("NonUsers");
                 });
 
-            modelBuilder.Entity("DebtsCompass.Domain.Entities.User", b =>
+            modelBuilder.Entity("DebtsCompass.Domain.Entities.Models.User", b =>
                 {
                     b.Property<string>("Id")
                         .HasColumnType("nvarchar(450)");
@@ -217,7 +235,7 @@ namespace DebtsCompass.DataAccess.Migrations
                     b.ToTable("AspNetUsers", (string)null);
                 });
 
-            modelBuilder.Entity("DebtsCompass.Domain.Entities.UserInfo", b =>
+            modelBuilder.Entity("DebtsCompass.Domain.Entities.Models.UserInfo", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -378,26 +396,26 @@ namespace DebtsCompass.DataAccess.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
-            modelBuilder.Entity("DebtsCompass.Domain.Entities.DebtAssignment", b =>
+            modelBuilder.Entity("DebtsCompass.Domain.Entities.Models.DebtAssignment", b =>
                 {
-                    b.HasOne("DebtsCompass.Domain.Entities.User", "CreatorUser")
+                    b.HasOne("DebtsCompass.Domain.Entities.Models.User", "CreatorUser")
                         .WithMany("CreatedDebts")
                         .HasForeignKey("CreatorUserId")
                         .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
-                    b.HasOne("DebtsCompass.Domain.Entities.Debt", "Debt")
+                    b.HasOne("DebtsCompass.Domain.Entities.Models.Debt", "Debt")
                         .WithMany("DebtAssignments")
                         .HasForeignKey("DebtId")
                         .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
-                    b.HasOne("DebtsCompass.Domain.Entities.NonUserDebtAssignment", "NonUserDebtAssignment")
+                    b.HasOne("DebtsCompass.Domain.Entities.Models.NonUser", "NonUser")
                         .WithMany()
                         .HasForeignKey("NonUserDebtAssignmentId")
                         .OnDelete(DeleteBehavior.NoAction);
 
-                    b.HasOne("DebtsCompass.Domain.Entities.User", "SelectedUser")
+                    b.HasOne("DebtsCompass.Domain.Entities.Models.User", "SelectedUser")
                         .WithMany("DebtsAssigned")
                         .HasForeignKey("SelectedUserId")
                         .OnDelete(DeleteBehavior.NoAction);
@@ -406,14 +424,33 @@ namespace DebtsCompass.DataAccess.Migrations
 
                     b.Navigation("Debt");
 
-                    b.Navigation("NonUserDebtAssignment");
+                    b.Navigation("NonUser");
 
                     b.Navigation("SelectedUser");
                 });
 
-            modelBuilder.Entity("DebtsCompass.Domain.Entities.User", b =>
+            modelBuilder.Entity("DebtsCompass.Domain.Entities.Models.Friendship", b =>
                 {
-                    b.HasOne("DebtsCompass.Domain.Entities.UserInfo", "UserInfo")
+                    b.HasOne("DebtsCompass.Domain.Entities.Models.User", "UserOne")
+                        .WithMany()
+                        .HasForeignKey("UserOneId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("DebtsCompass.Domain.Entities.Models.User", "UserTwo")
+                        .WithMany()
+                        .HasForeignKey("UserTwoId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("UserOne");
+
+                    b.Navigation("UserTwo");
+                });
+
+            modelBuilder.Entity("DebtsCompass.Domain.Entities.Models.User", b =>
+                {
+                    b.HasOne("DebtsCompass.Domain.Entities.Models.UserInfo", "UserInfo")
                         .WithMany()
                         .HasForeignKey("UserInfoId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -422,9 +459,9 @@ namespace DebtsCompass.DataAccess.Migrations
                     b.Navigation("UserInfo");
                 });
 
-            modelBuilder.Entity("DebtsCompass.Domain.Entities.UserInfo", b =>
+            modelBuilder.Entity("DebtsCompass.Domain.Entities.Models.UserInfo", b =>
                 {
-                    b.HasOne("DebtsCompass.Domain.Entities.Address", "Address")
+                    b.HasOne("DebtsCompass.Domain.Entities.Models.Address", "Address")
                         .WithMany()
                         .HasForeignKey("AddressId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -444,7 +481,7 @@ namespace DebtsCompass.DataAccess.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<string>", b =>
                 {
-                    b.HasOne("DebtsCompass.Domain.Entities.User", null)
+                    b.HasOne("DebtsCompass.Domain.Entities.Models.User", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -453,7 +490,7 @@ namespace DebtsCompass.DataAccess.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<string>", b =>
                 {
-                    b.HasOne("DebtsCompass.Domain.Entities.User", null)
+                    b.HasOne("DebtsCompass.Domain.Entities.Models.User", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -468,7 +505,7 @@ namespace DebtsCompass.DataAccess.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("DebtsCompass.Domain.Entities.User", null)
+                    b.HasOne("DebtsCompass.Domain.Entities.Models.User", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -477,19 +514,19 @@ namespace DebtsCompass.DataAccess.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<string>", b =>
                 {
-                    b.HasOne("DebtsCompass.Domain.Entities.User", null)
+                    b.HasOne("DebtsCompass.Domain.Entities.Models.User", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("DebtsCompass.Domain.Entities.Debt", b =>
+            modelBuilder.Entity("DebtsCompass.Domain.Entities.Models.Debt", b =>
                 {
                     b.Navigation("DebtAssignments");
                 });
 
-            modelBuilder.Entity("DebtsCompass.Domain.Entities.User", b =>
+            modelBuilder.Entity("DebtsCompass.Domain.Entities.Models.User", b =>
                 {
                     b.Navigation("CreatedDebts");
 

@@ -56,8 +56,8 @@ namespace DebtsCompass.Application.Services
 
             return new RefreshTokenResponse
             {
-                AccessToken = GenerateToken(email),
-                RefreshToken = GenerateRefreshToken()
+                AccessToken = accesToken,
+                RefreshToken = refreshToken
             };
 
         }

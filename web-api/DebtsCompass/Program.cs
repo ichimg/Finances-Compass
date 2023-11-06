@@ -5,7 +5,6 @@ using DebtsCompass.DataAccess;
 using DebtsCompass.DataAccess.Repositories;
 using DebtsCompass.Domain.Entities.Models;
 using DebtsCompass.Domain.Interfaces;
-using DebtsCompass.Domain.Services;
 using EmailSender;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
@@ -84,6 +83,7 @@ builder.Services.AddAuthorization();
 builder.Services.AddScoped<IJwtService, JwtService>();
 builder.Services.AddScoped<IDebtsService, DebtsService>();
 builder.Services.AddScoped<IAuthenticationService, AuthenticationService>();
+builder.Services.AddScoped<IFriendshipsService, FriendshipsService>();
 builder.Services.AddScoped<EmailValidator>();
 builder.Services.AddScoped<PasswordValidator>();
 
@@ -91,6 +91,8 @@ builder.Services.AddScoped<PasswordValidator>();
 // Add Repositories
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IDebtAssignmentRepository, DebtAssignmentRepository>();
+builder.Services.AddScoped<IFriendshipRepository, FriendshipRepository>();
+builder.Services.AddScoped<INonUserRepository, NonUserRepository> ();
 
 
 // Email

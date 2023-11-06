@@ -1,0 +1,56 @@
+<body>
+  <app-header></app-header>
+  <mat-sidenav-container autosize>
+    <mat-sidenav #leftSidebar mode="side" class="left-sidebar">
+      <mat-nav-list>
+        <a mat-list-item routerLink="/dashboard"
+          ><span class="sidebar-item"
+            ><mat-icon matPrefix>home</mat-icon>Dashboard</span
+          ></a
+        >
+
+        <a mat-list-item routerLink="/expenses" class="sidebar-item"
+          ><span class="sidebar-item"
+            ><mat-icon matPrefix>account_balance_wallet</mat-icon>Expenses</span
+          ></a
+        >
+        <a mat-list-item routerLink="/debts" class="sidebar-item"
+          ><span class="sidebar-item"
+            ><mat-icon matPrefix>payment</mat-icon>Debts</span
+          ></a
+        >
+        <mat-divider> </mat-divider>
+        <a mat-list-item routerLink="/settings"
+          ><span class="sidebar-item"
+            ><mat-icon matPrefix>settings</mat-icon>Settings</span
+          ></a
+        >
+      </mat-nav-list>
+    </mat-sidenav>
+    <mat-sidenav-content>
+      <mat-sidenav-container autosize>
+        <mat-sidenav
+          #rightSidebar
+          mode="side"
+          position="end"
+          class="right-sidebar"
+        >
+          <mat-nav-list>
+            <a
+              mat-list-item
+              (click)="openSearchUsersDialog()"
+              class="sidebar-item"
+              ><span class="sidebar-item"
+                ><mat-icon matPrefix>search</mat-icon>Search users</span
+              ></a
+            >
+            <mat-divider> </mat-divider>
+          </mat-nav-list>
+        </mat-sidenav>
+        <mat-sidenav-content>
+          <router-outlet></router-outlet>
+        </mat-sidenav-content>
+      </mat-sidenav-container>
+    </mat-sidenav-content>
+  </mat-sidenav-container>
+</body>

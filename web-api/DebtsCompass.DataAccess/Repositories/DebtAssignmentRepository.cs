@@ -17,11 +17,12 @@ namespace DebtsCompass.DataAccess.Repositories
             return await dbContext.DebtAssignments
                 .Include(da => da.Debt)
                 .Include(da => da.CreatorUser)
-                .Include(da => da.NonUserDebtAssignment)
+                .Include(da => da.NonUser)
                 .Include(da => da.SelectedUser)
                 .ThenInclude(u => u.UserInfo)
                 .Where(da => da.CreatorUser.Email == email)
                 .ToListAsync();
+
         }
 
         public async Task<List<DebtAssignment>> GetAllUserDebtsByEmail(string email)
@@ -34,6 +35,34 @@ namespace DebtsCompass.DataAccess.Repositories
                 .ThenInclude(u => u.UserInfo)
                 .Where(da => da.SelectedUser.Email == email)
                 .ToListAsync();
+        }
+
+        public async Task<List<DebtAssignment>> GetAllNonUserDebtsByEmail(string email)
+        {
+            return await dbContext.DebtAssignments
+                .Include(da => da.Debt)
+                .Include(da => da.CreatorUser)
+                .ThenInclude(u => u.UserInfo)
+                .Include(da => da.NonUser)
+                .Where(da => da.NonUser.PersonEmail == email)
+                .ToListAsync();
+        }
+
+        public async Task CreateDebt(DebtAssignment debtAssignment)
+        {
+            if(debtAssignment is null)
+            {
+                throw new ArgumentNullException(nameof(debtAssignment));
+            }
+
+            await dbContext.DebtAssignments.AddAsync(debtAssignment);
+            await dbContext.SaveChangesAsync();
+        }
+
+        public async Task UpdateRange(IEnumerable<DebtAssignment> debtAssignments)
+        {
+            dbContext.DebtAssignments.UpdateRange(debtAssignments);
+            await dbContext.SaveChangesAsync();
         }
     }
 }

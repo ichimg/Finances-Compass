@@ -17,9 +17,8 @@ export const authGuard: CanActivateFn = async (_route, _state) => {
   if (!isRefreshSuccess) {
     authService.logout();
     notificationService.showWarning('You need to log in!');
-    return router.parseUrl('');
+    return router.parseUrl('login');
   }
 
-  console.log('a fost un succes!')
   return isRefreshSuccess;
 };

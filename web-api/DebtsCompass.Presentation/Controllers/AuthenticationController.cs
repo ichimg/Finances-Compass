@@ -107,23 +107,7 @@ namespace DebtsCompass.Presentation.Controllers
         [HttpGet("email-confirmation")]
         public async Task<ActionResult<Response<object>>> EmailConfirmation([FromQuery] string email, [FromQuery] string token)
         {
-            User user = await userManager.FindByEmailAsync(email);
-
-            if(user.EmailConfirmed == true)
-            {
-                throw new EmailAlreadyConfirmedException(email);
-            }
-
-            var confirmResult = await userManager.ConfirmEmailAsync(user, token);
-            if (!confirmResult.Succeeded)
-            {
-                return BadRequest(new Response<object>
-                {
-                    Message = null,
-                    Payload = null,
-                    StatusCode = HttpStatusCode.BadRequest
-                });
-            }
+            await authenticationService.ConfirmEmail(email, token);
 
             return Ok(new Response<object>
             {

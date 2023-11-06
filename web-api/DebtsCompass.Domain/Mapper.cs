@@ -1,8 +1,10 @@
 ﻿using DebtsCompass.Domain.Entities;
 using DebtsCompass.Domain.Entities.DtoResponses;
 using DebtsCompass.Domain.Entities.Dtos;
+using DebtsCompass.Domain.Entities.EmailDtos;
 using DebtsCompass.Domain.Entities.Models;
 using DebtsCompass.Domain.Entities.Requests;
+using DebtsCompass.Domain.Enums;
 
 namespace DebtsCompass.Domain
 {
@@ -12,17 +14,22 @@ namespace DebtsCompass.Domain
         {
             return new DebtDto
             {
-                Name = debtAssignment.SelectedUser != null ? 
-                $"{debtAssignment.SelectedUser.UserInfo.FirstName}  {debtAssignment.SelectedUser.UserInfo.LastName}" : 
-                $"{debtAssignment.NonUserDebtAssignment.PersonFirstName} {debtAssignment.NonUserDebtAssignment.PersonLastName}",
-                Email = debtAssignment.SelectedUser != null ? debtAssignment.SelectedUser.Email : debtAssignment.NonUserDebtAssignment.PersonEmail,
+                FirstName = debtAssignment.SelectedUser != null ?
+                debtAssignment.SelectedUser.UserInfo.FirstName :
+                debtAssignment.NonUser.PersonFirstName,
+
+                LastName = debtAssignment.SelectedUser != null ?
+                debtAssignment.SelectedUser.UserInfo.LastName :
+                debtAssignment.NonUser.PersonLastName,
+
+                Email = debtAssignment.SelectedUser != null ? debtAssignment.SelectedUser.Email : debtAssignment.NonUser.PersonEmail,
                 Amount = debtAssignment.Debt.Amount,
                 BorrowingDate = debtAssignment.Debt.DateOfBorrowing,
                 Deadline = debtAssignment.Debt.DeadlineDate,
                 Reason = debtAssignment.Debt.BorrowReason,
                 Status = debtAssignment.Debt.Status.ToString(),
                 IsPaid = debtAssignment.Debt.IsPaid,
-                IsUserAccount = debtAssignment.NonUserDebtAssignment != null
+                IsUserAccount = debtAssignment.NonUser != null
             };
         }
 
@@ -30,7 +37,8 @@ namespace DebtsCompass.Domain
         {
             return new DebtDto
             {
-                Name = $"{debtAssignment.CreatorUser.UserInfo.FirstName} {debtAssignment.CreatorUser.UserInfo.LastName}",
+                FirstName = debtAssignment.CreatorUser.UserInfo.FirstName,
+                LastName = debtAssignment.CreatorUser.UserInfo.LastName,
                 Email = debtAssignment.CreatorUser.Email,
                 Amount = debtAssignment.Debt.Amount,
                 BorrowingDate = debtAssignment.Debt.DateOfBorrowing,
@@ -38,7 +46,7 @@ namespace DebtsCompass.Domain
                 Reason = debtAssignment.Debt.BorrowReason,
                 Status = debtAssignment.Debt.Status.ToString(),
                 IsPaid = debtAssignment.Debt.IsPaid,
-                IsUserAccount = debtAssignment.NonUserDebtAssignment != null
+                IsUserAccount = debtAssignment.NonUser != null
             };
         }
 
@@ -74,6 +82,115 @@ namespace DebtsCompass.Domain
                 Firstname = user.UserInfo.FirstName,
                 Lastname = user.UserInfo.LastName,
                 Email = user.Email
+            };
+        }
+
+        public static ReceiverInfoDto NonUserToReceiverInfoDto(NonUser nonUser)
+        {
+            return new ReceiverInfoDto
+            {
+                Firstname = nonUser.PersonFirstName,
+                Lastname = nonUser.PersonLastName,
+                Email = nonUser.PersonEmail
+            };
+        }
+
+        public static UserDto UserToUserDto(User user)
+        {
+            return new UserDto
+            {
+                FirstName = user.UserInfo.FirstName,
+                LastName = user.UserInfo.LastName,
+                Email = user.Email
+            };
+        }
+
+        public static DebtAssignment CreateDebtRequestToDebtAssignment(CreateDebtRequest createDebtRequest, User creatorUser, User selectedUser)
+        {
+            if (Enum.TryParse(createDebtRequest.Status, out Status debtStatus))
+            {
+                return new DebtAssignment
+                {
+                    CreatorUser = creatorUser,
+                    SelectedUser = selectedUser,
+                    Debt = new Debt
+                    {
+                        Amount = createDebtRequest.Amount,
+                        BorrowReason = createDebtRequest.Reason,
+                        DateOfBorrowing = DateTime.Parse(createDebtRequest.BorrowingDate),
+                        DeadlineDate = DateTime.Parse(createDebtRequest.Deadline),
+                        Status = debtStatus,
+                        IsPaid = createDebtRequest.IsPaid
+                    }
+                };
+            }
+            else
+            {
+                throw new ArgumentException();
+            }
+        }
+
+        public static DebtAssignment CreateDebtRequestToDebtAssignment(CreateDebtRequest createDebtRequest, User creatorUser, NonUser selectedUser)
+        {
+            if (Enum.TryParse(createDebtRequest.Status, out Status debtStatus))
+            {
+                return new DebtAssignment
+                {
+                    CreatorUser = creatorUser,
+                    NonUser = selectedUser,
+                    Debt = new Debt
+                    {
+                        Amount = createDebtRequest.Amount,
+                        BorrowReason = createDebtRequest.Reason,
+                        DateOfBorrowing = DateTime.Parse(createDebtRequest.BorrowingDate),
+                        DeadlineDate = DateTime.Parse(createDebtRequest.Deadline),
+                        Status = debtStatus,
+                        IsPaid = createDebtRequest.IsPaid
+                    }
+                };
+            }
+            else
+            {
+                throw new ArgumentException();
+            }
+        }
+
+        public static DebtAssignment CreateDebtRequestToDebtAssignment(CreateDebtRequest createDebtRequest, User creatorUser)
+        {
+            if (Enum.TryParse(createDebtRequest.Status, out Status debtStatus))
+            {
+                return new DebtAssignment
+                {
+                    CreatorUser = creatorUser,
+                    NonUser = new NonUser
+                    {
+                        PersonFirstName = createDebtRequest.FirstName,
+                        PersonLastName = createDebtRequest.LastName,
+                        PersonEmail = createDebtRequest.Email,
+                    },
+                    Debt = new Debt
+                    {
+                        Amount = createDebtRequest.Amount,
+                        BorrowReason = createDebtRequest.Reason,
+                        DateOfBorrowing = DateTime.Parse(createDebtRequest.BorrowingDate),
+                        DeadlineDate = DateTime.Parse(createDebtRequest.Deadline),
+                        Status = debtStatus,
+                        IsPaid = createDebtRequest.IsPaid
+                    }
+                };
+            }
+            else
+            {
+                throw new ArgumentException();
+            }
+        }
+
+        public static CreatedDebtEmailInfoDto UserToCreatedDebtEmailInfoDto(User user)
+        {
+            return new CreatedDebtEmailInfoDto
+            {
+                CreatorFirstName = user.UserInfo.FirstName,
+                CreatorLastName = user.UserInfo.LastName
             };
         }
     }

@@ -1,9 +1,9 @@
 import { environment } from './../../environments/environment';
 import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { LoginResponse } from '../interfaces/login-response';
+import { LoginResponse } from '../entities/login.response';
 import {JwtHelperService} from '@auth0/angular-jwt';
-import { RegisterRequest } from '../interfaces/register-request';
+import { RegisterRequest } from '../entities/register.request';
 import { lastValueFrom } from 'rxjs';
 import { CustomEncoder } from '../custom-encoder';
 
@@ -33,7 +33,6 @@ export class AuthenticationService {
   register(registerRequest: RegisterRequest){
     const registerEndpoint = `${this.apiUrl}/register`;
 
-    console.log(registerRequest)
     return this.httpClient.post<any>(registerEndpoint, registerRequest, {headers: this.headers});
   }
 
@@ -61,18 +60,19 @@ export class AuthenticationService {
       try {
   
         const response = await lastValueFrom(this.httpClient.post<any>(refreshEndpoint, tokenModel, {headers: this.headers}));
-        console.log(response);
+        console.log(`Refresh response: ${(<any>response).payload}`);
         const newToken = (<any>response).payload.accessToken;
         const newRefreshToken = (<any>response).payload.refreshToken;
-        const email = (<any>response).payload.email;
-        localStorage.setItem("accessToken", newToken);
-        localStorage.setItem("refreshToken", newRefreshToken);
+        localStorage.setItem('accessToken', newToken);
+        localStorage.setItem('refreshToken', newRefreshToken);
         isRefreshSuccess = true;
       }
       catch (ex) {
         console.log(ex);
         isRefreshSuccess = false;
       }
+
+      console.log(`refresh success: ${isRefreshSuccess}`)
       return isRefreshSuccess;
   };
 
