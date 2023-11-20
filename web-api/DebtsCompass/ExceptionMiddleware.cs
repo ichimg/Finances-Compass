@@ -1,5 +1,4 @@
 ﻿using DebtsCompass.Application.Exceptions;
-using DebtsCompass.Application.Services;
 using DebtsCompass.Domain;
 using Microsoft.IdentityModel.Tokens;
 using System.Net;
@@ -56,6 +55,7 @@ namespace DebtsCompass
                     break;
 
                 case EmailAlreadyExistsException:
+                case UsernameAlreadyExistsException:
                     statusCode = HttpStatusCode.Conflict;
                     message = ex.Message;
                     logger.LogError(message);
@@ -71,6 +71,7 @@ namespace DebtsCompass
                     break;
 
                 case EmailAlreadyConfirmedException:
+
                     statusCode = HttpStatusCode.Gone;
                     message = ex.Message;
                     logger.LogError(message);

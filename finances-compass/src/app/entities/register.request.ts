@@ -6,6 +6,7 @@ export interface RegisterRequest {
     city: string;
     postalCode: string;
     streetAddress: string;
+    username: string;
     email: string;
     phoneNumber: string;
     password: string;

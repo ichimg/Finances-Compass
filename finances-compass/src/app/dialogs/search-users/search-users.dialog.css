@@ -1,0 +1,32 @@
+
+
+.search {
+  display: flex;
+  gap: 10px;
+}
+
+mat-card {
+  overflow-y: auto;
+  padding: 5px;
+  margin: 10px;
+  max-height: 90vh;
+  height: 600px;
+  width: 400px;
+}
+
+.item {
+  display: flex;
+  font-family: "Trebuchet MS", "Lucida Sans Unicode", "Lucida Grande",
+    "Lucida Sans", Arial, sans-serif;
+  justify-content: space-between;
+}
+
+.add-person-icon {
+  color: red;
+}
+
+.not-found {
+  font-family: "Trebuchet MS", "Lucida Sans Unicode", "Lucida Grande",
+    "Lucida Sans", Arial, sans-serif;
+  font-style: italic;
+}

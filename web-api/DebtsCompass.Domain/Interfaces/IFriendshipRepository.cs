@@ -1,9 +1,10 @@
 ﻿using DebtsCompass.Domain.Entities.Models;
+using DebtsCompass.Domain.Pagination;
 
 namespace DebtsCompass.Domain.Interfaces
 {
     public interface IFriendshipRepository
     {
-        Task<IEnumerable<User>> GetUserFriendsById(string userId);
+        Task<PagedList<User>> GetUserFriendsById(string userId, PagedParameters pagedParameters);
     }
 }

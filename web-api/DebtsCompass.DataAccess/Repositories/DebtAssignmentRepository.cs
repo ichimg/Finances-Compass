@@ -21,6 +21,7 @@ namespace DebtsCompass.DataAccess.Repositories
                 .Include(da => da.SelectedUser)
                 .ThenInclude(u => u.UserInfo)
                 .Where(da => da.CreatorUser.Email == email)
+                .AsNoTracking()
                 .ToListAsync();
 
         }
@@ -34,6 +35,7 @@ namespace DebtsCompass.DataAccess.Repositories
                 .Include(da => da.SelectedUser)
                 .ThenInclude(u => u.UserInfo)
                 .Where(da => da.SelectedUser.Email == email)
+                .AsNoTracking()
                 .ToListAsync();
         }
 
@@ -45,6 +47,7 @@ namespace DebtsCompass.DataAccess.Repositories
                 .ThenInclude(u => u.UserInfo)
                 .Include(da => da.NonUser)
                 .Where(da => da.NonUser.PersonEmail == email)
+                .AsNoTracking()
                 .ToListAsync();
         }
 

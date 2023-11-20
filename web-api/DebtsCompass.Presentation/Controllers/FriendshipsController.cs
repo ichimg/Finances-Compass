@@ -3,8 +3,10 @@ using DebtsCompass.Application.Services;
 using DebtsCompass.Domain;
 using DebtsCompass.Domain.Entities.DtoResponses;
 using DebtsCompass.Domain.Interfaces;
+using DebtsCompass.Domain.Pagination;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 using System.Net;
 using System.Security.Claims;
 
@@ -24,7 +26,7 @@ namespace DebtsCompass.Presentation.Controllers
         [HttpGet]
         [Route("friends")]
         [Authorize]
-        public async Task<ActionResult<List<UserDto>>> GetFriends([FromHeader] string email)
+        public async Task<ActionResult<PagedList<UserDto>>> GetFriends([FromHeader] string email, [FromQuery] PagedParameters pagedParameters)
         {
             var userIdentity = User.Identity as ClaimsIdentity;
             var userEmailClaim = userIdentity.FindFirst(ClaimTypes.Email)?.Value;
@@ -34,7 +36,19 @@ namespace DebtsCompass.Presentation.Controllers
                 throw new ForbiddenRequestException();
             }
 
-            var friends = await friendshipsService.GetUserFriendsByEmail(email);
+            var friends = await friendshipsService.GetUserFriendsByEmail(email, pagedParameters);
+
+            var metadata = new
+            {
+                friends.TotalCount,
+                friends.PageSize,
+                friends.CurrentPage,
+                friends.TotalPages,
+                friends.HasNext,
+                friends.HasPrevious
+            };
+
+            Response.Headers.Add("X-Pagination", JsonConvert.SerializeObject(metadata));
 
             Response<List<UserDto>> response = new Response<List<UserDto>>
             {
@@ -44,6 +58,6 @@ namespace DebtsCompass.Presentation.Controllers
             };
 
             return Ok(response);
-        }
+        }    
     }
 }

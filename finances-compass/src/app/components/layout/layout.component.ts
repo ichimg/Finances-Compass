@@ -3,7 +3,10 @@ import { Component, OnInit, ViewChild } from '@angular/core';
 import { DebtsService } from '../../services/debts.service';
 import { SidebarService } from 'src/app/services/sidebar.service';
 import { MatSidenav } from '@angular/material/sidenav';
-import { UserFriend } from 'src/app/entities/user-friend.model';
+import { UserModel } from 'src/app/entities/user-friend.model';
+import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
+import { MatDialog } from '@angular/material/dialog';
+import { SearchUsersDialog } from 'src/app/dialogs/search-users/search-users.dialog';
 
 @Component({
   selector: 'app-layout',
@@ -15,29 +18,38 @@ export class LayoutComponent implements OnInit {
   @ViewChild('leftSidebar') public leftSidebar!: MatSidenav;
   @ViewChild('rightSidebar') public rightSidebar!: MatSidenav;
 
-  userFriends!: UserFriend[];
+  userFriends!: UserModel[];
+
+  sidenavMode: 'side' | 'over' = 'side';
+
   constructor(
     private sidebarService: SidebarService,
-    private usersService: UsersService
+    private breakpointObserver: BreakpointObserver,
+    private dialog: MatDialog
   ) {
-
+    this.breakpointObserver
+      .observe([Breakpoints.Handset])
+      .subscribe((result) => {
+        if (result.matches) {
+          this.sidenavMode = 'over';
+        } else {
+          this.sidenavMode = 'side';
+        }
+      });
   }
 
   ngOnInit(): void {
-    this.sidebarService.leftSideNavToggleSubject.subscribe(()=> {
-      this.leftSidebar.toggle();
+    this.sidebarService.leftSideNavToggleSubject.subscribe(() => {
+      this.leftSidebar?.toggle();
     });
 
-    this.sidebarService.rightSideNavToggleSubject.subscribe(()=> {
-      this.rightSidebar.toggle();
+    this.sidebarService.rightSideNavToggleSubject.subscribe(() => {
+      this.rightSidebar?.toggle();
     });
-
-    
   }
 
-  
-
   openSearchUsersDialog(): void {
+    this.dialog.open(SearchUsersDialog);
 
   }
 }

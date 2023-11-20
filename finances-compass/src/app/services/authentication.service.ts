@@ -42,8 +42,9 @@ export class AuthenticationService {
     return token ? true : false;
   }
 
-  isTokenExpired(): boolean {
-    return this.jwtHelper.isTokenExpired(localStorage.getItem('accessToken'));
+  async isTokenExpired(): Promise<boolean> {
+    const token = localStorage.getItem('accessToken') ?? null;
+    return await this.jwtHelper.isTokenExpired(Promise.resolve(token!));
   }
 
   async refreshTokens(token: string): Promise<boolean>  {

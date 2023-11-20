@@ -3,7 +3,6 @@ using DebtsCompass.Domain.Entities.EmailDtos;
 using MailKit.Net.Smtp;
 using MimeKit;
 using MimeKit.Text;
-using System.Reflection;
 
 namespace EmailSender
 {

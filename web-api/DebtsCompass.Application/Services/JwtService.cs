@@ -49,14 +49,14 @@ namespace DebtsCompass.Application.Services
                 throw new SecurityTokenException("Invalid token");
             }
 
-            string accesToken = GenerateToken(email);
+            string accessToken = GenerateToken(email);
             string refreshToken = GenerateRefreshToken();
 
             user.RefreshToken = refreshToken;
 
             return new RefreshTokenResponse
             {
-                AccessToken = accesToken,
+                AccessToken = accessToken,
                 RefreshToken = refreshToken
             };
 

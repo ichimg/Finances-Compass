@@ -84,6 +84,7 @@ builder.Services.AddScoped<IJwtService, JwtService>();
 builder.Services.AddScoped<IDebtsService, DebtsService>();
 builder.Services.AddScoped<IAuthenticationService, AuthenticationService>();
 builder.Services.AddScoped<IFriendshipsService, FriendshipsService>();
+builder.Services.AddScoped<IUsersService, UsersService>();
 builder.Services.AddScoped<EmailValidator>();
 builder.Services.AddScoped<PasswordValidator>();
 
@@ -110,7 +111,8 @@ builder.Services.AddCors(options =>
     {
         builder.WithOrigins(allowedOrigins)
                .AllowAnyHeader()
-               .AllowAnyMethod();
+               .AllowAnyMethod()
+               .WithExposedHeaders("X-Pagination");
 
     });
 });

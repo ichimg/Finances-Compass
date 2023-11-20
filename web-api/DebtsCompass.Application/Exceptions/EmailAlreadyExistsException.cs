@@ -2,6 +2,7 @@
 {
     public class EmailAlreadyExistsException : Exception
     {
-        public EmailAlreadyExistsException(string email) : base($"The provided e-mail is already registered: {email}") { }
+        const string DefaultMessage = "Account e-mail already exists";
+        public EmailAlreadyExistsException() : base(DefaultMessage) { }
     }
 }

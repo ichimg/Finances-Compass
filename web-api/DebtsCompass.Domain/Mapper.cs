@@ -23,13 +23,14 @@ namespace DebtsCompass.Domain
                 debtAssignment.NonUser.PersonLastName,
 
                 Email = debtAssignment.SelectedUser != null ? debtAssignment.SelectedUser.Email : debtAssignment.NonUser.PersonEmail,
+                Username = debtAssignment.SelectedUser != null ? debtAssignment.SelectedUser.UserName : null,
                 Amount = debtAssignment.Debt.Amount,
                 BorrowingDate = debtAssignment.Debt.DateOfBorrowing,
                 Deadline = debtAssignment.Debt.DeadlineDate,
                 Reason = debtAssignment.Debt.BorrowReason,
                 Status = debtAssignment.Debt.Status.ToString(),
                 IsPaid = debtAssignment.Debt.IsPaid,
-                IsUserAccount = debtAssignment.NonUser != null
+                IsUserAccount = debtAssignment.SelectedUser != null
             };
         }
 
@@ -39,6 +40,7 @@ namespace DebtsCompass.Domain
             {
                 FirstName = debtAssignment.CreatorUser.UserInfo.FirstName,
                 LastName = debtAssignment.CreatorUser.UserInfo.LastName,
+                Username = debtAssignment.CreatorUser.UserName,
                 Email = debtAssignment.CreatorUser.Email,
                 Amount = debtAssignment.Debt.Amount,
                 BorrowingDate = debtAssignment.Debt.DateOfBorrowing,
@@ -46,7 +48,7 @@ namespace DebtsCompass.Domain
                 Reason = debtAssignment.Debt.BorrowReason,
                 Status = debtAssignment.Debt.Status.ToString(),
                 IsPaid = debtAssignment.Debt.IsPaid,
-                IsUserAccount = debtAssignment.NonUser != null
+                IsUserAccount = debtAssignment.SelectedUser != null
             };
         }
 
@@ -63,15 +65,13 @@ namespace DebtsCompass.Domain
                         Country = registerRequest.Country,
                         County = registerRequest.State,
                         City = registerRequest.City,
-                        PostalCode = registerRequest.PostalCode,
                         StreetAddress = registerRequest.StreetAddress
                     },
-                    Iban = registerRequest.Iban,
                 },
                 Email = registerRequest.Email,
                 PasswordHash = BCrypt.Net.BCrypt.HashPassword(registerRequest.Password),
                 PhoneNumber = registerRequest.PhoneNumber,
-                UserName = registerRequest.Email
+                UserName = registerRequest.Username
             };
         }
 
@@ -101,6 +101,7 @@ namespace DebtsCompass.Domain
             {
                 FirstName = user.UserInfo.FirstName,
                 LastName = user.UserInfo.LastName,
+                Username = user.UserName,
                 Email = user.Email
             };
         }

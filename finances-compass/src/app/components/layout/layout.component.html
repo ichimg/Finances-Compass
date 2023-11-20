@@ -1,7 +1,7 @@
 <body>
   <app-header></app-header>
-  <mat-sidenav-container autosize>
-    <mat-sidenav #leftSidebar mode="side" class="left-sidebar">
+  <mat-sidenav-container autosize [hasBackdrop]="false">
+    <mat-sidenav #leftSidebar [mode]="sidenavMode" class="left-sidebar">
       <mat-nav-list>
         <a mat-list-item routerLink="/dashboard"
           ><span class="sidebar-item"
@@ -28,10 +28,10 @@
       </mat-nav-list>
     </mat-sidenav>
     <mat-sidenav-content>
-      <mat-sidenav-container autosize>
+      <mat-sidenav-container autosize [hasBackdrop]="false">
         <mat-sidenav
           #rightSidebar
-          mode="side"
+          [mode]="sidenavMode"
           position="end"
           class="right-sidebar"
         >
@@ -41,16 +41,21 @@
               (click)="openSearchUsersDialog()"
               class="sidebar-item"
               ><span class="sidebar-item"
-                ><mat-icon matPrefix>search</mat-icon>Search users</span
+                ><mat-icon matPrefix>search</mat-icon>Search users <mat-icon matSuffix>open_in_new</mat-icon></span
               ></a
             >
             <mat-divider> </mat-divider>
+            <mat-divider> </mat-divider>
+            <a mat-subheader class="sidebar-item">Similar users:</a>
           </mat-nav-list>
         </mat-sidenav>
         <mat-sidenav-content>
           <router-outlet></router-outlet>
         </mat-sidenav-content>
+        
       </mat-sidenav-container>
     </mat-sidenav-content>
   </mat-sidenav-container>
+  <app-footer></app-footer>
+
 </body>

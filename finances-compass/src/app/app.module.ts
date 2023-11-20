@@ -47,6 +47,10 @@ import { LoadingBarModule } from '@ngx-loading-bar/core';
 import { LoadingBarRouterModule } from '@ngx-loading-bar/router';
 import { LoadingBarHttpClientModule } from '@ngx-loading-bar/http-client';
 import { StatusTransformPipe } from './pipes/status-transform.pipe';
+import { ViewDebtDialog } from './dialogs/view-debt-dialog/view-debt.dialog';
+import { SearchUsersDialog } from './dialogs/search-users/search-users.dialog';
+import { InfiniteScrollDirective } from './directives/infinite-scroll.directive';
+import { FooterComponent } from './components/footer/footer.component';
 
 
 const OPTIONS = {
@@ -67,6 +71,10 @@ const OPTIONS = {
     AddDebtDialog,
     DebtsComponent,
     StatusTransformPipe,
+    ViewDebtDialog,
+    SearchUsersDialog,
+    InfiniteScrollDirective,
+    FooterComponent,
   ],
   imports: [
     BrowserModule,
@@ -102,7 +110,7 @@ const OPTIONS = {
     MatListModule,
     LoadingBarModule,
     LoadingBarHttpClientModule, 
-    LoadingBarRouterModule
+    LoadingBarRouterModule,
   ],
   providers: [
     { provide: JWT_OPTIONS, useValue: JWT_OPTIONS },

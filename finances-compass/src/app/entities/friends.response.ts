@@ -1,7 +1,6 @@
-import { UserFriend } from "./user-friend.model";
+import { UserModel } from "./user-friend.model";
 
-export interface FriendsResponse {
-    message: string | null;
-    payload: UserFriend[];
-    statusCode: number;
+export interface UserFriendModel {
+   userModel: UserModel;
+   friendStatus: string;
 }

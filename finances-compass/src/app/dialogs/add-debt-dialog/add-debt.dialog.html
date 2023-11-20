@@ -64,9 +64,9 @@
       </div>
       <mat-form-field *ngIf="isVisible == 0" class="flex-column">
         <mat-label>Select user</mat-label>
-        <mat-select [(ngModel)]="selectedUserEmail" name="friend" formControlName="userSelect">
-          <mat-option *ngFor="let userFriend of userFriends" [value]="userFriend.email">
-            {{userFriend.firstName + " " + userFriend.lastName}}
+        <mat-select appInfiniteScroll (scrolled)="loadMoreFriends()" [(ngModel)]="selectedUser" name="friend" formControlName="userSelect">
+          <mat-option *ngFor="let userFriend of userFriends" [value]="userFriend">
+            {{userFriend.username}}
           </mat-option>
         </mat-select>
       </mat-form-field>
@@ -79,7 +79,7 @@
         >
           OK
         </button>
-        <button mat-raised-button color="accent" (click)="closeDialog()">
+        <button mat-raised-button color="accent" (click)="closeDialog()" type="button">
           Cancel
         </button>
       </div>

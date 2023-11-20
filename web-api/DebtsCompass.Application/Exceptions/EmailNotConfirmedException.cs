@@ -1,5 +1,4 @@
-﻿
-namespace DebtsCompass.Application.Services
+﻿namespace DebtsCompass.Application.Exceptions
 {
     public class EmailNotConfirmedException : Exception
     {

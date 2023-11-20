@@ -47,10 +47,6 @@
             <input matInput formControlName="city" />
           </mat-form-field>
           <mat-form-field>
-            <mat-label>Postal Code:</mat-label>
-            <input matInput formControlName="postalCode" />
-          </mat-form-field>
-          <mat-form-field>
             <mat-label>Street Address:</mat-label>
             <input matInput formControlName="streetAddress" />
           </mat-form-field>
@@ -63,6 +59,10 @@
             <mat-card-title class="title-font">Account Information</mat-card-title>
           </mat-card-header>
         <div class="column">
+          <mat-form-field>
+            <mat-label>Username:</mat-label>
+            <input matInput formControlName="username" />
+          </mat-form-field>
           <mat-form-field>
             <mat-label>E-mail:</mat-label>
             <input matInput formControlName="email" />
@@ -88,10 +88,6 @@
             <mat-error *ngIf="registerForm.hasError('passwordMismatch')">
               Passwords do not match.
             </mat-error>
-          </mat-form-field>
-          <mat-form-field>
-            <mat-label>IBAN:</mat-label>
-            <input matInput formControlName="iban"/>
           </mat-form-field>
           <div class="btn-container">
             <button mat-raised-button color="accent" type="submit" [disabled]="!registerForm.valid">

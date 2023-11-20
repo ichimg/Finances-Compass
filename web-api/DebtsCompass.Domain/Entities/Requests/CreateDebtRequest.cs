@@ -17,7 +17,7 @@ namespace DebtsCompass.Domain.Entities.Requests
         public string BorrowingDate { get; set; }
         [Required]
         public string Deadline { get; set; }
-        [MaxLength(30)]
+        [MaxLength(50)]
         [Required]
         public string Reason { get; set; }
         [MaxLength(10)]

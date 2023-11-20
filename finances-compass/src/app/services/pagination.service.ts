@@ -6,25 +6,28 @@ import { PageEvent } from '@angular/material/paginator';
 export class PaginationService {
   private paginationModel: PaginationModel;
 
-  get page(): number {
-      return this.paginationModel.pageIndex;
+  public get pageNumber(): number {
+      return this.paginationModel.pageNumber;
   }
 
-  get selectItemsPerPage(): number[] {
-      return this.paginationModel.selectItemsPerPage;
-  }
-
-  get pageCount(): number {
+  public get pageSize(): number {
       return this.paginationModel.pageSize;
+  }
+
+  public get totalCount(): number {
+    return this.paginationModel.itemsLength;
+  }
+
+  resetPageNumber() {
+    this.paginationModel.pageNumber = 1;
   }
 
   constructor() {
       this.paginationModel = new PaginationModel();
   }
 
-  change(pageEvent: PageEvent) {
-      this.paginationModel.pageIndex = pageEvent.pageIndex + 1;
-      this.paginationModel.pageSize = pageEvent.pageSize;
-      this.paginationModel.allItemsLength = pageEvent.length;
+  change(length: number) {
+      this.paginationModel.pageNumber++;
+      this.paginationModel.itemsLength = length;
   }
 }

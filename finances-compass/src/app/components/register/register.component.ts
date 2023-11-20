@@ -19,9 +19,9 @@ import { passwordMatchingValidator as passwordMatchingValidator } from '../../va
 })
 export class RegisterComponent implements OnInit {
   countries: Countries[] = countries;
-  countryFormControl = new FormControl('', [Validators.required, countryValidator()]);
-  emailFormControl = new FormControl('', [Validators.required, Validators.email])
-  passwordFormControl = new FormControl('', [Validators.required, passwordValidator()]);
+  countryFormControl = new FormControl('', [Validators.required, countryValidator(), Validators.maxLength(100)]);
+  emailFormControl = new FormControl('', [Validators.required, Validators.email, Validators.maxLength(320)])
+  passwordFormControl = new FormControl('', [Validators.required, passwordValidator(), Validators.maxLength(100)]);
 
   filteredOptions!: Observable<Countries[]>;
 
@@ -40,18 +40,17 @@ export class RegisterComponent implements OnInit {
 
 
   registerForm = new FormGroup({
-    firstName: new FormControl('', Validators.required),
-    lastName: new FormControl('', Validators.required),
+    firstName: new FormControl('', [Validators.required, Validators.maxLength(20)]),
+    lastName: new FormControl('', [Validators.required, Validators.maxLength(20)]),
     country: this.countryFormControl,
-    state: new FormControl('', Validators.required),
-    city: new FormControl('', Validators.required),
-    postalCode: new FormControl('', Validators.required),
-    streetAddress: new FormControl('', Validators.required),
+    state: new FormControl('', [Validators.required, Validators.maxLength(100)]),
+    city: new FormControl('', [Validators.required, Validators.maxLength(100)]),
+    streetAddress: new FormControl('', [Validators.required, Validators.maxLength(100)]),
+    username: new FormControl('', [Validators.required, Validators.maxLength(50)]),
     email: this.emailFormControl,
-    phoneNumber: new FormControl('', Validators.required),
+    phoneNumber: new FormControl('', [Validators.required, Validators.maxLength(20)]),
     password: this.passwordFormControl,
-    confirmPassword: new FormControl('', [Validators.required, passwordValidator()]),
-    iban: new FormControl('', Validators.required),
+    confirmPassword: new FormControl('', [Validators.required, passwordValidator(), Validators.maxLength(100)]),
   },
   { validators: passwordMatchingValidator });
 
@@ -70,13 +69,12 @@ export class RegisterComponent implements OnInit {
       country: this.registerForm.value.country,
       state: this.registerForm.value.state,
       city: this.registerForm.value.city,
-      postalCode: this.registerForm.value.postalCode,
       streetAddress: this.registerForm.value.streetAddress,
+      username: this.registerForm.value.username,
       email: this.registerForm.value.email,
       phoneNumber: this.registerForm.value.phoneNumber,
       password: this.registerForm.value.password,
       confirmPassword: this.registerForm.value.confirmPassword,
-      iban: this.registerForm.value.iban,
       clientURI: 'http://localhost:4200/emailconfirmation'
     });
 
@@ -92,7 +90,7 @@ export class RegisterComponent implements OnInit {
           break;
 
         case 409:
-          this.notificationService.showError('Account e-mail already exists');
+          this.notificationService.showError(response.message);
           break;
 
         default:

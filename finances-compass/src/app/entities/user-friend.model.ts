@@ -1,5 +1,6 @@
-export interface UserFriend {
+export interface UserModel {
   firstName: string;
   lastName: string;
+  username: string;
   email: string;
 }

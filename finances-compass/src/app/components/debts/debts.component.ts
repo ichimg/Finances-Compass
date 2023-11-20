@@ -6,17 +6,18 @@ import { DebtsService } from '../../services/debts.service';
 import { MatDialog } from '@angular/material/dialog';
 import { AddDebtDialog } from 'src/app/dialogs/add-debt-dialog/add-debt.dialog';
 import { UsersService } from 'src/app/services/users.service';
-import { UserFriend } from 'src/app/entities/user-friend.model';
+import { Debt } from 'src/app/entities/debt';
+import { ViewDebtDialog } from 'src/app/dialogs/view-debt-dialog/view-debt.dialog';
 
 
 @Component({
   selector: 'app-debts',
   templateUrl: './debts.component.html',
-  styleUrls: ['./debts.component.css'],
+  styleUrls: ['./debts.component.css']
 })
 export class DebtsComponent implements OnInit, AfterViewInit {
   displayedReceivingColumns: string[] = [
-    'email',
+    'name',
     'amount',
     'deadline',
     'reason',
@@ -28,7 +29,6 @@ export class DebtsComponent implements OnInit, AfterViewInit {
 
   isReceivingDebtsLoaded: boolean = false;
   isUserDebtsLoaded: boolean = false;
-  userFriends!: UserFriend[];
 
   constructor(
     private liveAnnouncer: LiveAnnouncer,
@@ -40,17 +40,13 @@ export class DebtsComponent implements OnInit, AfterViewInit {
     this.debtsService.getAllReceivingDebts().subscribe((response) => {
       this.dataReceivingDebtsSource.data = response.payload.sort((a, b) => {
         return new Date(b.deadline).getTime() - new Date(a.deadline).getTime();
-      })
+      });
       this.isReceivingDebtsLoaded = true;
     });
 
     this.debtsService.getAllUserDebts().subscribe((response) => {
       this.dataUserDebtsSource.data = response.payload;
       this.isUserDebtsLoaded = true;
-    });
-
-    this.usersService.getAllFriends().subscribe((response) => {
-      this.userFriends = response.payload;
     });
   }
 
@@ -59,13 +55,9 @@ export class DebtsComponent implements OnInit, AfterViewInit {
   }
   @ViewChild('debtUserTbSort') set debtUserTbSort(sort: MatSort) {
     this.dataUserDebtsSource.sort = sort;
-    
   }
 
-  ngAfterViewInit() {
-
-
-  }
+  ngAfterViewInit() {}
 
   announceReceivingSortChange(sortState: Sort) {
     if (sortState.direction) {
@@ -95,7 +87,6 @@ export class DebtsComponent implements OnInit, AfterViewInit {
     const dialogRef = this.dialog
       .open(AddDebtDialog, {
         data: {
-          userFriends: this.userFriends,
           debts: this.dataReceivingDebtsSource.data,
         },
       })
@@ -105,5 +96,22 @@ export class DebtsComponent implements OnInit, AfterViewInit {
           this.dataReceivingDebtsSource.data = response;
         }
       });
+  }
+
+  onRowClick(debt: Debt) {
+    console.log(debt);
+    const dialogRef = this.dialog.open(ViewDebtDialog, {
+      width: '600px',
+      data: { debt },
+    });
+  }
+
+  openEditDialog(event: Event): void {
+    event.stopPropagation();
+  }
+
+  deleteDebt(event: Event): void {
+
+    event.stopPropagation();
   }
 }

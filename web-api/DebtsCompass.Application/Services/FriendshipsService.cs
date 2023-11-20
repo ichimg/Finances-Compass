@@ -3,6 +3,7 @@ using DebtsCompass.Domain;
 using DebtsCompass.Domain.Entities.DtoResponses;
 using DebtsCompass.Domain.Entities.Models;
 using DebtsCompass.Domain.Interfaces;
+using DebtsCompass.Domain.Pagination;
 
 namespace DebtsCompass.Application.Services
 {
@@ -17,20 +18,17 @@ namespace DebtsCompass.Application.Services
             this.userRepository = userRepository;
         }
 
-        public async Task<List<UserDto>> GetUserFriendsByEmail(string email)
+        public async Task<PagedList<UserDto>> GetUserFriendsByEmail(string email, PagedParameters pagedParameters)
         {
-            User userFromDb = await userRepository.GetUserByEmail(email);
+            User userFromDb = await userRepository.GetUserByEmail(email) ?? throw new UserNotFoundException(email);
+            PagedList<User> friendsFromDb = await friendshipRepository.GetUserFriendsById(userFromDb.Id, pagedParameters);
 
-            if (userFromDb is null)
-            {
-                throw new UserNotFoundException(email);
-            }
+            var userDtos =  friendsFromDb.Select(Mapper.UserToUserDto).ToList();
 
-            IEnumerable<User> friendsFromDb = await friendshipRepository.GetUserFriendsById(userFromDb.Id);
+            var userDtosPagedList = 
+                new PagedList<UserDto>(userDtos, friendsFromDb.TotalCount, friendsFromDb.CurrentPage, friendsFromDb.PageSize);
 
-            var userDtos =  friendsFromDb.Select(u => Mapper.UserToUserDto(u)).ToList();
-
-            return userDtos;
+            return userDtosPagedList;
         }
     }
 }

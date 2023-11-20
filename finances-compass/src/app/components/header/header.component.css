@@ -10,8 +10,9 @@
 }
 
 header {
-  background-color: #3b444b;
+
   height: 75px;
+
 }
 
 img {
@@ -19,9 +20,13 @@ img {
 }
 
 .flex-container {
+  background-color: #3b444b;
   display: flex;
   align-items: center;
   flex-wrap: nowrap;
+  position: fixed;
+  z-index: 2;
+  width: 100%;
 }
 
 .menu-icon {
@@ -35,7 +40,6 @@ img {
   padding-bottom: 5px;
   padding-right: 5px;
 }
-
 
 @media screen and (max-width: 520px) {
   header {

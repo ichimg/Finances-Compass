@@ -45,12 +45,8 @@ namespace DebtsCompass.Application.Services
                 return false;
             }
 
-            User userFromDb = await userRepository.GetUserByEmail(loginRequest.Email);
-
-            if (userFromDb is null)
-            {
-                throw new UserNotFoundException(loginRequest.Email);
-            }
+            User userFromDb = await userRepository.GetUserByEmail(loginRequest.Email) ?? 
+                              throw new UserNotFoundException(loginRequest.Email);
 
             if (!BCrypt.Net.BCrypt.Verify(loginRequest.Password, userFromDb.PasswordHash))
             {
@@ -86,7 +82,14 @@ namespace DebtsCompass.Application.Services
 
             if (existingUser is not null)
             {
-                throw new EmailAlreadyExistsException(registerRequest.Email);
+                throw new EmailAlreadyExistsException();
+            }
+
+            existingUser = await userRepository.GetUserByUsername(registerRequest.Username);
+
+            if (existingUser is not null)
+            {
+                throw new UsernameAlreadyExistsException();
             }
 
             User user = Mapper.RegisterRequestToUserDbModel(registerRequest);
@@ -94,6 +97,7 @@ namespace DebtsCompass.Application.Services
             await userRepository.Add(user);
 
             NonUser nonUser = await nonUserRepository.GetNonUserByEmail(user.Email);
+
             if (nonUser is not null)
             {
                 await MoveExistingNonAccountDebts(user);

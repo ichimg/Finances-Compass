@@ -13,7 +13,9 @@ const routes: Routes = [
     path: '',
     component: LayoutComponent,
     canActivate: [authGuard],
-    children: [{ path: 'debts', component: DebtsComponent }],
+    children: [
+      { path: '', redirectTo: 'debts', pathMatch: 'full' },
+      { path: 'debts', component: DebtsComponent }],
   },
   { path: 'login', component: LoginComponent, canActivate: [unauthGuard] },
   {
@@ -22,6 +24,7 @@ const routes: Routes = [
     canActivate: [unauthGuard],
   },
   { path: 'emailconfirmation', component: EmailConfirmationComponent },
+  { path: '**', redirectTo: 'debts' },
 ];
 
 @NgModule({

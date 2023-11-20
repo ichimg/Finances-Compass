@@ -1,179 +1,163 @@
 table {
-    width: 100%;
-  }
-  
-  th.mat-sort-header-sorted {
-    color: black;
-  }
-  
-  .to-be-collected {
-    font-family: "Trebuchet MS", "Lucida Sans Unicode", "Lucida Grande",
-      "Lucida Sans", Arial, sans-serif;
-    font-weight: lighter;
-  }
-  
-  .text-img {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-  }
-  
-  .icon-title {
-    display: flex;
-    justify-content: space-between;
-  }
-  
+  width: 100%;
+}
+
+th.mat-sort-header-sorted {
+  color: black;
+}
+
+.to-be-collected {
+  font-family: "Trebuchet MS", "Lucida Sans Unicode", "Lucida Grande",
+    "Lucida Sans", Arial, sans-serif;
+  font-weight: lighter;
+}
+
+.text-img {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.icon-title {
+  display: flex;
+  justify-content: space-between;
+}
+
+.action-icons {
+  display: flex;
+  gap: 5px;
+}
+
+.edit-icon {
+  cursor: pointer;
+  z-index: 2;
+}
+
+.edit-icon:hover {
+  color: #3b444b;
+}
+
+.delete-icon {
+  cursor: pointer;
+  color: #a6120d;
+}
+
+.delete-icon:hover {
+  color: #7d0f0b;
+}
+.border {
+  padding: 40px 50px;
+}
+
+.flex {
+  display: flex;
+  flex-direction: column;
+}
+
+.btn-items {
+  display: flex;
+  justify-content: space-between;
+  align-content: space-between;
+}
+
+.container {
+  max-width: 1230px;
+  margin: 50px auto;
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
+  padding: 30px;
+}
+
+.add-btn {
+  padding: 30px;
+}
+.mat-elevation-z8 {
+  box-shadow: none;
+}
+
+.icon {
+  display: flex;
+  gap: 7px;
+  align-content: center;
+}
+
+img {
+  max-width: 100%;
+  max-height: 100%;
+}
+
+.record {
+  cursor: pointer;
+}
+
+.record:hover {
+  background-color: whitesmoke;
+}
+
+@media screen and (max-width: 930px) {
   .action-icons {
     display: flex;
-    gap: 5px;
+    flex-direction: column;
   }
-  
-  .edit-icon {
-    cursor: pointer;
+}
+
+@media screen and (max-width: 1584px) {
+  .table-size {
+    overflow-x: auto;
   }
-  
-  .edit-icon:hover {
-    color: #3b444b;
-  }
-  
-  .delete-icon {
-    cursor: pointer;
-    color: #a6120d;
-  }
-  
-  .delete-icon:hover {
-    color: #7d0f0b;
-  }
+
   .border {
-    padding: 40px 50px;
-  }
-  
-  .flex {
-    display: flex;
-    flex-direction: column;
-  }
-  
-  .btn-items {
-    display: flex;
-    justify-content: space-between;
-    align-content: space-between;
-  }
-  
-  .container {
-    max-width: 1230px;
-    margin: 50px auto;
-    display: flex;
-    flex-direction: column;
-    gap: 30px;
     padding: 30px;
   }
-  
+}
+
+@media screen and (max-width: 1030px) {
+  .to-be-collected {
+    font-size: 15px;
+  }
+
   .add-btn {
-    padding: 30px;
+    padding: 0;
+    margin: 0;
   }
-  .mat-elevation-z8 {
-    box-shadow: none;
+
+  button {
+    height: 5px;
+    width: 5px;
   }
-  
-  .icon {
-    display: flex;
-    gap: 7px;
-    align-content: center;
+
+  .btn-items {
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
   }
-  
-  img {
-    max-width: 100%;
-    max-height: 100%;
-  }
-  
-  mat-sidenav-container {
-    height: calc(205vh - 115vh);
-  }
-  
-  .left-sidebar {
-    width: 200px;
-  }
-  
+
   .right-sidebar {
-    width: 500px;
+    width: 150px;
   }
-  
+
+  .left-sidebar {
+    width: 100px;
+  }
+
   .sidebar-item {
-    display: flex;
-    font-family: "Trebuchet MS", "Lucida Sans Unicode", "Lucida Grande",
-      "Lucida Sans", Arial, sans-serif;
-    gap: 10px;
+    gap: 0;
+    font-size: 10px;
   }
-  
-  @media screen and (max-width: 930px) {
-    .action-icons {
-      display: flex;
-      flex-direction: column;
-    }
+
+  .text-img {
+    gap: 0;
+    flex-direction: column;
   }
-  
-  @media screen and (max-width: 1584px) {
-    .table-size {
-      overflow-x: auto;
-    }
-  
-    .border {
-      padding: 30px;
-    }
+}
+
+@media screen and (max-width: 400px) {
+  .border {
+    padding: 5px 5px;
+    margin: 0;
   }
-  
-  @media screen and (max-width: 1030px) {
-    .to-be-collected {
-      font-size: 15px;
-    }
-  
-    .add-btn{
-      padding:0;
-      margin:0;
-  
-    }
-  
-    button{
-      height: 5px;
-      width: 5px;
-    }
-  
-    .btn-items{
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-    }
-  
-    .right-sidebar{
-      width:150px;
-    }
-  
-    .left-sidebar{
-      width:100px;
-    }
-  
-    .sidebar-item
-    {
-      gap:0;
-      font-size:10px;
-    }
-  
-    .text-img{
-      gap:0;
-      flex-direction: column;
-    }
+  .hide-column {
+    display: none;
   }
-  
-  @media screen and (max-width: 400px) {
-  
-    .border{
-      padding: 5px 5px;
-      margin: 0;
-    }
-    .hide-column{
-      display:none;
-    }
-    
-  }
-  
-  
+}

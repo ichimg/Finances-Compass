@@ -9,11 +9,12 @@ export const authGuard: CanActivateFn = async (_route, _state) => {
   const notificationService = inject(NotificationService)
   const token = localStorage.getItem('accessToken');
 
-  if (token && !authService.isTokenExpired()) {
+  let isTokenExpired = await authService.isTokenExpired();
+  if (token && await !isTokenExpired) {
     return true;
   }
 
-  const isRefreshSuccess = await authService.refreshTokens(token!);
+  const isRefreshSuccess =  await authService.refreshTokens(token!);
   if (!isRefreshSuccess) {
     authService.logout();
     notificationService.showWarning('You need to log in!');
