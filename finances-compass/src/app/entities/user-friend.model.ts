@@ -3,4 +3,5 @@ export interface UserModel {
   lastName: string;
   username: string;
   email: string;
+  friendStatus: string;
 }

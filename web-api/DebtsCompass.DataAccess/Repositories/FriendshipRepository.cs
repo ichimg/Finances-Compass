@@ -26,5 +26,30 @@ namespace DebtsCompass.DataAccess.Repositories
                 .AsNoTracking()
                 .ToPagedListAsync(pagedParameters.PageNumber, pagedParameters.PageSize);
         }
+
+        public async Task<Friendship> GetUsersFriendStatus(User userOne, User userTwo)
+        {
+            var friendshipFromDb = await dbContext.Friendships
+                .Where(f => f.UserOneId.Equals(userOne.Id) && f.UserTwoId.Equals(userTwo.Id)).FirstOrDefaultAsync();
+
+            return friendshipFromDb;
+
+        }
+
+        public async Task Add(Friendship friendship)
+        {
+            if (friendship is null)
+            {
+                throw new ArgumentNullException(nameof(friendship));
+            }
+            await dbContext.Friendships.AddAsync(friendship);
+            await dbContext.SaveChangesAsync();
+        }
+
+        public async Task Delete(Friendship friendship)
+        {
+            dbContext.Friendships.Remove(friendship);
+            await dbContext.SaveChangesAsync();
+        }
     }
 }

@@ -71,8 +71,13 @@ namespace DebtsCompass
                     break;
 
                 case EmailAlreadyConfirmedException:
-
                     statusCode = HttpStatusCode.Gone;
+                    message = ex.Message;
+                    logger.LogError(message);
+                    break;
+
+                case EntityNotFoundException:
+                    statusCode = HttpStatusCode.NoContent;
                     message = ex.Message;
                     logger.LogError(message);
                     break;

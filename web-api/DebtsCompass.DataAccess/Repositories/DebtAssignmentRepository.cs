@@ -67,5 +67,24 @@ namespace DebtsCompass.DataAccess.Repositories
             dbContext.DebtAssignments.UpdateRange(debtAssignments);
             await dbContext.SaveChangesAsync();
         }
+
+        public async Task<DebtAssignment> GetDebtById(string id)
+        {
+            var debtAssignmentFromDb = await dbContext.DebtAssignments.Where(d => d.Id.ToString().Equals(id))
+                                                                      .Include(d => d.CreatorUser)
+                                                                      .ThenInclude(u => u.UserInfo)
+                                                                      .Include(d => d.SelectedUser)
+                                                                      .ThenInclude(u => u.UserInfo)
+                                                                      .Include(d => d.Debt)
+                                                                      .FirstOrDefaultAsync();
+
+            return debtAssignmentFromDb;
+        }
+
+        public async Task DeleteDebt(DebtAssignment debtAssignment)
+        {
+            dbContext.DebtAssignments.Remove(debtAssignment);
+            await dbContext.SaveChangesAsync();
+        }
     }
 }

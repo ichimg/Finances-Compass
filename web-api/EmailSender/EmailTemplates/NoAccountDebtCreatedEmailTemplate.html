@@ -25,11 +25,16 @@
         .title {
             font-size: 60px;
             color: #DC143C;
+			-ms-user-select: none;
+			-webkit-user-select: none;
+			user-select: none;
         }
 
         .content {
+            padding: 10px;
             margin: 0 auto;
             width: 80%;
+            box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
         }
 
         .redirect {
@@ -58,7 +63,6 @@
         <a href="http://localhost:4200/register" class="redirect">Sign up now</a>
         <p class="third-p">
             *If you think you received this e-mail by mistake, simply delete it.
-            You won't be subscribed if you don't click the confirmation link above.
         </p>
     </div>
 

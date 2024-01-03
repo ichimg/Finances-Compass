@@ -49,4 +49,14 @@ export class DebtsService {
       headers: headers,
     });
   }
+
+  deleteDebt(id: string) {
+    const email = localStorage.getItem('email');
+    const deleteDebtEndpoint = `${this.apiUrl}/delete-debt?id=${id}&email=${email}`;
+    const headers = new HttpHeaders({
+      'Content-Type': 'application/json'
+    });
+
+    return this.httpClient.delete<any>(deleteDebtEndpoint, {headers: headers});
+  }
 }

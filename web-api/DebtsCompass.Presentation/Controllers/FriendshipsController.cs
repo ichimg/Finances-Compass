@@ -1,7 +1,7 @@
 ﻿using DebtsCompass.Application.Exceptions;
-using DebtsCompass.Application.Services;
 using DebtsCompass.Domain;
 using DebtsCompass.Domain.Entities.DtoResponses;
+using DebtsCompass.Domain.Entities.Requests;
 using DebtsCompass.Domain.Interfaces;
 using DebtsCompass.Domain.Pagination;
 using Microsoft.AspNetCore.Authorization;
@@ -36,7 +36,7 @@ namespace DebtsCompass.Presentation.Controllers
                 throw new ForbiddenRequestException();
             }
 
-            var friends = await friendshipsService.GetUserFriendsByEmail(email, pagedParameters);
+            var friends = await friendshipsService.GetUserFriendsById(email, pagedParameters);
 
             var metadata = new
             {
@@ -58,6 +58,50 @@ namespace DebtsCompass.Presentation.Controllers
             };
 
             return Ok(response);
-        }    
+        }
+
+        [HttpPost]
+        [Route("add-friend")]
+        public async Task<ActionResult<object>> AddFriend([FromBody] FriendRequest friendRequest)
+        {
+            var userIdentity = User.Identity as ClaimsIdentity;
+            var userEmailClaim = userIdentity.FindFirst(ClaimTypes.Email)?.Value;
+
+            if (!string.Equals(userEmailClaim, friendRequest.RequesterUserEmail, StringComparison.OrdinalIgnoreCase))
+            {
+                throw new ForbiddenRequestException();
+            }
+
+            await friendshipsService.AddFriend(friendRequest);
+
+            return Ok(new Response<object>
+            {
+                Message = null,
+                Payload = null,
+                StatusCode = HttpStatusCode.OK
+            });
+        }
+
+        [HttpDelete]
+        [Route("cancel-friend")]
+        public async Task<ActionResult<object>> CancelFriend([FromBody] DeleteFriendRequest deleteFriendRequest)
+        {
+            var userIdentity = User.Identity as ClaimsIdentity;
+            var userEmailClaim = userIdentity.FindFirst(ClaimTypes.Email)?.Value;
+
+            if (!string.Equals(userEmailClaim, deleteFriendRequest.RequesterUserEmail, StringComparison.OrdinalIgnoreCase))
+            {
+                throw new ForbiddenRequestException();
+            }
+
+            await friendshipsService.DeleteFriendRequest(deleteFriendRequest);
+
+            return Ok(new Response<object>
+            {
+                Message = null,
+                Payload = null,
+                StatusCode = HttpStatusCode.OK
+            });
+        }
     }
 }

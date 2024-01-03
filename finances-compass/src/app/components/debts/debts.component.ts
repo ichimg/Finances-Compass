@@ -5,15 +5,15 @@ import { MatTableDataSource } from '@angular/material/table';
 import { DebtsService } from '../../services/debts.service';
 import { MatDialog } from '@angular/material/dialog';
 import { AddDebtDialog } from 'src/app/dialogs/add-debt-dialog/add-debt.dialog';
-import { UsersService } from 'src/app/services/users.service';
 import { Debt } from 'src/app/entities/debt';
 import { ViewDebtDialog } from 'src/app/dialogs/view-debt-dialog/view-debt.dialog';
-
+import { NotificationService } from '../../services/notification.service';
+import { DeleteConfirmationDialog } from '../../dialogs/delete-confirmation-dialog/delete-confirmation.dialog';
 
 @Component({
   selector: 'app-debts',
   templateUrl: './debts.component.html',
-  styleUrls: ['./debts.component.css']
+  styleUrls: ['./debts.component.css'],
 })
 export class DebtsComponent implements OnInit, AfterViewInit {
   displayedReceivingColumns: string[] = [
@@ -34,7 +34,7 @@ export class DebtsComponent implements OnInit, AfterViewInit {
     private liveAnnouncer: LiveAnnouncer,
     private debtsService: DebtsService,
     private dialog: MatDialog,
-    private usersService: UsersService
+    private notificationService: NotificationService
   ) {}
   ngOnInit(): void {
     this.debtsService.getAllReceivingDebts().subscribe((response) => {
@@ -44,10 +44,15 @@ export class DebtsComponent implements OnInit, AfterViewInit {
       this.isReceivingDebtsLoaded = true;
     });
 
-    this.debtsService.getAllUserDebts().subscribe((response) => {
-      this.dataUserDebtsSource.data = response.payload;
-      this.isUserDebtsLoaded = true;
-    });
+    this.debtsService.getAllUserDebts().subscribe(
+      (response) => {
+        this.dataUserDebtsSource.data = response.payload;
+        this.isUserDebtsLoaded = true;
+      },
+      () => {
+        this.notificationService.showError('Something went wrong');
+      }
+    );
   }
 
   @ViewChild('debtReceivingTbSort') set debtReceivingTbSort(sort: MatSort) {
@@ -60,6 +65,7 @@ export class DebtsComponent implements OnInit, AfterViewInit {
   ngAfterViewInit() {}
 
   announceReceivingSortChange(sortState: Sort) {
+    console.log(sortState.direction);
     if (sortState.direction) {
       this.liveAnnouncer.announce(`Sorted ${sortState.direction} ending`);
     } else {
@@ -99,19 +105,29 @@ export class DebtsComponent implements OnInit, AfterViewInit {
   }
 
   onRowClick(debt: Debt) {
-    console.log(debt);
     const dialogRef = this.dialog.open(ViewDebtDialog, {
       width: '600px',
       data: { debt },
     });
   }
 
-  openEditDialog(event: Event): void {
+  openEditDialog(event: Event, debt: Debt): void {
     event.stopPropagation();
   }
 
-  deleteDebt(event: Event): void {
-
+  deleteDebt(event: Event, debt: Debt): void {
     event.stopPropagation();
+
+    const dialogRef = this.dialog
+      .open(DeleteConfirmationDialog, {
+        width: '600px',
+        data: { debt: debt, debtsList: this.dataReceivingDebtsSource.data },
+      })
+      .afterClosed()
+      .subscribe((response) => {
+        if (response) {
+          this.dataReceivingDebtsSource.data = response;
+        }
+      });
   }
 }

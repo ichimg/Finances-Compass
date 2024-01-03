@@ -35,4 +35,5 @@ p {
 
 .mat-icon-button:hover {
   cursor: pointer;
+  color: #DC143C;
 }

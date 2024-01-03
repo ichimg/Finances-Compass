@@ -6,6 +6,8 @@ namespace EmailSender
     public interface IEmailService
     {
         Task SendEmailConfirmationNotification(ReceiverInfoDto receiverInfoDto, string callback);
-        Task SendNoAccountDebtCreatedNotification(ReceiverInfoDto receiverInfoDto, CreatedDebtEmailInfoDto createdDebtEmailInfoDto);
+        Task SendNoAccountDebtCreatedNotification(ReceiverInfoDto receiverInfoDto, DebtEmailInfoDto createdDebtEmailInfoDto);
+        Task SendDebtCreatedNotification(ReceiverInfoDto receiverInfoDto, DebtEmailInfoDto createdDebtEmailInfoDto);
+        Task SendDebtDeletedNotification(ReceiverInfoDto receiverInfoDto, DebtEmailInfoDto createdDebtEmailInfoDto);
     }
 }

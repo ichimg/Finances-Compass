@@ -127,14 +127,14 @@
                       matTooltip="Edit"
                       matTooltipPosition="left"
                       class="edit-icon"
-                      (click)="openEditDialog($event)"
-                      >edit</mat-icon
+                      (click)="openEditDialog($event, element)"
+                      >border_color</mat-icon
                     >
                     <mat-icon
                       matTooltip="Delete"
                       matTooltipPosition="right"
                       class="delete-icon"
-                      (click)="deleteDebt($event)"
+                      (click)="deleteDebt($event, element)"
                       >delete_forever</mat-icon
                     >
                   </div>
@@ -192,7 +192,7 @@
               mat-table
               [dataSource]="dataUserDebtsSource"
               matSort
-              #debtTbSort="matSort"
+              #debtUserTbSort="matSort"
               (matSortChange)="announceUserSortChange($event)"
               class="mat-elevation-z8"
               *ngIf="areDebts()"

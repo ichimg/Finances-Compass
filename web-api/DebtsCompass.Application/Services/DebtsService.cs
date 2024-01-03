@@ -48,52 +48,68 @@ namespace DebtsCompass.Application.Services
             return debts;
         }
 
-        public async Task CreateDebt(CreateDebtRequest createDebtRequest, string creatorEmail)
+        public async Task<Guid> CreateDebt(CreateDebtRequest createDebtRequest, string creatorEmail)
         {
             User creatorUser = await userRepository.GetUserByEmail(creatorEmail) ?? throw new UserNotFoundException(creatorEmail);
             bool isUserAccount = await userRepository.GetUserByEmail(createDebtRequest.Email) != null;
 
-            switch (isUserAccount)
+            DebtAssignment debtAssignment;
+            if (isUserAccount)
             {
-                case true:
-                    {
-                        User selectedUser = await userRepository.GetUserByEmail(createDebtRequest.Email)
-                                            ?? throw new UserNotFoundException(createDebtRequest.Email);
 
-                        DebtAssignment debtAssignment = Mapper.CreateDebtRequestToDebtAssignment(createDebtRequest, creatorUser, selectedUser);
-                        await debtAssignmentRepository.CreateDebt(debtAssignment);
+                User selectedUser = await userRepository.GetUserByEmail(createDebtRequest.Email)
+                                    ?? throw new UserNotFoundException(createDebtRequest.Email);
 
-                        break;
-                    }
-                case false:
-                    {
-                        DebtAssignment debtAssignment;
-                        bool isFirstDebtAdded = false;
+                debtAssignment = Mapper.CreateDebtRequestToDebtAssignment(createDebtRequest, creatorUser, selectedUser);
+                await debtAssignmentRepository.CreateDebt(debtAssignment);
 
-                        NonUser selectedNonUser = await nonUserRepository.GetNonUserByEmail(createDebtRequest.Email);
-                        if (selectedNonUser is not null)
-                        {
-                            debtAssignment = Mapper.CreateDebtRequestToDebtAssignment(createDebtRequest, creatorUser, selectedNonUser);
-                        }
-                        else
-                        {
-                            debtAssignment = Mapper.CreateDebtRequestToDebtAssignment(createDebtRequest, creatorUser);
-                            isFirstDebtAdded = true;
-                        }
 
-                        await debtAssignmentRepository.CreateDebt(debtAssignment);
+                ReceiverInfoDto receiverInfoDto = Mapper.UserToReceiverInfoDto(debtAssignment.SelectedUser);
+                DebtEmailInfoDto createdDebtEmailInfoDto = Mapper.DebtAssignmentToCreatedDebtEmailInfoDto(debtAssignment);
+                await emailService.SendDebtCreatedNotification(receiverInfoDto, createdDebtEmailInfoDto);
 
-                        if (isFirstDebtAdded)
-                        {
-                            ReceiverInfoDto receiverInfoDto = Mapper.NonUserToReceiverInfoDto(debtAssignment.NonUser);
+            }
 
-                            CreatedDebtEmailInfoDto createdDebtEmailInfoDto = Mapper.UserToCreatedDebtEmailInfoDto(creatorUser);
+            else
+            {
 
-                            await emailService.SendNoAccountDebtCreatedNotification(receiverInfoDto, createdDebtEmailInfoDto);
-                        }
+                debtAssignment = Mapper.CreateDebtRequestToDebtAssignment(createDebtRequest, creatorUser);
+                await debtAssignmentRepository.CreateDebt(debtAssignment);
 
-                        break;
-                    }
+                ReceiverInfoDto receiverInfoDto = Mapper.NonUserToReceiverInfoDto(debtAssignment.NonUser);
+                DebtEmailInfoDto createdDebtEmailInfoDto = Mapper.UserToCreatedDebtEmailInfoDto(creatorUser);
+                await emailService.SendNoAccountDebtCreatedNotification(receiverInfoDto, createdDebtEmailInfoDto);
+            }
+
+
+            return debtAssignment.Id;
+        }
+
+        public async Task DeleteDebt(string id, string email)
+        {
+            var debtFromDb = await debtAssignmentRepository.GetDebtById(id);
+
+            if (debtFromDb is null)
+            {
+                throw new EntityNotFoundException();
+            }
+
+            if (!debtFromDb.CreatorUser.Email.Equals(email))
+            {
+                throw new ForbiddenRequestException();
+            }
+
+            if (debtFromDb.SelectedUser is not null)
+            {
+                ReceiverInfoDto receiverInfoDto = Mapper.UserToReceiverInfoDto(debtFromDb.SelectedUser);
+                DebtEmailInfoDto deletedDebtEmailInfoDto = Mapper.DebtAssignmentToCreatedDebtEmailInfoDto(debtFromDb);
+
+                await debtAssignmentRepository.DeleteDebt(debtFromDb);
+                await emailService.SendDebtDeletedNotification(receiverInfoDto, deletedDebtEmailInfoDto);
+            }
+            else
+            {
+                await debtAssignmentRepository.DeleteDebt(debtFromDb);
             }
         }
     }

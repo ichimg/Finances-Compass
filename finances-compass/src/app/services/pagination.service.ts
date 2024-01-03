@@ -1,6 +1,5 @@
 import { Injectable } from '@angular/core';
 import { PaginationModel } from '../entities/pagination.model';
-import { PageEvent } from '@angular/material/paginator';
 
 @Injectable()
 export class PaginationService {

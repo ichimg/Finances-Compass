@@ -1,12 +1,12 @@
 import { UsersService } from './../../services/users.service';
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { DebtsService } from '../../services/debts.service';
-import { SidebarService } from 'src/app/services/sidebar.service';
 import { MatSidenav } from '@angular/material/sidenav';
-import { UserModel } from 'src/app/entities/user-friend.model';
 import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
 import { MatDialog } from '@angular/material/dialog';
-import { SearchUsersDialog } from 'src/app/dialogs/search-users/search-users.dialog';
+import { UserModel } from '../../entities/user-friend.model';
+import { SearchUsersDialog } from '../../dialogs/search-users/search-users.dialog';
+import { SidebarService } from '../../services/sidebar.service';
 
 @Component({
   selector: 'app-layout',

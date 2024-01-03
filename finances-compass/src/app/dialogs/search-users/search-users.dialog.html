@@ -1,8 +1,20 @@
-<div>
+<div class="container">
   <mat-card appInfiniteScroll (scrolled)="loadMoreUsers()">
+    <mat-card-header class="spaced">
+      <mat-card-title class="title">Search users</mat-card-title>
+      <mat-icon color="warn" class="close-btn" (click)="closeDialog()"
+        >cancel</mat-icon
+      >
+    </mat-card-header>
+    <mat-divider></mat-divider>
     <mat-form-field>
       <mat-label>Enter name or username </mat-label>
-      <input #searchInput matInput (input)="onSearchInputChange($event)" (keyup.enter)="searchUsers(searchInput.value)"/>
+      <input
+        #searchInput
+        matInput
+        (input)="onSearchInputChange($event)"
+        (keyup.enter)="searchUsers(searchInput.value)"
+      />
       <button
         mat-icon-button
         matSuffix
@@ -12,13 +24,24 @@
       </button>
     </mat-form-field>
     <mat-card-content>
-      <mat-nav-list *ngFor="let user of users">
+      <mat-nav-list *ngFor="let user of searchedUsers">
         <div class="item">
-        <mat-list-item class="item"> {{ user.username }} </mat-list-item>
-        <button color="primary" mat-icon-button (click)="addFriend(user)">	<mat-icon>person_add</mat-icon></button>
-      </div>
+          <mat-list-item class="item">
+            {{ user.userDetails.username }}
+          </mat-list-item>
+          <button
+            [style.color]="user.iconColor"
+            mat-icon-button
+            (click)="addFriend(user)"
+            [disabled]="user.isButtonDisabled"
+          >
+            <mat-icon>{{user.iconName}}</mat-icon>
+          </button>
+        </div>
       </mat-nav-list>
-      <p class="not-found" *ngIf="users != null && users.length === 0">No users found</p>
+      <p class="not-found" *ngIf="users != null && users.length === 0">
+        No users found
+      </p>
     </mat-card-content>
   </mat-card>
 </div>

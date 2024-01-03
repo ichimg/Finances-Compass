@@ -1,8 +1,11 @@
-
-
 .search {
   display: flex;
   gap: 10px;
+}
+
+.close-btn:hover {
+  cursor: pointer;
+  color: crimson;
 }
 
 mat-card {
@@ -12,6 +15,18 @@ mat-card {
   max-height: 90vh;
   height: 600px;
   width: 400px;
+}
+
+.mat-green {
+  color: forestgreen !important;
+}
+
+.mat-navy {
+  color: navy !important;
+}
+
+.mat-red {
+  color: crimson !important;
 }
 
 .item {
@@ -29,4 +44,16 @@ mat-card {
   font-family: "Trebuchet MS", "Lucida Sans Unicode", "Lucida Grande",
     "Lucida Sans", Arial, sans-serif;
   font-style: italic;
+}
+
+.spaced {
+  padding: 10px;
+  display: flex;
+  justify-content: space-between;
+}
+
+.title {
+  margin-bottom: 10px;
+  font-family: "Trebuchet MS", "Lucida Sans Unicode", "Lucida Grande",
+    "Lucida Sans", Arial, sans-serif;
 }

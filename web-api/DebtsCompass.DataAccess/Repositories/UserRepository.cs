@@ -59,9 +59,10 @@ namespace DebtsCompass.DataAccess.Repositories
             return await dbContext.Users
             .Include(u => u.UserInfo)
             .ThenInclude(u => u.Address)
-            .Where(u => u.UserName.ToUpper().Contains(query.ToUpper())
-                      || u.UserInfo.FirstName.ToUpper().Contains(query.ToUpper())
-                      || u.UserInfo.LastName.ToUpper().Contains(query.ToUpper()))
+            .Where(u => u.UserName.ToUpper() != currentUser.UserName.ToUpper() 
+                        && u.UserName.ToUpper().Contains(query.ToUpper())
+                        || u.UserInfo.FirstName.ToUpper().Contains(query.ToUpper())
+                        || u.UserInfo.LastName.ToUpper().Contains(query.ToUpper()))
             .OrderBy(u => u.UserInfo.Address.City == currentUser.UserInfo.Address.City ? 0 : 1) 
             .ThenBy(u => u.UserInfo.Address.County == currentUser.UserInfo.Address.County ? 0 : 1) 
             .ThenBy(u => u.UserInfo.Address.Country == currentUser.UserInfo.Address.Country ? 0 : 1) 

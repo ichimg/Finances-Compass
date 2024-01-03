@@ -1,4 +1,5 @@
 export interface Debt {
+    guid: string;
     firstName: string;
     lastName: string;
     username: string;

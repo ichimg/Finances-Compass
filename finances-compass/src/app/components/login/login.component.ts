@@ -84,7 +84,7 @@ export class LoginComponent implements OnInit {
               break;
           }
         },
-        (error) => {
+        () => {
           this.notificationService.showError('Something went wrong');
         }
       );

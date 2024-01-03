@@ -1,5 +1,4 @@
 ﻿using DebtsCompass.Application.Exceptions;
-using DebtsCompass.Application.Services;
 using DebtsCompass.Domain;
 using DebtsCompass.Domain.Entities.DtoResponses;
 using DebtsCompass.Domain.Interfaces;

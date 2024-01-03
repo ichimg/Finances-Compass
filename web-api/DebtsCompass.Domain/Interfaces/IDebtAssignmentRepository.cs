@@ -9,5 +9,7 @@ namespace DebtsCompass.Domain.Interfaces
         Task CreateDebt(DebtAssignment debtAssignment);
         Task<List<DebtAssignment>> GetAllNonUserDebtsByEmail(string email);
         Task UpdateRange(IEnumerable<DebtAssignment> debtAssignments);
+        Task<DebtAssignment> GetDebtById(string id);
+        Task DeleteDebt(DebtAssignment debtAssignment);
     }
 }

@@ -12,6 +12,7 @@ th.mat-sort-header-sorted {
   font-weight: lighter;
 }
 
+
 .text-img {
   display: flex;
   align-items: center;
@@ -25,7 +26,7 @@ th.mat-sort-header-sorted {
 
 .action-icons {
   display: flex;
-  gap: 5px;
+  gap: 10px;
 }
 
 .edit-icon {

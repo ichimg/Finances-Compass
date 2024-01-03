@@ -14,6 +14,7 @@ namespace DebtsCompass.Domain
         {
             return new DebtDto
             {
+                Guid = debtAssignment.Id.ToString(),
                 FirstName = debtAssignment.SelectedUser != null ?
                 debtAssignment.SelectedUser.UserInfo.FirstName :
                 debtAssignment.NonUser.PersonFirstName,
@@ -38,6 +39,7 @@ namespace DebtsCompass.Domain
         {
             return new DebtDto
             {
+                Guid = debtAssignment.Id.ToString(),
                 FirstName = debtAssignment.CreatorUser.UserInfo.FirstName,
                 LastName = debtAssignment.CreatorUser.UserInfo.LastName,
                 Username = debtAssignment.CreatorUser.UserName,
@@ -95,14 +97,15 @@ namespace DebtsCompass.Domain
             };
         }
 
-        public static UserDto UserToUserDto(User user)
+        public static UserDto UserToUserDto(User user, Status friendStatus)
         {
             return new UserDto
             {
                 FirstName = user.UserInfo.FirstName,
                 LastName = user.UserInfo.LastName,
                 Username = user.UserName,
-                Email = user.Email
+                Email = user.Email,
+                FriendStatus = friendStatus.ToString()
             };
         }
 
@@ -186,12 +189,35 @@ namespace DebtsCompass.Domain
             }
         }
 
-        public static CreatedDebtEmailInfoDto UserToCreatedDebtEmailInfoDto(User user)
+        public static DebtEmailInfoDto UserToCreatedDebtEmailInfoDto(User user)
         {
-            return new CreatedDebtEmailInfoDto
+            return new DebtEmailInfoDto
             {
                 CreatorFirstName = user.UserInfo.FirstName,
                 CreatorLastName = user.UserInfo.LastName
+            };
+        }
+
+        public static DebtEmailInfoDto DebtAssignmentToCreatedDebtEmailInfoDto(DebtAssignment debtAssignment)
+        {
+            return new DebtEmailInfoDto
+            {
+                CreatorFirstName = debtAssignment.CreatorUser.UserInfo.FirstName,
+                CreatorLastName = debtAssignment.CreatorUser.UserInfo.LastName,
+                Amount = debtAssignment.Debt.Amount.ToString(),
+                Currency = "RON", // for now hardcoded..
+                DateOfBorrowing = debtAssignment.Debt.DateOfBorrowing.ToString("dd MMM yyyy"),
+                Deadline = debtAssignment.Debt.DeadlineDate.ToString("dd MMM yyyy")
+            };
+        }
+
+        public static Friendship FriendRequestToFriendship(FriendRequest friendRequest, User userOne, User userTwo)
+        {
+            return new Friendship
+            {
+                UserOne = userOne,
+                UserTwo = userTwo,
+                Status = Enum.Parse<Status>(friendRequest.Status)
             };
         }
     }

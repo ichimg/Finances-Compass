@@ -1,6 +1,7 @@
 ﻿using DebtsCompass.Application.Exceptions;
 using DebtsCompass.Domain;
 using DebtsCompass.Domain.Entities.DtoResponses;
+using DebtsCompass.Domain.Entities.Models;
 using DebtsCompass.Domain.Entities.Requests;
 using DebtsCompass.Domain.Interfaces;
 using Microsoft.AspNetCore.Authorization;
@@ -25,10 +26,7 @@ namespace DebtsCompass.Presentation.Controllers
         [Authorize]
         public async Task<ActionResult<List<DebtDto>>> GetReceivingDebts([FromHeader] string email)
         {
-            var userIdentity = User.Identity as ClaimsIdentity;
-            var userEmailClaim = userIdentity.FindFirst(ClaimTypes.Email)?.Value;
-
-            if (!string.Equals(userEmailClaim, email, StringComparison.OrdinalIgnoreCase))
+            if (!IsRequestFromValidUser(email))
             {
                 throw new ForbiddenRequestException();
             }
@@ -50,10 +48,7 @@ namespace DebtsCompass.Presentation.Controllers
         [Authorize]
         public async Task<ActionResult<List<DebtDto>>> GetUserDebts([FromHeader] string email)
         {
-            var userIdentity = User.Identity as ClaimsIdentity;
-            var userEmailClaim = userIdentity.FindFirst(ClaimTypes.Email)?.Value;
-
-            if (!string.Equals(userEmailClaim, email, StringComparison.OrdinalIgnoreCase))
+            if (!IsRequestFromValidUser(email))
             {
                 throw new ForbiddenRequestException();
             }
@@ -76,14 +71,46 @@ namespace DebtsCompass.Presentation.Controllers
         public async Task<ActionResult<object>> CreateDebt([FromBody] CreateDebtRequest createDebtRequest,
             [FromQuery(Name = "email")] string email)
         {
-            await debtsService.CreateDebt(createDebtRequest, email);
+            if (!IsRequestFromValidUser(email))
+            {
+                throw new ForbiddenRequestException();
+            }
+
+            Guid createdDebtId = await debtsService.CreateDebt(createDebtRequest, email);
+
+            return Ok(new Response<object>
+            {
+                Message = null,
+                Payload = createdDebtId,
+                StatusCode = HttpStatusCode.Created
+            });
+        }
+
+        [HttpDelete]
+        [Route("delete-debt")]
+        public async Task<ActionResult<object>> DeleteDebt([FromQuery] string id, [FromQuery] string email) 
+        {
+            if(!IsRequestFromValidUser(email))
+            {
+                throw new ForbiddenRequestException();
+            }
+
+            await debtsService.DeleteDebt(id, email);
 
             return Ok(new Response<object>
             {
                 Message = null,
                 Payload = null,
-                StatusCode = HttpStatusCode.Created
+                StatusCode = HttpStatusCode.OK
             });
+        }
+
+        private bool IsRequestFromValidUser(string email)
+        {
+            var userIdentity = User.Identity as ClaimsIdentity;
+            var userEmailClaim = userIdentity.FindFirst(ClaimTypes.Email)?.Value;
+
+            return string.Equals(userEmailClaim, email, StringComparison.OrdinalIgnoreCase);
         }
     }
 }

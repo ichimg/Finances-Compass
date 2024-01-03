@@ -1,5 +1,6 @@
+import { DeleteConfirmationDialog } from './dialogs/delete-confirmation-dialog/delete-confirmation.dialog';
 import { NgModule } from '@angular/core';
-import { BrowserModule } from '@angular/platform-browser';
+import { BrowserModule, Title } from '@angular/platform-browser';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
@@ -75,6 +76,7 @@ const OPTIONS = {
     SearchUsersDialog,
     InfiniteScrollDirective,
     FooterComponent,
+    DeleteConfirmationDialog,
   ],
   imports: [
     BrowserModule,
@@ -124,7 +126,8 @@ const OPTIONS = {
       provide: MAT_FORM_FIELD_DEFAULT_OPTIONS,
       useValue: { OPTIONS },
     },
-    UsersService
+    UsersService,
+    Title
   ],
   bootstrap: [AppComponent],
 })

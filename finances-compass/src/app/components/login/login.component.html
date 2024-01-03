@@ -1,73 +1,73 @@
 <body>
   <app-header></app-header>
-    <div class="center-container">
-      <form (ngSubmit)="onSubmitLogin()" #loginForm="ngForm" class="login-form">
-        <div class="form-group">
-          <mat-form-field appearance="fill">
-            <mat-label>E-mail:</mat-label>
-            <input
-              type="text"
-              id="email"
-              name="email"
-              placeholder="Enter your e-mail"
-              [(ngModel)]="loginData.email"
-              required
-              matInput
-              [formControl]="emailFormControl"
-              [errorStateMatcher]="emailMatcher"
-            />
-            <mat-error
-              *ngIf="
-                emailFormControl.hasError('email') &&
-                !emailFormControl.hasError('required')
-              "
-            >
-              Please enter a valid email address</mat-error
-            >
-            <mat-error *ngIf="emailFormControl.hasError('required')">
-              E-mail is <strong>required</strong></mat-error
-            >
-            <mat-icon matSuffix></mat-icon>
-          </mat-form-field>
-        </div>
+  <div class="center-container">
+    <form (ngSubmit)="onSubmitLogin()" #loginForm="ngForm" class="login-form">
+      <div class="form-group">
+        <mat-form-field appearance="fill">
+          <mat-label>E-mail:</mat-label>
+          <input
+            type="text"
+            id="email"
+            name="email"
+            placeholder="Enter your e-mail"
+            [(ngModel)]="loginData.email"
+            required
+            matInput
+            [formControl]="emailFormControl"
+            [errorStateMatcher]="emailMatcher"
+          />
+          <mat-error
+            *ngIf="
+              emailFormControl.hasError('email') &&
+              !emailFormControl.hasError('required')
+            "
+          >
+            Please enter a valid email address</mat-error
+          >
+          <mat-error *ngIf="emailFormControl.hasError('required')">
+            E-mail is <strong>required</strong></mat-error
+          >
+          <mat-icon matSuffix></mat-icon>
+        </mat-form-field>
+      </div>
 
-        <div class="form-group">
-          <mat-form-field appearance="fill">
-            <mat-label>Password:</mat-label>
-            <input
-              type="{{ hidePassword ? 'password' : 'text' }}"
-              id="password"
-              name="password"
-              placeholder="Enter your password"
-              [(ngModel)]="loginData.password"
-              required
-              matInput
-              [formControl]="passwordFormControl"
-            />
+      <div class="form-group">
+        <mat-form-field appearance="fill">
+          <mat-label>Password:</mat-label>
+          <input
+            type="{{ hidePassword ? 'password' : 'text' }}"
+            id="password"
+            name="password"
+            placeholder="Enter your password"
+            [(ngModel)]="loginData.password"
+            required
+            matInput
+            [formControl]="passwordFormControl"
+          />
 
-            <mat-error *ngIf="passwordFormControl.hasError('required')"
-              >Password is <strong>required</strong></mat-error
-            >
-            <mat-icon
-              class="mat-icon-button"
-              matSuffix
-              (click)="togglePasswordVisibility()"
-            >
-              {{ hidePassword ? "visibility_off" : "visibility" }}
-            </mat-icon>
-          </mat-form-field>
-        </div>
+          <mat-error *ngIf="passwordFormControl.hasError('required')"
+            >Password is <strong>required</strong></mat-error
+          >
+          <mat-icon
+            class="mat-icon-button"
+            matSuffix
+            (click)="togglePasswordVisibility()"
+          >
+            {{ hidePassword ? "visibility" : "visibility_off" }}
+          </mat-icon>
+        </mat-form-field>
+      </div>
 
-        <button
-          mat-raised-button
-          color="accent"
-          type="submit"
-          [disabled]="emailFormControl.invalid || passwordFormControl.invalid"
-          (keyup.enter)="onSubmitLogin()"
-        >
-          Login
-        </button>
-      </form>
-    </div>
+      <button
+        mat-raised-button
+        color="accent"
+        type="submit"
+        [disabled]="emailFormControl.invalid || passwordFormControl.invalid"
+        (keyup.enter)="onSubmitLogin()"
+      >
+        Login
+      </button>
+    </form>
+  </div>
   <p>Don't have an account? <a routerLink="/register">Sign up here</a></p>
 </body>

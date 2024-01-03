@@ -1,20 +1,26 @@
 ﻿using DebtsCompass.Domain.Entities.Dtos;
 using DebtsCompass.Domain.Entities.EmailDtos;
+using MailKit;
 using MailKit.Net.Smtp;
 using MimeKit;
 using MimeKit.Text;
+using Org.BouncyCastle.Asn1.Pkcs;
+using System.Runtime;
 
 namespace EmailSender
 {
     public class EmailService : IEmailService
     {
         private readonly EmailConfiguration emailConfiguration;
+        private readonly EmailTemplatesService emailTemplatesService;
         private readonly InternetAddress internetAddress;
 
-        public EmailService(EmailConfiguration emailConfiguration)
+        public EmailService(EmailConfiguration emailConfiguration, EmailTemplatesService emailTemplatesService)
         {
             this.emailConfiguration = emailConfiguration;
+            this.emailTemplatesService = emailTemplatesService;
             internetAddress = MailboxAddress.Parse(emailConfiguration.From);
+            internetAddress.Name = "Finances Compass";
         }
 
         private async Task SendEmail(ReceiverInfoDto receiverInfoDto, string htmlEmailBody, string subject)
@@ -40,35 +46,27 @@ namespace EmailSender
 
         public async Task SendEmailConfirmationNotification(ReceiverInfoDto receiverInfoDto, string callback)
         {
-            string html = GetEmailConfirmationHtml(callback);
+            string html = emailTemplatesService.GetEmailConfirmationHtml(callback);
             await SendEmail(receiverInfoDto, html, "E-mail confirmation");
         }
 
-        public async Task SendNoAccountDebtCreatedNotification(ReceiverInfoDto receiverInfoDto, CreatedDebtEmailInfoDto createdDebtEmailInfoDto)
+        public async Task SendNoAccountDebtCreatedNotification(ReceiverInfoDto receiverInfoDto, DebtEmailInfoDto createdDebtEmailInfoDto)
         {
-            string html = GetNoAccountDebtCreatedHtml(createdDebtEmailInfoDto);
-            await SendEmail(receiverInfoDto, html, "Join Finances Compass to see what you owe to your friends!");
+            string html = emailTemplatesService.GetNoAccountDebtCreatedHtml(createdDebtEmailInfoDto);
+            await SendEmail(receiverInfoDto, html, "Join Finances Compass to see what you owe to your friends");
         }
 
-        private string ReadHtmlTemplate(string templatePath)
+        public async Task SendDebtCreatedNotification(ReceiverInfoDto receiverInfoDto, DebtEmailInfoDto createdDebtEmailInfoDto)
         {
-            string emailTemplatesFolderPath = EmailConfiguration.GetEmailTemplatesFolderPath();
-            string templateFullPath = $@"{emailTemplatesFolderPath}\{templatePath}";
-            return File.ReadAllText(templateFullPath);
+            string html = emailTemplatesService.GetDebtCreatedHtml(createdDebtEmailInfoDto);
+            await SendEmail(receiverInfoDto, html, "Check new debt added");
         }
 
-        private string GetEmailConfirmationHtml(string callback)
+        public async Task SendDebtDeletedNotification(ReceiverInfoDto receiverInfoDto, DebtEmailInfoDto createdDebtEmailInfoDto)
         {
-            string html = ReadHtmlTemplate(@"EmailConfirmationEmailTemplate.html");
-            html = html.Replace("{link}", callback);
-            return html;
+            string html = emailTemplatesService.GetDebtDeletedHtml(createdDebtEmailInfoDto);
+            await SendEmail(receiverInfoDto, html, "A debt just got deleted");
         }
 
-        private string GetNoAccountDebtCreatedHtml(CreatedDebtEmailInfoDto createdDebtEmailInfoDto)
-        {
-            string html = ReadHtmlTemplate(@"NoAccountDebtCreatedEmailTemplate.html");
-            html = html.Replace("{creatorName}", $"{createdDebtEmailInfoDto.CreatorFirstName} {createdDebtEmailInfoDto.CreatorLastName}");
-            return html;
-        }
     }
 }

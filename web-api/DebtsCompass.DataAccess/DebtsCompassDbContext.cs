@@ -45,7 +45,7 @@ namespace DebtsCompass.DataAccess
                 .HasOne(da => da.Debt)
                 .WithMany(d => d.DebtAssignments)
                 .HasForeignKey(da => da.DebtId)
-                .OnDelete(DeleteBehavior.NoAction);
+                .OnDelete(DeleteBehavior.Cascade);
 
             modelBuilder.Entity<Friendship>().HasKey(f => new { f.UserOneId, f.UserTwoId });
 

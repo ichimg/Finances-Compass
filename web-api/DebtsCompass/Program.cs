@@ -99,7 +99,8 @@ builder.Services.AddScoped<INonUserRepository, NonUserRepository> ();
 // Email
 var emailConfig = builder.Configuration.GetSection("EmailConfiguration").Get<EmailConfiguration>();
 builder.Services.AddSingleton(emailConfig);
-builder.Services.AddScoped<IEmailService, EmailService>();  
+builder.Services.AddScoped<IEmailService, EmailService>();
+builder.Services.AddScoped<EmailTemplatesService>();
 
 
 //Allow CORS

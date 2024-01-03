@@ -162,6 +162,8 @@ export class AddDebtDialog implements OnInit {
         .subscribe((response) => {
           switch (response.statusCode) {
             case 201:
+              console.log(response.payload);
+              createUserDebtRequest.guid = response.payload;
               this.debts.push(createUserDebtRequest);
               this.notificationService.showSuccess('Debt added successfully!');
               this.closeDialog();
