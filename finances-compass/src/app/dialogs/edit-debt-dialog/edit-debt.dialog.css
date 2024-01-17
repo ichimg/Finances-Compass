@@ -6,10 +6,6 @@
   align-items: flex;
 }
 
-.hide {
-  display: none;
-}
-
 .btn {
   display: flex;
   justify-content: end;

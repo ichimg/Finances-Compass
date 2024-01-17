@@ -9,5 +9,8 @@ namespace DebtsCompass.Domain.Interfaces
         Task<List<DebtDto>> GetAllUserDebts(string email);
         Task<Guid> CreateDebt(CreateDebtRequest createDebtRequest, string creatorEmail);
         Task DeleteDebt(string id, string email);
+        Task EditDebt(EditDebtRequest editDebtRequest, string email);
+        Task ApproveDebt(string debtId, string email);
+        Task RejectDebt(string debtId, string email);
     }
 }

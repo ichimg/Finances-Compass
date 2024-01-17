@@ -1,7 +1,6 @@
 ﻿using DebtsCompass.Application.Exceptions;
 using DebtsCompass.Domain;
 using DebtsCompass.Domain.Entities.DtoResponses;
-using DebtsCompass.Domain.Entities.Models;
 using DebtsCompass.Domain.Entities.Requests;
 using DebtsCompass.Domain.Interfaces;
 using Microsoft.AspNetCore.Authorization;
@@ -88,9 +87,9 @@ namespace DebtsCompass.Presentation.Controllers
 
         [HttpDelete]
         [Route("delete-debt")]
-        public async Task<ActionResult<object>> DeleteDebt([FromQuery] string id, [FromQuery] string email) 
+        public async Task<ActionResult<object>> DeleteDebt([FromQuery] string id, [FromQuery] string email)
         {
-            if(!IsRequestFromValidUser(email))
+            if (!IsRequestFromValidUser(email))
             {
                 throw new ForbiddenRequestException();
             }
@@ -104,6 +103,66 @@ namespace DebtsCompass.Presentation.Controllers
                 StatusCode = HttpStatusCode.OK
             });
         }
+
+        [HttpPut]
+        [Route("edit-debt")]
+        public async Task<ActionResult<object>> EditDebt([FromBody] EditDebtRequest editDebtRequest, [FromQuery(Name = "email")] string email)
+        {
+            if (!IsRequestFromValidUser(email))
+            {
+                throw new ForbiddenRequestException();
+            }
+
+            await debtsService.EditDebt(editDebtRequest, email);
+
+            return Ok(new Response<object>
+            {
+                Message = null,
+                Payload = null,
+                StatusCode = HttpStatusCode.OK
+            });
+        }
+
+        [HttpPut]
+        [Route("approve-debt")]
+        [Authorize]
+        public async Task<ActionResult<object>> ApproveDebt([FromQuery] string debtId, [FromQuery(Name = "email")] string email)
+        {
+            if (!IsRequestFromValidUser(email))
+            {
+                throw new ForbiddenRequestException();
+            }
+
+            await debtsService.ApproveDebt(debtId, email);
+
+            return Ok(new Response<object>
+            {
+                Message = null,
+                Payload = null,
+                StatusCode = HttpStatusCode.OK
+            });
+        }
+
+        [HttpPut]
+        [Route("reject-debt")]
+        [Authorize]
+        public async Task<ActionResult<object>> RejectDebt([FromQuery] string debtId, [FromQuery(Name = "email")] string email)
+        {
+            if (!IsRequestFromValidUser(email))
+            {
+                throw new ForbiddenRequestException();
+            }
+
+            await debtsService.RejectDebt(debtId, email);
+
+            return Ok(new Response<object>
+            {
+                Message = null,
+                Payload = null,
+                StatusCode = HttpStatusCode.OK
+            });
+        }
+
 
         private bool IsRequestFromValidUser(string email)
         {

@@ -11,6 +11,7 @@ using DebtsCompass.Domain.Entities.Requests;
 using Microsoft.AspNetCore.WebUtilities;
 using DebtsCompass.Domain.Entities.Dtos;
 using EmailSender;
+using Microsoft.AspNetCore.Authorization;
 
 namespace DebtsCompass.Presentation.Controllers
 {
@@ -82,6 +83,7 @@ namespace DebtsCompass.Presentation.Controllers
         }
 
         [HttpPost]
+        [Authorize]
         [Route("refresh-token")]
         public async Task<ActionResult<Response<RefreshTokenResponse>>> RefreshToken(RefreshTokenRequest refreshTokenRequest)
         {

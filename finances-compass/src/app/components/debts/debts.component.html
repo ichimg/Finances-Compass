@@ -1,182 +1,166 @@
 <div class="container">
-    <div>
-      <mat-card class="border">
-        <div class="flex">
-          <div class="btn-items">
-            <div class="text-img" *ngIf="areDebtsToReceive()">
-              <div class="image">
-                <img
-                  src="../../assets/images/money-note-icon.png"
-                  alt=""
-                  width="30"
-                  height="20"
-                />
-              </div>
-              <div class="text">
-                <h2 class="to-be-collected">Debts to be collected:</h2>
-              </div>
-            </div>
-            <div
-              class="text-img"
-              *ngIf="!areDebtsToReceive() && isReceivingDebtsLoaded"
-            >
+  <div>
+    <mat-card class="border">
+      <div class="flex">
+        <div class="btn-items">
+          <div class="text-img" *ngIf="areDebtsToReceive()">
+            <div class="image">
               <img
                 src="../../assets/images/money-note-icon.png"
                 alt=""
                 width="30"
                 height="20"
               />
-              <h3 class="to-be-collected">
-                You don't have any debts to be collected.
-              </h3>
-            </div>
-            <div class="add-btn" *ngIf="isReceivingDebtsLoaded">
-              <button
-                mat-raised-button
-                color="primary"
-                (click)="addDebt()"
-              >
-                <mat-icon>add_circle_outline</mat-icon>Add Debt
-              </button>
-            </div>
-          </div>
-
-          <div class="table-size">
-            <table
-              mat-table
-              [dataSource]="dataReceivingDebtsSource"
-              matSort
-              #debtReceivingTbSort="matSort"
-              (matSortChange)="announceReceivingSortChange($event)"
-              class="mat-elevation-z8"
-              *ngIf="areDebtsToReceive()"
-            >
-              <ng-container matColumnDef="name">
-                <th
-                  mat-header-cell
-                  *matHeaderCellDef
-                  mat-sort-header
-                  sortActionDescription="Sort by name"
-                >
-                  Name
-                </th>
-                <td mat-cell *matCellDef="let element">
-                  {{ element.firstName }} {{element.lastName}}
-                </td>
-              </ng-container>
-
-              <ng-container matColumnDef="amount">
-                <th
-                  mat-header-cell
-                  *matHeaderCellDef
-                  mat-sort-header
-                  sortActionDescription="Sort by amount"
-                >
-                  Amount
-                </th>
-                <td mat-cell *matCellDef="let element">
-                  {{ element.amount + " RON" }}
-                </td>
-              </ng-container>
-              <ng-container matColumnDef="deadline">
-                <th
-                  mat-header-cell
-                  *matHeaderCellDef
-                  mat-sort-header
-                  sortActionDescription="Sort by deadline"
-                >
-                  Deadline
-                </th>
-                <td mat-cell *matCellDef="let element">
-                  {{ element.deadline | date : "dd MMM yyyy" }}
-                </td>
-              </ng-container>
-
-              <ng-container matColumnDef="reason">
-                <th
-                  mat-header-cell
-                  *matHeaderCellDef
-                  mat-sort-header
-                  sortActionDescription="Sort by reason"
-                >
-                  Reason
-                </th>
-                <td mat-cell *matCellDef="let element">
-                  {{ element.reason }}
-                </td>
-              </ng-container>
-              <ng-container matColumnDef="status">
-                <th
-                  mat-header-cell
-                  *matHeaderCellDef
-                  mat-sort-header
-                  sortActionDescription="Sort by status"
-                >
-                  Status
-                </th>
-                <td mat-cell *matCellDef="let element">
-                  {{ element.status | statusTransform }}
-                </td>
-              </ng-container>
-
-              <ng-container matColumnDef="action">
-                <th mat-header-cell *matHeaderCellDef>Action</th>
-                <td mat-cell *matCellDef="let element">
-                  <div class="action-icons">
-                    <mat-icon
-                      matTooltip="Edit"
-                      matTooltipPosition="left"
-                      class="edit-icon"
-                      (click)="openEditDialog($event, element)"
-                      >border_color</mat-icon
-                    >
-                    <mat-icon
-                      matTooltip="Delete"
-                      matTooltipPosition="right"
-                      class="delete-icon"
-                      (click)="deleteDebt($event, element)"
-                      >delete_forever</mat-icon
-                    >
-                  </div>
-                </td>
-              </ng-container>
-
-              <tr
-                mat-header-row
-                *matHeaderRowDef="displayedReceivingColumns"
-              ></tr>
-              <tr class="record"
-                mat-row
-                (click)="onRowClick(row)"
-                *matRowDef="let row; columns: displayedReceivingColumns"
-              ></tr>
-            </table>
-          </div>
-        </div>
-      </mat-card>
-    </div>
-
-    <div>
-      <mat-card class="border">
-        <div class="flex">
-          <div class="text-img" *ngIf="areDebts()">
-            <div class="image">
-              <img
-                src="../../assets/images/icons8-cash-in-hand-96.png"
-                alt=""
-                width="40"
-                height="40"
-                class="icon"
-              />
             </div>
             <div class="text">
-              <h2 class="to-be-collected">Your pending debts:</h2>
+              <h2 class="to-be-collected">Debts to be collected:</h2>
             </div>
           </div>
           <div
             class="text-img"
-            *ngIf="!areDebts() && isUserDebtsLoaded"
+            *ngIf="!areDebtsToReceive() && isReceivingDebtsLoaded"
           >
+            <img
+              src="../../assets/images/money-note-icon.png"
+              alt=""
+              width="30"
+              height="20"
+            />
+            <h3 class="to-be-collected">
+              You don't have any debts to be collected.
+            </h3>
+          </div>
+          <div class="add-btn" *ngIf="isReceivingDebtsLoaded">
+            <button mat-raised-button color="primary" (click)="addDebt()">
+              <mat-icon>add_circle_outline</mat-icon>Add Debt
+            </button>
+          </div>
+        </div>
+
+        <div class="table-size">
+          <table
+            mat-table
+            [dataSource]="dataReceivingDebtsSource"
+            matSort
+            #debtReceivingTbSort="matSort"
+            (matSortChange)="announceReceivingSortChange($event)"
+            class="mat-elevation-z8"
+            *ngIf="areDebtsToReceive()"
+          >
+            <ng-container matColumnDef="name">
+              <th
+                mat-header-cell
+                *matHeaderCellDef
+                mat-sort-header
+                sortActionDescription="Sort by name"
+              >
+                Name
+              </th>
+              <td mat-cell *matCellDef="let element" [ngClass]="element.status === 'Rejected' ?'rejected-debt' : ''">
+                {{ element.firstName }} {{ element.lastName }}
+              </td>
+            </ng-container>
+
+            <ng-container matColumnDef="amount">
+              <th
+                mat-header-cell
+                *matHeaderCellDef
+                mat-sort-header
+                sortActionDescription="Sort by amount"
+              >
+                Amount
+              </th>
+              <td mat-cell *matCellDef="let element" [ngClass]="element.status === 'Rejected' ?'rejected-debt' : ''">
+                {{ element.amount + " RON" }}
+              </td>
+            </ng-container>
+            <ng-container matColumnDef="deadline">
+              <th
+                mat-header-cell
+                *matHeaderCellDef
+                mat-sort-header
+                sortActionDescription="Sort by deadline"
+              >
+                Deadline
+              </th>
+              <td mat-cell *matCellDef="let element" [ngClass]="element.status === 'Rejected' ?'rejected-debt' : ''">
+                {{ element.deadline | date : "dd MMM yyyy" }}
+              </td>
+            </ng-container>
+
+            <ng-container matColumnDef="reason">
+              <th
+                mat-header-cell
+                *matHeaderCellDef
+                mat-sort-header
+                sortActionDescription="Sort by reason"
+              >
+                Reason
+              </th>
+              <td mat-cell *matCellDef="let element" [ngClass]="element.status === 'Rejected' ?'rejected-debt' : ''">
+                {{ element.reason }}
+              </td>
+            </ng-container>
+            <ng-container matColumnDef="status">
+              <th
+                mat-header-cell
+                *matHeaderCellDef
+                mat-sort-header
+                sortActionDescription="Sort by status"
+              >
+                Status
+              </th>
+              <td mat-cell *matCellDef="let element" [ngClass]="element.status === 'Rejected' ?'rejected-debt' : ''">
+                {{ element.status | statusTransform }}
+              </td>
+            </ng-container>
+
+            <ng-container matColumnDef="action">
+              <th mat-header-cell *matHeaderCellDef>Action</th>
+              <td mat-cell *matCellDef="let element" [ngClass]="element.status === 'Rejected' ?'rejected-debt' : ''">
+                <div class="action-icons">
+                  <mat-icon
+                    matTooltip="Click to edit"
+                    [matTooltipDisabled]="element.status !== 'Pending'"
+                    matTooltipPosition="left"
+                    [ngClass]="element.status === 'Pending' ? 'edit-icon' : 'edit-icon disabled'"
+                    (click)="element.status === 'Pending' &&  openEditDialog($event, element)"
+                    
+                    >border_color</mat-icon
+                  >
+                  <mat-icon
+                    matTooltip="Click to delete"
+                    [matTooltipDisabled]="element.status !== 'Pending'"
+                    matTooltipPosition="right"
+                    [ngClass]="element.status === 'Pending' ? 'delete-icon' : 'delete-icon disabled'"
+                    (click)="element.status === 'Pending' && deleteDebt($event, element)"
+                    >delete_forever</mat-icon
+                  >
+                </div>
+              </td>
+            </ng-container>
+
+            <tr
+              mat-header-row
+              *matHeaderRowDef="displayedReceivingColumns"
+            ></tr>
+            <tr
+              class="record"
+              mat-row
+              (click)="onRowClick(row)"
+              *matRowDef="let row; columns: displayedReceivingColumns"
+            ></tr>
+          </table>
+        </div>
+      </div>
+    </mat-card>
+  </div>
+
+  <div>
+    <mat-card class="border">
+      <div class="flex">
+        <div class="text-img" *ngIf="areDebts()">
+          <div class="image">
             <img
               src="../../assets/images/icons8-cash-in-hand-96.png"
               alt=""
@@ -184,104 +168,143 @@
               height="40"
               class="icon"
             />
-            <h3 class="to-be-collected">You don't have any debts.</h3>
           </div>
-
-          <div class="table-size">
-            <table
-              mat-table
-              [dataSource]="dataUserDebtsSource"
-              matSort
-              #debtUserTbSort="matSort"
-              (matSortChange)="announceUserSortChange($event)"
-              class="mat-elevation-z8"
-              *ngIf="areDebts()"
-            >
-              <ng-container matColumnDef="name">
-                <th
-                  mat-header-cell
-                  *matHeaderCellDef
-                  mat-sort-header
-                  sortActionDescription="Sort by name"
-                >
-                  Name
-                </th>
-                <td mat-cell *matCellDef="let element">
-                  {{ element.firstName }} {{element.lastName}}
-                </td>
-              </ng-container>
-
-              <ng-container matColumnDef="amount">
-                <th
-                  mat-header-cell
-                  *matHeaderCellDef
-                  mat-sort-header
-                  sortActionDescription="Sort by amount"
-                >
-                  Amount
-                </th>
-                <td mat-cell *matCellDef="let element">
-                  {{ element.amount + " RON" }}
-                </td>
-              </ng-container>
-              <ng-container matColumnDef="deadline">
-                <th
-                  mat-header-cell
-                  *matHeaderCellDef
-                  mat-sort-header
-                  sortActionDescription="Sort by deadline"
-                >
-                  Deadline
-                </th>
-                <td mat-cell *matCellDef="let element">
-                  {{ element.deadline | date : "dd MMM yyyy" }}
-                </td>
-              </ng-container>
-
-              <ng-container matColumnDef="reason">
-                <th
-                  mat-header-cell
-                  *matHeaderCellDef
-                  mat-sort-header
-                  sortActionDescription="Sort by reason"
-                >
-                  Reason
-                </th>
-                <td mat-cell *matCellDef="let element">
-                  {{ element.reason }}
-                </td>
-              </ng-container>
-              <ng-container matColumnDef="status">
-                <th
-                  mat-header-cell
-                  *matHeaderCellDef
-                  mat-sort-header
-                  sortActionDescription="Sort by status"
-                >
-                  Status
-                </th>
-                <td mat-cell *matCellDef="let element">
-                  {{ element.status }}
-                </td>
-              </ng-container>
-
-              <ng-container matColumnDef="action">
-                <th mat-header-cell *matHeaderCellDef>Action</th>
-                <td mat-cell *matCellDef="let element"></td
-              ></ng-container>
-
-              <tr
-                mat-header-row
-                *matHeaderRowDef="displayedReceivingColumns"
-              ></tr>
-              <tr class="record"
-                mat-row
-                (click)="onRowClick(row)"
-                *matRowDef="let row; columns: displayedReceivingColumns"
-              ></tr>
-            </table>
+          <div class="text">
+            <h2 class="to-be-collected">Your pending debts:</h2>
           </div>
         </div>
-      </mat-card>
-    </div>
+        <div class="text-img" *ngIf="!areDebts() && isUserDebtsLoaded">
+          <img
+            src="../../assets/images/icons8-cash-in-hand-96.png"
+            alt=""
+            width="40"
+            height="40"
+            class="icon"
+          />
+          <h3 class="to-be-collected">You don't have any debts.</h3>
+        </div>
+
+        <div class="table-size">
+          <table
+            mat-table
+            [dataSource]="dataUserDebtsSource"
+            matSort
+            #debtUserTbSort="matSort"
+            (matSortChange)="announceUserSortChange($event)"
+            class="mat-elevation-z8"
+            *ngIf="areDebts()"
+          >
+            <ng-container matColumnDef="name">
+              <th
+                mat-header-cell
+                *matHeaderCellDef
+                mat-sort-header
+                sortActionDescription="Sort by name"
+              >
+                Name
+              </th>
+              <td mat-cell *matCellDef="let element">
+                {{ element.firstName }} {{ element.lastName }}
+              </td>
+            </ng-container>
+
+            <ng-container matColumnDef="amount">
+              <th
+                mat-header-cell
+                *matHeaderCellDef
+                mat-sort-header
+                sortActionDescription="Sort by amount"
+              >
+                Amount
+              </th>
+              <td mat-cell *matCellDef="let element">
+                {{ element.amount + " RON" }}
+              </td>
+            </ng-container>
+            <ng-container matColumnDef="deadline">
+              <th
+                mat-header-cell
+                *matHeaderCellDef
+                mat-sort-header
+                sortActionDescription="Sort by deadline"
+              >
+                Deadline
+              </th>
+              <td mat-cell *matCellDef="let element">
+                {{ element.deadline | date : "dd MMM yyyy" }}
+              </td>
+            </ng-container>
+
+            <ng-container matColumnDef="reason">
+              <th
+                mat-header-cell
+                *matHeaderCellDef
+                mat-sort-header
+                sortActionDescription="Sort by reason"
+              >
+                Reason
+              </th>
+              <td mat-cell *matCellDef="let element">
+                {{ element.reason }}
+              </td>
+            </ng-container>
+            <ng-container matColumnDef="status">
+              <th
+                mat-header-cell
+                *matHeaderCellDef
+                mat-sort-header
+                sortActionDescription="Sort by status"
+              >
+                Status
+              </th>
+              <td mat-cell *matCellDef="let element">
+                {{ element.status }}
+              </td>
+            </ng-container>
+
+            <ng-container matColumnDef="action">
+              <th mat-header-cell *matHeaderCellDef>Action</th>
+              <td mat-cell *matCellDef="let element">
+                <div class="action-icons">
+                  <mat-icon
+                    *ngIf="
+                      element.status !== 'Accepted' &&
+                      element.status !== 'Rejected'
+                    "
+                    matTooltip="Click to approve"
+                    matTooltipPosition="left"
+                    class="approve-icon"
+                    (click)="approveDebt($event, element)"
+                    >done_outline</mat-icon
+                  >
+                  <mat-icon
+                    matTooltip="Click to reject"
+                    matTooltipPosition="right"
+                    class="delete-icon"
+                    *ngIf="
+                      element.status !== 'Accepted' &&
+                      element.status !== 'Rejected'
+                    "
+                    (click)="rejectDebt($event, element)"
+                    >cancel</mat-icon
+                  >
+                </div>
+              </td></ng-container
+            >
+
+            <tr
+              mat-header-row
+              *matHeaderRowDef="displayedReceivingColumns"
+            ></tr>
+            <tr
+              class="record"
+              mat-row
+              (click)="onRowClick(row)"
+              *matRowDef="let row; columns: displayedReceivingColumns"
+            ></tr>
+          </table>
+        </div>
+      </div>
+    </mat-card>
   </div>
+</div>

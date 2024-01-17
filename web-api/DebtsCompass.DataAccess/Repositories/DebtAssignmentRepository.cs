@@ -1,4 +1,5 @@
 ﻿using DebtsCompass.Domain.Entities.Models;
+using DebtsCompass.Domain.Enums;
 using DebtsCompass.Domain.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
@@ -75,6 +76,7 @@ namespace DebtsCompass.DataAccess.Repositories
                                                                       .ThenInclude(u => u.UserInfo)
                                                                       .Include(d => d.SelectedUser)
                                                                       .ThenInclude(u => u.UserInfo)
+                                                                      .Include(d => d.NonUser)
                                                                       .Include(d => d.Debt)
                                                                       .FirstOrDefaultAsync();
 
@@ -84,6 +86,30 @@ namespace DebtsCompass.DataAccess.Repositories
         public async Task DeleteDebt(DebtAssignment debtAssignment)
         {
             dbContext.DebtAssignments.Remove(debtAssignment);
+            await dbContext.SaveChangesAsync();
+        }
+
+        public async Task UpdateDebt(DebtAssignment debtFromDb, DebtAssignment updatedDebt)
+        {
+            debtFromDb.Debt.Amount = updatedDebt.Debt.Amount;
+            debtFromDb.Debt.BorrowReason = updatedDebt.Debt.BorrowReason;
+            debtFromDb.Debt.DateOfBorrowing = updatedDebt.Debt.DateOfBorrowing;
+            debtFromDb.Debt.DeadlineDate = updatedDebt.Debt.DeadlineDate;
+            debtFromDb.SelectedUser = updatedDebt.SelectedUser;
+            debtFromDb.NonUser = updatedDebt.NonUser;
+
+            await dbContext.SaveChangesAsync();
+        }
+        
+        public async Task ApproveDebt(DebtAssignment debtFromDb)
+        {
+            debtFromDb.Debt.Status = Status.Accepted;
+            await dbContext.SaveChangesAsync();
+        }
+
+        public async Task RejectDebt(DebtAssignment debtFromDb)
+        {
+            debtFromDb.Debt.Status = Status.Rejected;
             await dbContext.SaveChangesAsync();
         }
     }

@@ -28,6 +28,7 @@ namespace EmailSender
             string html = ReadHtmlTemplate(@"DebtCreatedEmailTemplate.html");
             html = html.Replace("{creatorName}", $"{createdDebtEmailInfoDto.CreatorFirstName} {createdDebtEmailInfoDto.CreatorLastName}");
             html = html.Replace("{amount}", $"{createdDebtEmailInfoDto.Amount}");
+            html = html.Replace("{reason}", $"{createdDebtEmailInfoDto.Reason}");
             html = html.Replace("{currency}", $"{createdDebtEmailInfoDto.Currency}");
             html = html.Replace("{dateOfBorrowing}", $"{createdDebtEmailInfoDto.DateOfBorrowing}");
             html = html.Replace("{deadline}", $"{createdDebtEmailInfoDto.Deadline}");
@@ -40,6 +41,7 @@ namespace EmailSender
             string html = ReadHtmlTemplate(@"DebtDeletedEmailTemplate.html");
             html = html.Replace("{creatorName}", $"{createdDebtEmailInfoDto.CreatorFirstName} {createdDebtEmailInfoDto.CreatorLastName}");
             html = html.Replace("{amount}", $"{createdDebtEmailInfoDto.Amount}");
+            html = html.Replace("{reason}", $"{createdDebtEmailInfoDto.Reason}");
             html = html.Replace("{currency}", $"{createdDebtEmailInfoDto.Currency}");
             html = html.Replace("{dateOfBorrowing}", $"{createdDebtEmailInfoDto.DateOfBorrowing}");
             html = html.Replace("{deadline}", $"{createdDebtEmailInfoDto.Deadline}");

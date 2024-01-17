@@ -43,7 +43,9 @@ export class AddDebtDialog implements OnInit {
   userFriends!: UserModel[];
   userFriendsTotalCount!: number;
   debts!: Debt[];
-  selectedUser!: UserModel;
+  selectedUser!: string;
+
+  isDebtEdited: boolean = false;
 
   emailFormControl = new FormControl('', [
     Validators.required,
@@ -75,11 +77,13 @@ export class AddDebtDialog implements OnInit {
           response.headers.get('X-Pagination')!
         ).TotalCount;
 
+        if (this.data.selectedDebt !== undefined) {
+          this.fillEditModalForm();
+        }
       });
-
   }
 
-  addDebtForm = new FormGroup({
+  debtForm = new FormGroup({
     amount: new FormControl('', [
       Validators.required,
       Validators.maxLength(50),
@@ -100,40 +104,108 @@ export class AddDebtDialog implements OnInit {
       Validators.maxLength(20),
     ]),
     userSelect: new FormControl('', Validators.required),
+    userType: new FormControl(''),
   });
 
   closeDialog(): void {
     this.dialogRef.close(this.debts);
   }
 
+  fillEditModalForm() {
+    this.debtForm.controls['amount'].setValue(this.data.selectedDebt.amount);
+    this.debtForm.controls['reason'].setValue(this.data.selectedDebt.reason);
+    this.debtForm.controls['borrowingDate'].setValue(
+      this.data.selectedDebt.borrowingDate
+    );
+    this.debtForm.controls['deadlineDate'].setValue(
+      this.data.selectedDebt.deadline
+    );
+
+    if (this.data.selectedDebt.isUserAccount) {
+      this.debtForm.controls['userType'].setValue(
+        this.userDebtOptions[0]['name']
+      );
+      this.debtForm.controls['userSelect'].setValue(
+        this.data.selectedDebt.email
+      );
+      this.isVisible = 0;
+    } else {
+      this.debtForm.controls['userType'].setValue(
+        this.userDebtOptions[1]['name']
+      );
+      this.debtForm.controls['email'].setValue(this.data.selectedDebt.email);
+      this.debtForm.controls['firstName'].setValue(
+        this.data.selectedDebt.firstName
+      );
+      this.debtForm.controls['lastName'].setValue(
+        this.data.selectedDebt.lastName
+      );
+      this.isVisible = 1;
+    }
+
+    this.onItemChange(this.isVisible);
+    this.listenOnFormChanges();
+  }
+
+  listenOnFormChanges() {
+    this.debtForm.controls['amount'].valueChanges.subscribe((newValue) => {
+      this.isDebtEdited = true;
+    });
+    this.debtForm.controls['reason'].valueChanges.subscribe((newValue) => {
+      this.isDebtEdited = true;
+    });
+    this.debtForm.controls['borrowingDate'].valueChanges.subscribe(
+      (newValue) => {
+        this.isDebtEdited = true;
+      }
+    );
+    this.debtForm.controls['deadlineDate'].valueChanges.subscribe(
+      (newValue) => {
+        this.isDebtEdited = true;
+      }
+    );
+    this.debtForm.controls['email'].valueChanges.subscribe((newValue) => {
+      this.isDebtEdited = true;
+    });
+    this.debtForm.controls['firstName'].valueChanges.subscribe((newValue) => {
+      this.isDebtEdited = true;
+    });
+    this.debtForm.controls['lastName'].valueChanges.subscribe((newValue) => {
+      this.isDebtEdited = true;
+    });
+    this.debtForm.controls['userSelect'].valueChanges.subscribe((newValue) => {
+      this.isDebtEdited = true;
+    });
+  }
+
   onItemChange(itemIndex: number) {
     this.isVisible = itemIndex;
-    if (this.isVisible != 1) {
-      this.addDebtForm.get('userSelect')!.setValidators(Validators.required);
-      this.addDebtForm.get('userSelect')!.updateValueAndValidity();
+    if (this.isVisible !== 1) {
+      this.debtForm.get('userSelect')!.setValidators(Validators.required);
+      this.debtForm.get('userSelect')!.updateValueAndValidity();
 
-      this.addDebtForm.get('email')!.clearValidators();
-      this.addDebtForm.get('email')!.updateValueAndValidity();
-      this.addDebtForm.get('firstName')!.clearValidators();
-      this.addDebtForm.get('firstName')!.updateValueAndValidity();
-      this.addDebtForm.get('lastName')!.clearValidators();
-      this.addDebtForm.get('lastName')!.updateValueAndValidity();
+      this.debtForm.get('email')!.clearValidators();
+      this.debtForm.get('email')!.updateValueAndValidity();
+      this.debtForm.get('firstName')!.clearValidators();
+      this.debtForm.get('firstName')!.updateValueAndValidity();
+      this.debtForm.get('lastName')!.clearValidators();
+      this.debtForm.get('lastName')!.updateValueAndValidity();
     } else {
-      this.addDebtForm.get('userSelect')!.clearValidators();
-      this.addDebtForm.get('userSelect')!.updateValueAndValidity();
+      this.debtForm.get('userSelect')!.clearValidators();
+      this.debtForm.get('userSelect')!.updateValueAndValidity();
 
-      this.addDebtForm
+      this.debtForm
         .get('email')!
         .setValidators([Validators.required, Validators.email]);
-      this.addDebtForm.get('email')!.updateValueAndValidity();
-      this.addDebtForm
+      this.debtForm.get('email')!.updateValueAndValidity();
+      this.debtForm
         .get('firstName')!
         .setValidators([Validators.required, Validators.maxLength(20)]);
-      this.addDebtForm.get('firstName')!.updateValueAndValidity();
-      this.addDebtForm
+      this.debtForm.get('firstName')!.updateValueAndValidity();
+      this.debtForm
         .get('lastName')!
         .setValidators([Validators.required, Validators.maxLength(20)]);
-      this.addDebtForm.get('lastName')!.updateValueAndValidity();
+      this.debtForm.get('lastName')!.updateValueAndValidity();
     }
   }
 
@@ -141,18 +213,97 @@ export class AddDebtDialog implements OnInit {
     this.minDeadlineDate = selectedDate;
   }
 
-  onSubmit(): void {
+  editDebt(): void {
     if (this.isVisible == 0) {
       // Has account
-      console.log(this.selectedUser);
+      let selectedUserFriend = this.userFriends.find(u => u.email === this.selectedUser)!;
+
+      const editUserDebtRequest: Debt = Object.assign({
+        guid: this.data.selectedDebt.guid,
+        firstName: selectedUserFriend.firstName,
+        lastName: selectedUserFriend.lastName,
+        email: selectedUserFriend.email,
+        amount: this.debtForm.value.amount,
+        borrowingDate: this.debtForm.value.borrowingDate,
+        deadline: this.debtForm.value.deadlineDate,
+        reason: this.debtForm.value.reason,
+        isUserAccount: true,
+      });
+
+      this.debtsService
+        .updateDebt(editUserDebtRequest)
+        .subscribe((response) => {
+          switch (response.statusCode) {
+            case 200:
+              editUserDebtRequest.status = this.data.selectedDebt.status;
+              editUserDebtRequest.isPaid = this.data.selectedDebt.isPaid;
+
+              const index = this.data.debts.indexOf(this.data.selectedDebt);
+              this.data.debts.splice(index, 1);
+              this.debts.push(editUserDebtRequest);
+              this.notificationService.showSuccess(
+                'Debt updated successfully!'
+              );
+              this.closeDialog();
+              break;
+
+            default:
+              this.notificationService.showError('Something went wrong');
+              break;
+          }
+        });
+    } else if (this.isVisible == 1) {
+      // Non user
+      const editNonUserDebtRequest: Debt = Object.assign({
+        guid: this.data.selectedDebt.guid,
+        firstName: this.debtForm.value.firstName,
+        lastName: this.debtForm.value.lastName,
+        email: this.debtForm.value.email,
+        amount: this.debtForm.value.amount,
+        borrowingDate: this.debtForm.value.borrowingDate,
+        deadline: this.debtForm.value.deadlineDate,
+        reason: this.debtForm.value.reason,
+        isUserAccount: false,
+      });
+
+      this.debtsService
+        .updateDebt(editNonUserDebtRequest)
+        .subscribe((response) => {
+          switch (response.statusCode) {
+            case 200:
+              editNonUserDebtRequest.status = this.data.selectedDebt.status;
+              editNonUserDebtRequest.isPaid = this.data.selectedDebt.isPaid;
+
+              const index = this.data.debts.indexOf(this.data.selectedDebt);
+              this.data.debts.splice(index, 1);
+              this.debts.push(editNonUserDebtRequest);
+              this.notificationService.showSuccess(
+                'Debt updated successfully!'
+              );
+              this.closeDialog();
+              break;
+
+            default:
+              this.notificationService.showError('Something went wrong');
+              break;
+          }
+        });
+    }
+  }
+
+  createDebt(): void {
+    if (this.isVisible == 0) {
+      // Has account
+      let selectedUserFriend = this.userFriends.find(u => u.email === this.selectedUser)!;
+
       const createUserDebtRequest: Debt = Object.assign({
-        firstName: this.selectedUser.firstName,
-        lastName: this.selectedUser.lastName,
-        email: this.selectedUser.email,
-        amount: this.addDebtForm.value.amount,
-        borrowingDate: this.addDebtForm.value.borrowingDate,
-        deadline: this.addDebtForm.value.deadlineDate,
-        reason: this.addDebtForm.value.reason,
+        firstName: selectedUserFriend.firstName,
+        lastName: selectedUserFriend.lastName,
+        email: selectedUserFriend.email,
+        amount: this.debtForm.value.amount,
+        borrowingDate: this.debtForm.value.borrowingDate,
+        deadline: this.debtForm.value.deadlineDate,
+        reason: this.debtForm.value.reason,
         status: 'Pending',
         isPaid: false,
         isUserAccount: true,
@@ -162,7 +313,6 @@ export class AddDebtDialog implements OnInit {
         .subscribe((response) => {
           switch (response.statusCode) {
             case 201:
-              console.log(response.payload);
               createUserDebtRequest.guid = response.payload;
               this.debts.push(createUserDebtRequest);
               this.notificationService.showSuccess('Debt added successfully!');
@@ -177,13 +327,13 @@ export class AddDebtDialog implements OnInit {
     } else if (this.isVisible == 1) {
       // Non user
       const createNonUserDebtRequest: Debt = Object.assign({
-        firstName: this.addDebtForm.value.firstName,
-        lastName: this.addDebtForm.value.lastName,
-        email: this.addDebtForm.value.email,
-        amount: this.addDebtForm.value.amount,
-        borrowingDate: this.addDebtForm.value.borrowingDate,
-        deadline: this.addDebtForm.value.deadlineDate,
-        reason: this.addDebtForm.value.reason,
+        firstName: this.debtForm.value.firstName,
+        lastName: this.debtForm.value.lastName,
+        email: this.debtForm.value.email,
+        amount: this.debtForm.value.amount,
+        borrowingDate: this.debtForm.value.borrowingDate,
+        deadline: this.debtForm.value.deadlineDate,
+        reason: this.debtForm.value.reason,
         status: 'Pending',
         isPaid: false,
         isUserAccount: false,
@@ -194,6 +344,7 @@ export class AddDebtDialog implements OnInit {
         .subscribe((response) => {
           switch (response.statusCode) {
             case 201:
+              createNonUserDebtRequest.guid = response.payload;
               this.debts.push(createNonUserDebtRequest);
               this.notificationService.showSuccess('Debt added successfully!');
               this.closeDialog();
@@ -207,23 +358,29 @@ export class AddDebtDialog implements OnInit {
     }
   }
 
+  onSubmit(): void {
+    if (this.data.selectedDebt !== undefined) {
+      this.editDebt();
+    } else {
+      console.log('face asta');
+      this.createDebt();
+    }
+  }
+
   loadMoreFriends(): void {
     if (this.userFriends.length < this.paginationService.totalCount) {
       this.paginationService.change(this.userFriendsTotalCount);
-      
+
       this.usersService
         .getAllFriends(
           this.paginationService.pageNumber,
           this.paginationService.pageSize
         )
         .subscribe((response) => {
-          this.userFriends = this.userFriends.concat(
-            response.body.payload
-          );
+          this.userFriends = this.userFriends.concat(response.body.payload);
           this.userFriendsTotalCount = JSON.parse(
             response.headers.get('X-Pagination')!
           ).TotalCount;
-
         });
     }
   }

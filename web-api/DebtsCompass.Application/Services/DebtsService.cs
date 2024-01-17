@@ -51,28 +51,24 @@ namespace DebtsCompass.Application.Services
         public async Task<Guid> CreateDebt(CreateDebtRequest createDebtRequest, string creatorEmail)
         {
             User creatorUser = await userRepository.GetUserByEmail(creatorEmail) ?? throw new UserNotFoundException(creatorEmail);
-            bool isUserAccount = await userRepository.GetUserByEmail(createDebtRequest.Email) != null;
+            bool isUserAccount = createDebtRequest.IsUserAccount;
 
             DebtAssignment debtAssignment;
             if (isUserAccount)
             {
-
                 User selectedUser = await userRepository.GetUserByEmail(createDebtRequest.Email)
                                     ?? throw new UserNotFoundException(createDebtRequest.Email);
 
                 debtAssignment = Mapper.CreateDebtRequestToDebtAssignment(createDebtRequest, creatorUser, selectedUser);
                 await debtAssignmentRepository.CreateDebt(debtAssignment);
 
-
                 ReceiverInfoDto receiverInfoDto = Mapper.UserToReceiverInfoDto(debtAssignment.SelectedUser);
                 DebtEmailInfoDto createdDebtEmailInfoDto = Mapper.DebtAssignmentToCreatedDebtEmailInfoDto(debtAssignment);
                 await emailService.SendDebtCreatedNotification(receiverInfoDto, createdDebtEmailInfoDto);
 
             }
-
             else
             {
-
                 debtAssignment = Mapper.CreateDebtRequestToDebtAssignment(createDebtRequest, creatorUser);
                 await debtAssignmentRepository.CreateDebt(debtAssignment);
 
@@ -80,7 +76,6 @@ namespace DebtsCompass.Application.Services
                 DebtEmailInfoDto createdDebtEmailInfoDto = Mapper.UserToCreatedDebtEmailInfoDto(creatorUser);
                 await emailService.SendNoAccountDebtCreatedNotification(receiverInfoDto, createdDebtEmailInfoDto);
             }
-
 
             return debtAssignment.Id;
         }
@@ -99,6 +94,7 @@ namespace DebtsCompass.Application.Services
                 throw new ForbiddenRequestException();
             }
 
+
             if (debtFromDb.SelectedUser is not null)
             {
                 ReceiverInfoDto receiverInfoDto = Mapper.UserToReceiverInfoDto(debtFromDb.SelectedUser);
@@ -107,10 +103,48 @@ namespace DebtsCompass.Application.Services
                 await debtAssignmentRepository.DeleteDebt(debtFromDb);
                 await emailService.SendDebtDeletedNotification(receiverInfoDto, deletedDebtEmailInfoDto);
             }
+            else if (debtFromDb.NonUser is not null)
+            {
+                ReceiverInfoDto receiverInfoDto = Mapper.NonUserToReceiverInfoDto(debtFromDb.NonUser);
+                DebtEmailInfoDto deletedDebtEmailInfoDto = Mapper.DebtAssignmentToCreatedDebtEmailInfoDto(debtFromDb);
+
+                await debtAssignmentRepository.DeleteDebt(debtFromDb);
+                await emailService.SendDebtDeletedNotification(receiverInfoDto, deletedDebtEmailInfoDto);
+            }
+        }
+
+        public async Task EditDebt(EditDebtRequest editDebtRequest, string email)
+        {
+            DebtAssignment debtAssignmentFromDb = await debtAssignmentRepository.GetDebtById(editDebtRequest.Guid) ?? throw new EntityNotFoundException();
+
+            bool isUserAccount = editDebtRequest.IsUserAccount;
+            DebtAssignment updatedDebt;
+            if (isUserAccount)
+            {
+                User selectedUser = await userRepository.GetUserByEmail(editDebtRequest.Email);
+                updatedDebt = Mapper.EditDebtRequestToDebtAssignment(editDebtRequest, selectedUser);
+            }
             else
             {
-                await debtAssignmentRepository.DeleteDebt(debtFromDb);
+                NonUser nonUser = await nonUserRepository.GetNonUserByEmail(editDebtRequest.Email);
+                updatedDebt = Mapper.EditDebtRequestToDebtAssignment(editDebtRequest, nonUser);
             }
+
+            await debtAssignmentRepository.UpdateDebt(debtAssignmentFromDb, updatedDebt);
+        }
+
+        public async Task ApproveDebt(string debtId, string email)
+        {
+            DebtAssignment debtAssignmentFromDb = await debtAssignmentRepository.GetDebtById(debtId) ?? throw new EntityNotFoundException();
+            await debtAssignmentRepository.ApproveDebt(debtAssignmentFromDb);
+            // TODO: send e-mail notification
+        }
+
+        public async Task RejectDebt(string debtId, string email)
+        {
+            DebtAssignment debtAssignmentFromDb = await debtAssignmentRepository.GetDebtById(debtId) ?? throw new EntityNotFoundException();
+            await debtAssignmentRepository.RejectDebt(debtAssignmentFromDb);
+            // TODO: send e-mail notification
         }
     }
 }

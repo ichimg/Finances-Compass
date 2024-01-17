@@ -59,4 +59,36 @@ export class DebtsService {
 
     return this.httpClient.delete<any>(deleteDebtEndpoint, {headers: headers});
   }
+
+  updateDebt(editDebtRequest: Debt) {
+    const email = localStorage.getItem('email');
+    const editDebtEndpoint = `${this.apiUrl}/edit-debt?email=${email}`;
+    const headers = new HttpHeaders({
+      'Content-Type': 'application/json'
+    });
+
+    return this.httpClient.put<any>(editDebtEndpoint, editDebtRequest, {
+      headers: headers,
+    });
+  }
+
+  approveDebt(debtId: string) {
+    const email = localStorage.getItem('email');
+    const approveDebtEndpoint = `${this.apiUrl}/approve-debt?debtId=${debtId}&email=${email}`;
+    const headers = new HttpHeaders({
+      'Content-Type': 'application/json'
+    });
+
+    return this.httpClient.put<any>(approveDebtEndpoint, {headers: headers});
+  }
+
+  rejectDebt(debtId: string) {
+    const email = localStorage.getItem('email');
+    const approveDebtEndpoint = `${this.apiUrl}/reject-debt?debtId=${debtId}&email=${email}`;
+    const headers = new HttpHeaders({
+      'Content-Type': 'application/json'
+    });
+
+    return this.httpClient.put<any>(approveDebtEndpoint, {headers: headers});
+  }
 }

@@ -9,6 +9,7 @@ import { Debt } from 'src/app/entities/debt';
 import { ViewDebtDialog } from 'src/app/dialogs/view-debt-dialog/view-debt.dialog';
 import { NotificationService } from '../../services/notification.service';
 import { DeleteConfirmationDialog } from '../../dialogs/delete-confirmation-dialog/delete-confirmation.dialog';
+import { EditDebtDialog } from '../../dialogs/edit-debt-dialog/edit-debt.dialog';
 
 @Component({
   selector: 'app-debts',
@@ -113,6 +114,20 @@ export class DebtsComponent implements OnInit, AfterViewInit {
 
   openEditDialog(event: Event, debt: Debt): void {
     event.stopPropagation();
+
+    const dialogRef = this.dialog
+      .open(AddDebtDialog, {
+        data: {
+          debts: this.dataReceivingDebtsSource.data,
+          selectedDebt: debt,
+        },
+      })
+      .afterClosed()
+      .subscribe((response) => {
+        if (response) {
+          this.dataReceivingDebtsSource.data = response;
+        }
+      });
   }
 
   deleteDebt(event: Event, debt: Debt): void {
@@ -129,5 +144,53 @@ export class DebtsComponent implements OnInit, AfterViewInit {
           this.dataReceivingDebtsSource.data = response;
         }
       });
+  }
+
+  approveDebt(event: Event, debt: Debt): void {
+    event.stopPropagation();
+
+    this.debtsService.approveDebt(debt.guid).subscribe((response) => {
+      switch (response.statusCode) {
+        case 200:
+          debt.status = 'Accepted';
+          break;
+
+        case 404:
+          this.notificationService.showError('Debt to approve not found');
+          break;
+
+        case 403:
+          this.notificationService.showError('Unauthorized');
+          break;
+
+        default:
+          this.notificationService.showError('Something went wrong');
+          break;
+      }
+    });
+  }
+
+  rejectDebt(event: Event, debt: Debt): void {
+    event.stopPropagation();
+
+    this.debtsService.rejectDebt(debt.guid).subscribe((response) => {
+      switch (response.statusCode) {
+        case 200:
+          debt.status = 'Rejected';
+          break;
+
+        case 404:
+          this.notificationService.showError('Debt to reject not found');
+          break;
+
+        case 403:
+          this.notificationService.showError('Unauthorized');
+          break;
+
+        default:
+          this.notificationService.showError('Something went wrong');
+          break;
+      }
+    });
   }
 }

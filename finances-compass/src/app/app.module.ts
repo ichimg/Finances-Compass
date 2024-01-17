@@ -52,6 +52,7 @@ import { ViewDebtDialog } from './dialogs/view-debt-dialog/view-debt.dialog';
 import { SearchUsersDialog } from './dialogs/search-users/search-users.dialog';
 import { InfiniteScrollDirective } from './directives/infinite-scroll.directive';
 import { FooterComponent } from './components/footer/footer.component';
+import { EditDebtDialog } from './dialogs/edit-debt-dialog/edit-debt.dialog';
 
 
 const OPTIONS = {
@@ -77,6 +78,7 @@ const OPTIONS = {
     InfiniteScrollDirective,
     FooterComponent,
     DeleteConfirmationDialog,
+    EditDebtDialog
   ],
   imports: [
     BrowserModule,

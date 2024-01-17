@@ -12,6 +12,9 @@ th.mat-sort-header-sorted {
   font-weight: lighter;
 }
 
+table .mat-mdc-header-cell {
+  background-color: #787d8127;
+}
 
 .text-img {
   display: flex;
@@ -26,7 +29,7 @@ th.mat-sort-header-sorted {
 
 .action-icons {
   display: flex;
-  gap: 10px;
+  gap: 13px;
 }
 
 .edit-icon {
@@ -38,6 +41,11 @@ th.mat-sort-header-sorted {
   color: #3b444b;
 }
 
+.edit-icon.disabled {
+  color:rgba(128, 128, 128, 0.705);
+  cursor: default;
+}
+
 .delete-icon {
   cursor: pointer;
   color: #a6120d;
@@ -46,6 +54,22 @@ th.mat-sort-header-sorted {
 .delete-icon:hover {
   color: #7d0f0b;
 }
+
+.delete-icon.disabled {
+  color:rgba(128, 128, 128, 0.705);
+  cursor: default;
+}
+
+.approve-icon {
+  cursor: pointer;
+  color: rgb(1, 160, 1);
+  transition: 0.3s;
+}
+
+.approve-icon:hover{
+  color: rgb(129, 158, 129);
+}
+
 .border {
   padding: 40px 50px;
 }
@@ -94,6 +118,10 @@ img {
 
 .record:hover {
   background-color: whitesmoke;
+}
+
+.rejected-debt {
+  background-color: rgba(255, 58, 58, 0.164);
 }
 
 @media screen and (max-width: 930px) {

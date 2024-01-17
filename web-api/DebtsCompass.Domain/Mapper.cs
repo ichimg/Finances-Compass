@@ -189,6 +189,36 @@ namespace DebtsCompass.Domain
             }
         }
 
+        public static DebtAssignment EditDebtRequestToDebtAssignment(EditDebtRequest editDebtRequest, User selectedUser)
+        {
+            return new DebtAssignment
+            {
+                SelectedUser = selectedUser,
+                Debt = new Debt
+                {
+                    Amount = editDebtRequest.Amount,
+                    BorrowReason = editDebtRequest.Reason,
+                    DateOfBorrowing = DateTime.Parse(editDebtRequest.BorrowingDate),
+                    DeadlineDate = DateTime.Parse(editDebtRequest.Deadline),
+                }
+            };
+        }
+
+        public static DebtAssignment EditDebtRequestToDebtAssignment(EditDebtRequest editDebtRequest, NonUser selectedUser)
+        {
+            return new DebtAssignment
+            {
+                NonUser = selectedUser,
+                Debt = new Debt
+                {
+                    Amount = editDebtRequest.Amount,
+                    BorrowReason = editDebtRequest.Reason,
+                    DateOfBorrowing = DateTime.Parse(editDebtRequest.BorrowingDate),
+                    DeadlineDate = DateTime.Parse(editDebtRequest.Deadline),
+                }
+            };
+        }
+
         public static DebtEmailInfoDto UserToCreatedDebtEmailInfoDto(User user)
         {
             return new DebtEmailInfoDto
@@ -204,7 +234,8 @@ namespace DebtsCompass.Domain
             {
                 CreatorFirstName = debtAssignment.CreatorUser.UserInfo.FirstName,
                 CreatorLastName = debtAssignment.CreatorUser.UserInfo.LastName,
-                Amount = debtAssignment.Debt.Amount.ToString(),
+                Amount = debtAssignment.Debt.Amount.ToString("#.##"),
+                Reason = debtAssignment.Debt.BorrowReason,
                 Currency = "RON", // for now hardcoded..
                 DateOfBorrowing = debtAssignment.Debt.DateOfBorrowing.ToString("dd MMM yyyy"),
                 Deadline = debtAssignment.Debt.DeadlineDate.ToString("dd MMM yyyy")
