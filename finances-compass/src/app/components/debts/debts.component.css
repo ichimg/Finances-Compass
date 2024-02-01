@@ -179,6 +179,10 @@ img {
     gap: 0;
     flex-direction: column;
   }
+
+  .btn-items {
+    padding-bottom: 7px;
+  }
 }
 
 @media screen and (max-width: 400px) {

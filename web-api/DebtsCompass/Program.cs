@@ -1,4 +1,5 @@
 using DebtsCompass;
+using DebtsCompass.Application.Configurations;
 using DebtsCompass.Application.Services;
 using DebtsCompass.Application.Validators;
 using DebtsCompass.DataAccess;
@@ -85,6 +86,7 @@ builder.Services.AddScoped<IDebtsService, DebtsService>();
 builder.Services.AddScoped<IAuthenticationService, AuthenticationService>();
 builder.Services.AddScoped<IFriendshipsService, FriendshipsService>();
 builder.Services.AddScoped<IUsersService, UsersService>();
+builder.Services.AddScoped<IPaypalService, PaypalService>();
 builder.Services.AddScoped<EmailValidator>();
 builder.Services.AddScoped<PasswordValidator>();
 
@@ -101,6 +103,12 @@ var emailConfig = builder.Configuration.GetSection("EmailConfiguration").Get<Ema
 builder.Services.AddSingleton(emailConfig);
 builder.Services.AddScoped<IEmailService, EmailService>();
 builder.Services.AddScoped<EmailTemplatesService>();
+
+// Paypal Config
+var paypalConfig = builder.Configuration.GetSection("PaypalConfiguration").Get<PaypalConfiguration>();
+builder.Services.AddSingleton(paypalConfig);
+
+builder.Services.AddHttpClient();
 
 
 //Allow CORS

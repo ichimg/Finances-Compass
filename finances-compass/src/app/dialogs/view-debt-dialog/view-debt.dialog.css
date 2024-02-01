@@ -51,5 +51,6 @@
   .close-icon:hover{
     color:crimson;
     cursor:pointer;
+    background-color: lightgray;
   }
   
