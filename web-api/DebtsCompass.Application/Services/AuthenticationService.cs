@@ -2,6 +2,7 @@
 using DebtsCompass.Application.Exceptions;
 using DebtsCompass.Application.Validators;
 using DebtsCompass.Domain;
+using DebtsCompass.Domain.Entities.DtoResponses;
 using DebtsCompass.Domain.Entities.Models;
 using DebtsCompass.Domain.Entities.Requests;
 using DebtsCompass.Domain.Interfaces;
@@ -18,12 +19,14 @@ namespace DebtsCompass.Application.Services
         private readonly UserManager<User> userManager;
         private readonly INonUserRepository nonUserRepository;
         private readonly IDebtAssignmentRepository debtAssignmentRepository;
+        private readonly IJwtService jwtService;
         public AuthenticationService(IUserRepository userRepository,
             EmailValidator emailValidator,
             PasswordValidator passwordValidator,
             UserManager<User> userManager,
             INonUserRepository nonUserRepository,
-            IDebtAssignmentRepository debtAssignmentRepository)
+            IDebtAssignmentRepository debtAssignmentRepository,
+            IJwtService jwtService)
         {
             this.userRepository = userRepository;
             this.emailValidator = emailValidator;
@@ -31,6 +34,7 @@ namespace DebtsCompass.Application.Services
             this.userManager = userManager;
             this.nonUserRepository = nonUserRepository;
             this.debtAssignmentRepository = debtAssignmentRepository;
+            this.jwtService = jwtService;
         }
 
         public async Task<bool> IsValidLogin(LoginRequest loginRequest)
@@ -45,7 +49,7 @@ namespace DebtsCompass.Application.Services
                 return false;
             }
 
-            User userFromDb = await userRepository.GetUserByEmail(loginRequest.Email) ?? 
+            User userFromDb = await userRepository.GetUserByEmail(loginRequest.Email) ??
                               throw new UserNotFoundException(loginRequest.Email);
 
             if (!BCrypt.Net.BCrypt.Verify(loginRequest.Password, userFromDb.PasswordHash))
@@ -59,6 +63,26 @@ namespace DebtsCompass.Application.Services
             }
 
             return true;
+        }
+
+        public async Task<LoginResponse> GetLoginResponse(LoginRequest loginRequest)
+        {
+            if (!await IsValidLogin(loginRequest))
+            {
+                throw new InvalidCredentialsException();
+            }
+
+            string refreshToken = jwtService.GenerateRefreshToken();
+            await jwtService.UpdateRefreshToken(loginRequest.Email, refreshToken);
+            User user = await userRepository.GetUserByEmail(loginRequest.Email);
+
+            return new LoginResponse
+            {
+                Email = loginRequest.Email,
+                AccessToken = jwtService.GenerateToken(loginRequest.Email),
+                RefreshToken = refreshToken,
+                CurrencyPreference = user.CurrencyPreference.ToString()
+            };
         }
 
         public async Task<User> Register(RegisterRequest registerRequest)

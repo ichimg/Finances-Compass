@@ -112,5 +112,11 @@ namespace DebtsCompass.DataAccess.Repositories
             debtFromDb.Debt.Status = Status.Rejected;
             await dbContext.SaveChangesAsync();
         }
+
+        public async Task PayDebt(DebtAssignment debtFromDb)
+        {
+            debtFromDb.Debt.IsPaid = true;
+            await dbContext.SaveChangesAsync();
+        }
     }
 }

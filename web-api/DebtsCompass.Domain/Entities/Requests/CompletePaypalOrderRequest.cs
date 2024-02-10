@@ -4,5 +4,6 @@
     {
         public string Intent { get; set; }
         public string OrderId { get; set; }
+        public string DebtId { get; set; }
     }
 }

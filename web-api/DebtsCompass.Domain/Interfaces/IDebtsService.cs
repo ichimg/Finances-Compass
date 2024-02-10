@@ -12,5 +12,6 @@ namespace DebtsCompass.Domain.Interfaces
         Task EditDebt(EditDebtRequest editDebtRequest, string email);
         Task ApproveDebt(string debtId, string email);
         Task RejectDebt(string debtId, string email);
+        Task PayDebt(string debtId);
     }
 }

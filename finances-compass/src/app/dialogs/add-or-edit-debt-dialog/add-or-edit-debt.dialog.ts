@@ -19,9 +19,9 @@ import { Debt } from 'src/app/entities/debt';
 import { PaginationService } from 'src/app/services/pagination.service';
 
 @Component({
-  selector: 'app-add-debt',
-  templateUrl: './add-debt.dialog.html',
-  styleUrls: ['./add-debt.dialog.css'],
+  selector: 'app-add-or-edit-debt',
+  templateUrl: './add-or-edit-debt.dialog.html',
+  styleUrls: ['./add-or-edit-debt.dialog.css'],
   providers: [
     {
       provide: DateAdapter,
@@ -33,7 +33,7 @@ import { PaginationService } from 'src/app/services/pagination.service';
     PaginationService,
   ],
 })
-export class AddDebtDialog implements OnInit {
+export class AddOrEditDebtDialog implements OnInit {
   @ViewChild('endDatePicker') endDatePicker: any;
   minDeadlineDate!: Date | null;
 
@@ -55,7 +55,7 @@ export class AddDebtDialog implements OnInit {
   maxDate = new Date();
 
   constructor(
-    public dialogRef: MatDialogRef<AddDebtDialog>,
+    public dialogRef: MatDialogRef<AddOrEditDebtDialog>,
     @Inject(MAT_DIALOG_DATA) public data: any,
     private debtsService: DebtsService,
     private usersService: UsersService,

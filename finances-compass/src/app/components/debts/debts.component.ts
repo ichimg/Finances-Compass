@@ -1,22 +1,24 @@
 import { LiveAnnouncer } from '@angular/cdk/a11y';
-import { AfterViewInit, Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { MatSort, Sort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
 import { DebtsService } from '../../services/debts.service';
 import { MatDialog } from '@angular/material/dialog';
-import { AddDebtDialog } from 'src/app/dialogs/add-debt-dialog/add-debt.dialog';
 import { Debt } from 'src/app/entities/debt';
 import { ViewDebtDialog } from 'src/app/dialogs/view-debt-dialog/view-debt.dialog';
 import { NotificationService } from '../../services/notification.service';
 import { DeleteConfirmationDialog } from '../../dialogs/delete-confirmation-dialog/delete-confirmation.dialog';
-import { EditDebtDialog } from '../../dialogs/edit-debt-dialog/edit-debt.dialog';
+import { PaypalService } from '../../services/paypal.service';
+import { AddOrEditDebtDialog } from '../../dialogs/add-or-edit-debt-dialog/add-or-edit-debt.dialog';
+import { PaymentDialog } from '../../dialogs/payment-dialog/payment.dialog';
 
 @Component({
   selector: 'app-debts',
   templateUrl: './debts.component.html',
   styleUrls: ['./debts.component.css'],
+  providers: [PaypalService],
 })
-export class DebtsComponent implements OnInit, AfterViewInit {
+export class DebtsComponent implements OnInit {
   displayedReceivingColumns: string[] = [
     'name',
     'amount',
@@ -30,12 +32,13 @@ export class DebtsComponent implements OnInit, AfterViewInit {
 
   isReceivingDebtsLoaded: boolean = false;
   isUserDebtsLoaded: boolean = false;
+  currency!: string;
 
   constructor(
     private liveAnnouncer: LiveAnnouncer,
     private debtsService: DebtsService,
     private dialog: MatDialog,
-    private notificationService: NotificationService
+    private notificationService: NotificationService,
   ) {}
   ngOnInit(): void {
     this.debtsService.getAllReceivingDebts().subscribe((response) => {
@@ -54,6 +57,7 @@ export class DebtsComponent implements OnInit, AfterViewInit {
         this.notificationService.showError('Something went wrong');
       }
     );
+    this.currency = localStorage.getItem('currencyPreference')!;
   }
 
   @ViewChild('debtReceivingTbSort') set debtReceivingTbSort(sort: MatSort) {
@@ -62,8 +66,6 @@ export class DebtsComponent implements OnInit, AfterViewInit {
   @ViewChild('debtUserTbSort') set debtUserTbSort(sort: MatSort) {
     this.dataUserDebtsSource.sort = sort;
   }
-
-  ngAfterViewInit() {}
 
   announceReceivingSortChange(sortState: Sort) {
     console.log(sortState.direction);
@@ -92,7 +94,7 @@ export class DebtsComponent implements OnInit, AfterViewInit {
 
   addDebt(): void {
     const dialogRef = this.dialog
-      .open(AddDebtDialog, {
+      .open(AddOrEditDebtDialog, {
         data: {
           debts: this.dataReceivingDebtsSource.data,
         },
@@ -116,7 +118,7 @@ export class DebtsComponent implements OnInit, AfterViewInit {
     event.stopPropagation();
 
     const dialogRef = this.dialog
-      .open(AddDebtDialog, {
+      .open(AddOrEditDebtDialog, {
         data: {
           debts: this.dataReceivingDebtsSource.data,
           selectedDebt: debt,
@@ -193,4 +195,14 @@ export class DebtsComponent implements OnInit, AfterViewInit {
       }
     });
   }
+
+  onPayClick(event: Event, debt: Debt) {
+    event.stopPropagation();
+
+    const dialogRef = this.dialog
+    .open(PaymentDialog, {
+      width: '600px',
+      data: { debt: debt},
+    });
+    }
 }

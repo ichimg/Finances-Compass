@@ -14,9 +14,11 @@ namespace DebtsCompass.Presentation.Controllers
     {
 
         private readonly IPaypalService paypalService;
-        public PaypalController(IPaypalService paypalService)
+        private readonly IDebtsService debtsService;
+        public PaypalController(IPaypalService paypalService, IDebtsService debtsService)
         {
             this.paypalService = paypalService;
+            this.debtsService = debtsService;
         }
 
         [HttpGet("access-token")]
@@ -43,6 +45,7 @@ namespace DebtsCompass.Presentation.Controllers
         public async Task<ActionResult<Response<string>>> CompleteOrder([FromBody] CompletePaypalOrderRequest completeOrderRequest)
         {
             var response = await paypalService.CompleteOrder(completeOrderRequest);
+            await debtsService.PayDebt(completeOrderRequest.DebtId);
 
             return Ok(new Response<string>
             {

@@ -43,7 +43,7 @@ namespace DebtsCompass.Application.Services
 
             if (!response.IsSuccessStatusCode)
             {
-                return null;
+                throw new BadRequestException();
             }
 
             string responseBody = await response.Content.ReadAsStringAsync();
@@ -60,7 +60,7 @@ namespace DebtsCompass.Application.Services
 
             if (string.IsNullOrEmpty(accessToken))
             {
-                throw new ForbiddenRequestException();
+                throw new BadRequestException();
             }
 
             var requestBody = new
@@ -125,7 +125,7 @@ namespace DebtsCompass.Application.Services
                 {
                     { "Authorization", $"Bearer {accessToken}" }
                 },
-                Content = new StringContent(string.Empty, Encoding.UTF8, "application/json") 
+                Content = new StringContent("{}", Encoding.UTF8, "application/json")
             };
 
 
@@ -134,7 +134,8 @@ namespace DebtsCompass.Application.Services
 
             if (!response.IsSuccessStatusCode)
             {
-                return null;
+                // string errorContent = await response.Content.ReadAsStringAsync();
+                throw new BadRequestException();
             }
 
             string responseBody = await response.Content.ReadAsStringAsync();
@@ -144,4 +145,3 @@ namespace DebtsCompass.Application.Services
         }
     }
 }
-

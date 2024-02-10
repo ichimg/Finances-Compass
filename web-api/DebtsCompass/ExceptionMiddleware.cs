@@ -82,6 +82,12 @@ namespace DebtsCompass
                     logger.LogError(message);
                     break;
 
+                case BadRequestException:
+                    statusCode = HttpStatusCode.BadRequest;
+                    message = ex.Message;
+                    logger.LogError(message);
+                    break;
+
                 default:
                     statusCode = HttpStatusCode.InternalServerError;
                     message = "Internal Server Error";

@@ -34,7 +34,7 @@ import { EmailConfirmationComponent } from './components/email-confirmation/emai
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatDialogModule } from '@angular/material/dialog';
 import { EmailConfirmationDialog } from './dialogs/email-confirmation-dialog/email-confirmation.dialog';
-import { AddDebtDialog } from './dialogs/add-debt-dialog/add-debt.dialog';
+import { AddOrEditDebtDialog } from './dialogs/add-or-edit-debt-dialog/add-or-edit-debt.dialog';
 import { MatRadioModule } from '@angular/material/radio';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatNativeDateModule } from '@angular/material/core';
@@ -52,7 +52,8 @@ import { ViewDebtDialog } from './dialogs/view-debt-dialog/view-debt.dialog';
 import { SearchUsersDialog } from './dialogs/search-users/search-users.dialog';
 import { InfiniteScrollDirective } from './directives/infinite-scroll.directive';
 import { FooterComponent } from './components/footer/footer.component';
-import { EditDebtDialog } from './dialogs/edit-debt-dialog/edit-debt.dialog';
+import { NgxPayPalModule } from 'ngx-paypal';
+import { PaymentDialog } from './dialogs/payment-dialog/payment.dialog';
 
 
 const OPTIONS = {
@@ -70,7 +71,7 @@ const OPTIONS = {
     RegisterComponent,
     EmailConfirmationComponent,
     EmailConfirmationDialog,
-    AddDebtDialog,
+    AddOrEditDebtDialog,
     DebtsComponent,
     StatusTransformPipe,
     ViewDebtDialog,
@@ -78,7 +79,7 @@ const OPTIONS = {
     InfiniteScrollDirective,
     FooterComponent,
     DeleteConfirmationDialog,
-    EditDebtDialog
+    PaymentDialog,
   ],
   imports: [
     BrowserModule,
@@ -115,6 +116,7 @@ const OPTIONS = {
     LoadingBarModule,
     LoadingBarHttpClientModule, 
     LoadingBarRouterModule,
+    NgxPayPalModule
   ],
   providers: [
     { provide: JWT_OPTIONS, useValue: JWT_OPTIONS },

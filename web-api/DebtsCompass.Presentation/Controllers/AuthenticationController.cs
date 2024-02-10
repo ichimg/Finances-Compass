@@ -34,21 +34,7 @@ namespace DebtsCompass.Presentation.Controllers
         [HttpPost("login")]
         public async Task<ActionResult<Response<LoginResponse>>> Login([FromBody] LoginRequest loginRequest)
         {
-            User user = await userManager.FindByEmailAsync(loginRequest.Email);
-            if (!await authenticationService.IsValidLogin(loginRequest))
-            {
-                throw new InvalidCredentialsException();
-            }
-
-            string refreshToken = jwtService.GenerateRefreshToken();
-            await jwtService.UpdateRefreshToken(loginRequest.Email, refreshToken);
-
-            LoginResponse loginResponse = new LoginResponse
-            {
-                Email = loginRequest.Email,
-                AccessToken = jwtService.GenerateToken(loginRequest.Email),
-                RefreshToken = refreshToken
-            };
+            LoginResponse loginResponse = await authenticationService.GetLoginResponse(loginRequest);
 
             return Ok(new Response<LoginResponse>
             {

@@ -3,7 +3,6 @@ import { Component, OnInit } from '@angular/core';
 import { AuthenticationService } from '../../services/authentication.service';
 import { FormControl, Validators } from '@angular/forms';
 import { EmailMatcher } from '../../error-matchers/email-matcher';
-import { passwordValidator } from '../../validators/password-validator';
 import { Router } from '@angular/router';
 import { MatDialog } from '@angular/material/dialog';
 import { EmailConfirmationDialog } from 'src/app/dialogs/email-confirmation-dialog/email-confirmation.dialog';
@@ -27,8 +26,7 @@ export class LoginComponent implements OnInit {
     Validators.email,
   ]);
   passwordFormControl = new FormControl('', [
-    Validators.required,
-    passwordValidator(),
+    Validators.required
   ]);
 
   emailMatcher = new EmailMatcher();
@@ -60,6 +58,7 @@ export class LoginComponent implements OnInit {
                 'refreshToken',
                 response.payload.refreshToken
               );
+              localStorage.setItem('currencyPreference', response.payload.currencyPreference);
 
               this.notificationService.showSuccess("You're logged in");
               this.router.navigate(['debts']);
