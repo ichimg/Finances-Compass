@@ -15,16 +15,23 @@ export class PaypalService {
   constructor(private httpClient: HttpClient, private notificationService: NotificationService) { }
 
   initPaypalConfig(debt: Debt, dialogRef: MatDialogRef<PaymentDialog>): IPayPalConfig {
+    let currency: string | null = localStorage.getItem('currencyPreference');
+    let amount: string = debt.amount;
+    // make transfer in EUR for RON currencies
+    if(currency === 'RON') {
+      amount = (parseFloat(debt.amount) * parseFloat(debt.eurExchangeRate)).toString();
+    }
+
     let paypalConfig: IPayPalConfig = {
-      currency: localStorage.getItem('currencyPreference')!,
+      currency: localStorage.getItem('currencyPreference')! === 'RON' ? 'EUR' : currency!,
       clientId: 'AU_KG8qslN7KEbDT6PR45YTl1oWAYw5_8uOenV3VjjSPvWS6I-qGXOEHoDUg95d53ZdJy0xDqqANJ8hP',
-      createOrderOnServer: async (data) => {
+      createOrderOnServer: async () => {
         try {
           const order = await lastValueFrom(this.httpClient.post<any>(`${this.apiUrl}/create-paypal-order`, {
             intent: this.intent,
             payeeEmail: debt.email,
-            currencyCode: localStorage.getItem('currencyPreference'),
-            value: debt.amount.toString()
+            currencyCode: localStorage.getItem('currencyPreference')! === 'RON' ? 'EUR' : currency!,
+            value: amount.toString()
           }));
           return order.payload;
         } catch (error) {

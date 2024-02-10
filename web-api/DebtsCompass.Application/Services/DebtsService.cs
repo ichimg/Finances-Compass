@@ -16,16 +16,19 @@ namespace DebtsCompass.Application.Services
         private readonly IUserRepository userRepository;
         private readonly INonUserRepository nonUserRepository;
         private readonly IEmailService emailService;
+        private readonly ICurrencyRatesJob currencyRatesJob;
 
         public DebtsService(IDebtAssignmentRepository debtAssignmentRepository,
             IUserRepository userRepository,
             INonUserRepository nonUserRepository,
-            IEmailService emailService)
+            IEmailService emailService,
+            ICurrencyRatesJob currencyRatesJob)
         {
             this.debtAssignmentRepository = debtAssignmentRepository;
             this.userRepository = userRepository;
             this.nonUserRepository = nonUserRepository;
             this.emailService = emailService;
+            this.currencyRatesJob = currencyRatesJob;
         }
 
         public async Task<List<DebtDto>> GetAllReceivingDebts(string email)
@@ -53,13 +56,15 @@ namespace DebtsCompass.Application.Services
             User creatorUser = await userRepository.GetUserByEmail(creatorEmail) ?? throw new UserNotFoundException(creatorEmail);
             bool isUserAccount = createDebtRequest.IsUserAccount;
 
+            CurrencyDto currentCurrencies = await currencyRatesJob.GetLatestCurrencyRates();
+
             DebtAssignment debtAssignment;
             if (isUserAccount)
             {
                 User selectedUser = await userRepository.GetUserByEmail(createDebtRequest.Email)
                                     ?? throw new UserNotFoundException(createDebtRequest.Email);
 
-                debtAssignment = Mapper.CreateDebtRequestToDebtAssignment(createDebtRequest, creatorUser, selectedUser);
+                debtAssignment = Mapper.CreateDebtRequestToDebtAssignment(createDebtRequest, creatorUser, selectedUser, currentCurrencies);
                 await debtAssignmentRepository.CreateDebt(debtAssignment);
 
                 ReceiverInfoDto receiverInfoDto = Mapper.UserToReceiverInfoDto(debtAssignment.SelectedUser);
@@ -69,7 +74,16 @@ namespace DebtsCompass.Application.Services
             }
             else
             {
-                debtAssignment = Mapper.CreateDebtRequestToDebtAssignment(createDebtRequest, creatorUser);
+                NonUser existingNonUser = await nonUserRepository.GetNonUserByEmail(createDebtRequest.Email);
+
+                if (existingNonUser is not null) 
+                {
+                    debtAssignment = Mapper.CreateDebtRequestToDebtAssignment(createDebtRequest, creatorUser, existingNonUser, currentCurrencies);
+                }
+                else
+                { 
+                    debtAssignment = Mapper.CreateDebtRequestToDebtAssignment(createDebtRequest, creatorUser, currentCurrencies);
+                }
                 await debtAssignmentRepository.CreateDebt(debtAssignment);
 
                 ReceiverInfoDto receiverInfoDto = Mapper.NonUserToReceiverInfoDto(debtAssignment.NonUser);

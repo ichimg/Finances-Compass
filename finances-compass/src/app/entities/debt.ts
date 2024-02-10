@@ -11,4 +11,6 @@ export interface Debt {
     status: string;
     isPaid: boolean;
     isUserAccount: boolean;
+    eurExchangeRate: string;
+    usdExchangeRate: string;
 }

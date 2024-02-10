@@ -31,7 +31,9 @@ namespace DebtsCompass.Domain
                 Reason = debtAssignment.Debt.BorrowReason,
                 Status = debtAssignment.Debt.Status.ToString(),
                 IsPaid = debtAssignment.Debt.IsPaid,
-                IsUserAccount = debtAssignment.SelectedUser != null
+                IsUserAccount = debtAssignment.SelectedUser != null,
+                EurExchangeRate = debtAssignment.Debt.EurExchangeRate ?? 0.0m,
+                UsdExchangeRate = debtAssignment.Debt.UsdExchangeRate ?? 0.0m
             };
         }
 
@@ -50,7 +52,9 @@ namespace DebtsCompass.Domain
                 Reason = debtAssignment.Debt.BorrowReason,
                 Status = debtAssignment.Debt.Status.ToString(),
                 IsPaid = debtAssignment.Debt.IsPaid,
-                IsUserAccount = debtAssignment.SelectedUser != null
+                IsUserAccount = debtAssignment.SelectedUser != null,
+                EurExchangeRate = debtAssignment.Debt.EurExchangeRate ?? 0.0m,
+                UsdExchangeRate = debtAssignment.Debt.UsdExchangeRate ?? 0.0m
             };
         }
 
@@ -109,7 +113,8 @@ namespace DebtsCompass.Domain
             };
         }
 
-        public static DebtAssignment CreateDebtRequestToDebtAssignment(CreateDebtRequest createDebtRequest, User creatorUser, User selectedUser)
+        public static DebtAssignment CreateDebtRequestToDebtAssignment(CreateDebtRequest createDebtRequest, User creatorUser, 
+            User selectedUser, CurrencyDto currentCurrencies)
         {
             if (Enum.TryParse(createDebtRequest.Status, out Status debtStatus))
             {
@@ -124,7 +129,9 @@ namespace DebtsCompass.Domain
                         DateOfBorrowing = DateTime.Parse(createDebtRequest.BorrowingDate),
                         DeadlineDate = DateTime.Parse(createDebtRequest.Deadline),
                         Status = debtStatus,
-                        IsPaid = createDebtRequest.IsPaid
+                        IsPaid = createDebtRequest.IsPaid,
+                        EurExchangeRate = currentCurrencies.EurExchangeRate,
+                        UsdExchangeRate = currentCurrencies.UsdExchangeRate
                     }
                 };
             }
@@ -134,7 +141,8 @@ namespace DebtsCompass.Domain
             }
         }
 
-        public static DebtAssignment CreateDebtRequestToDebtAssignment(CreateDebtRequest createDebtRequest, User creatorUser, NonUser selectedUser)
+        public static DebtAssignment CreateDebtRequestToDebtAssignment(CreateDebtRequest createDebtRequest, User creatorUser,
+            NonUser selectedUser, CurrencyDto currentCurrencies)
         {
             if (Enum.TryParse(createDebtRequest.Status, out Status debtStatus))
             {
@@ -149,7 +157,9 @@ namespace DebtsCompass.Domain
                         DateOfBorrowing = DateTime.Parse(createDebtRequest.BorrowingDate),
                         DeadlineDate = DateTime.Parse(createDebtRequest.Deadline),
                         Status = debtStatus,
-                        IsPaid = createDebtRequest.IsPaid
+                        IsPaid = createDebtRequest.IsPaid,
+                        EurExchangeRate = currentCurrencies.EurExchangeRate,
+                        UsdExchangeRate = currentCurrencies.UsdExchangeRate
                     }
                 };
             }
@@ -159,7 +169,7 @@ namespace DebtsCompass.Domain
             }
         }
 
-        public static DebtAssignment CreateDebtRequestToDebtAssignment(CreateDebtRequest createDebtRequest, User creatorUser)
+        public static DebtAssignment CreateDebtRequestToDebtAssignment(CreateDebtRequest createDebtRequest, User creatorUser, CurrencyDto currentCurrencies)
         {
             if (Enum.TryParse(createDebtRequest.Status, out Status debtStatus))
             {
@@ -179,7 +189,9 @@ namespace DebtsCompass.Domain
                         DateOfBorrowing = DateTime.Parse(createDebtRequest.BorrowingDate),
                         DeadlineDate = DateTime.Parse(createDebtRequest.Deadline),
                         Status = debtStatus,
-                        IsPaid = createDebtRequest.IsPaid
+                        IsPaid = createDebtRequest.IsPaid,
+                        EurExchangeRate = currentCurrencies.EurExchangeRate,
+                        UsdExchangeRate = currentCurrencies.UsdExchangeRate
                     }
                 };
             }

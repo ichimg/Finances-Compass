@@ -1,5 +1,6 @@
 using DebtsCompass;
 using DebtsCompass.Application.Configurations;
+using DebtsCompass.Application.Jobs;
 using DebtsCompass.Application.Services;
 using DebtsCompass.Application.Validators;
 using DebtsCompass.DataAccess;
@@ -90,6 +91,8 @@ builder.Services.AddScoped<IPaypalService, PaypalService>();
 builder.Services.AddScoped<EmailValidator>();
 builder.Services.AddScoped<PasswordValidator>();
 
+// Add Jobs
+builder.Services.AddScoped<ICurrencyRatesJob, CurrencyRatesJob>();
 
 // Add Repositories
 builder.Services.AddScoped<IUserRepository, UserRepository>();

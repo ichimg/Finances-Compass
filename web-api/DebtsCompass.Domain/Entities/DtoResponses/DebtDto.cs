@@ -16,6 +16,7 @@ namespace DebtsCompass.Domain.Entities.DtoResponses
         public string Status { get; set; }
         public bool IsPaid { get; set; }
         public bool IsUserAccount { get; set; }
-
+        public decimal EurExchangeRate { get; set; }
+        public decimal UsdExchangeRate { get; set; }
     }
 }
