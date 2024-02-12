@@ -21,6 +21,23 @@ namespace DebtsCompass.DataAccess
         {
             base.OnModelCreating(modelBuilder);
 
+            // Ignore redundant Identity tables
+            base.OnModelCreating(modelBuilder);
+            modelBuilder.Ignore<IdentityRole>();
+            modelBuilder.Ignore<IdentityUserToken<string>>();
+            modelBuilder.Ignore<IdentityUserRole<string>>();
+            modelBuilder.Ignore<IdentityUserLogin<string>>();
+            modelBuilder.Ignore<IdentityUserClaim<string>>();
+            modelBuilder.Ignore<IdentityRoleClaim<string>>();
+            modelBuilder.Entity<User>()
+                .Ignore(c => c.AccessFailedCount)
+                .Ignore(c => c.LockoutEnabled)
+                .Ignore(c => c.TwoFactorEnabled)
+                .Ignore(c => c.LockoutEnd)
+                .Ignore(c => c.PhoneNumberConfirmed);
+
+            modelBuilder.Entity<User>().ToTable("Users");
+
             modelBuilder.Entity<DebtAssignment>()
                    .HasOne(da => da.CreatorUser)
                    .WithMany(u => u.CreatedDebts)

@@ -41,21 +41,32 @@
               (click)="openSearchUsersDialog()"
               class="sidebar-item"
               ><span class="sidebar-item"
-                ><mat-icon matPrefix>search</mat-icon>Search users <mat-icon matSuffix>open_in_new</mat-icon></span
+                ><mat-icon matPrefix>search</mat-icon>Search users</span
               ></a
             >
-            <mat-divider> </mat-divider>
-            <mat-divider> </mat-divider>
-            <a mat-subheader class="sidebar-item">Similar users:</a>
+            <mat-divider></mat-divider>
+            <a mat-list-item class="sidebar-item"
+            ><span class="sidebar-item"
+              ><mat-icon>people</mat-icon>My friends</span
+            ></a
+          >
+            <a mat-list-item class="sidebar-item"
+              ><span class="sidebar-item"
+                ><mat-icon matPrefix>contacts</mat-icon>Friend requests</span
+              ></a
+            >
+            <a mat-list-item class="sidebar-item"
+              ><span class="sidebar-item"
+                ><mat-icon>person_outline</mat-icon>See similar users</span
+              ></a
+            >
           </mat-nav-list>
         </mat-sidenav>
         <mat-sidenav-content>
           <router-outlet></router-outlet>
         </mat-sidenav-content>
-        
       </mat-sidenav-container>
     </mat-sidenav-content>
   </mat-sidenav-container>
   <app-footer></app-footer>
-
 </body>
