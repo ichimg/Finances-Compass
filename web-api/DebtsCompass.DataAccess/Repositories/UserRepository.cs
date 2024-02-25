@@ -59,7 +59,8 @@ namespace DebtsCompass.DataAccess.Repositories
             return await dbContext.Users
             .Include(u => u.UserInfo)
             .ThenInclude(u => u.Address)
-            .Where(u => u.UserName.ToUpper() != currentUser.UserName.ToUpper() 
+            .Where(u => u.UserName.ToUpper() != currentUser.UserName.ToUpper()
+                        && u.EmailConfirmed == true
                         && u.UserName.ToUpper().Contains(query.ToUpper())
                         || u.UserInfo.FirstName.ToUpper().Contains(query.ToUpper())
                         || u.UserInfo.LastName.ToUpper().Contains(query.ToUpper()))

@@ -32,10 +32,16 @@ export class EmailConfirmationComponent implements OnInit {
       .confirmEmail('email-confirmation', token, email)
       .subscribe({
         next: (res: any) => {
-          if (res.statusCode == 410) {
-            this.showAlreadyConfirmed = true;
-          } else {
-            this.showSuccess = true;
+          switch(res.statusCode) {
+            case 410:
+              this.showAlreadyConfirmed = true;
+              break;
+            case 200: 
+              this.showSuccess = true;
+              break;
+            default:
+              this.showError = true;
+              break;
           }
         },
         error: (err: HttpErrorResponse) => {

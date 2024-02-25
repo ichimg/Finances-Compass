@@ -12,7 +12,7 @@
 
 .btn {
   display: flex;
-  justify-content: end;
+  justify-content: flex-end;
   align-items: flex;
   gap: 7px;
   padding-bottom: 10px;

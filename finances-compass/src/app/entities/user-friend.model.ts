@@ -4,4 +4,5 @@ export interface UserModel {
   username: string;
   email: string;
   friendStatus: string;
+  isPendingFriendRequest: boolean;
 }

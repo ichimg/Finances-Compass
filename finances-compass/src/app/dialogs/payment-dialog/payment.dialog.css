@@ -27,8 +27,8 @@
 }
 
 .paid-btn {
-  height: 55px;
-  width: 547.78px;
+  max-height: 55px;
+  width: 100%;
   font-size: 20px;
 }
 

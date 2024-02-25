@@ -101,7 +101,7 @@ namespace DebtsCompass.Domain
             };
         }
 
-        public static UserDto UserToUserDto(User user, Status friendStatus)
+        public static UserDto UserToUserDto(User user, Status friendStatus, bool isPendingFriendRequest = false)
         {
             return new UserDto
             {
@@ -109,7 +109,8 @@ namespace DebtsCompass.Domain
                 LastName = user.UserInfo.LastName,
                 Username = user.UserName,
                 Email = user.Email,
-                FriendStatus = friendStatus.ToString()
+                FriendStatus = friendStatus.ToString(),
+                IsPendingFriendRequest = isPendingFriendRequest
             };
         }
 
@@ -248,7 +249,7 @@ namespace DebtsCompass.Domain
                 CreatorLastName = debtAssignment.CreatorUser.UserInfo.LastName,
                 Amount = debtAssignment.Debt.Amount.ToString("#.##"),
                 Reason = debtAssignment.Debt.BorrowReason,
-                Currency = "RON", // for now hardcoded..
+                Currency = debtAssignment.SelectedUser.CurrencyPreference.ToString(),
                 DateOfBorrowing = debtAssignment.Debt.DateOfBorrowing.ToString("dd MMM yyyy"),
                 Deadline = debtAssignment.Debt.DeadlineDate.ToString("dd MMM yyyy")
             };
@@ -258,8 +259,8 @@ namespace DebtsCompass.Domain
         {
             return new Friendship
             {
-                UserOne = userOne,
-                UserTwo = userTwo,
+                RequesterUser = userOne,
+                SelectedUser = userTwo,
                 Status = Enum.Parse<Status>(friendRequest.Status)
             };
         }

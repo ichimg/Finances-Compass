@@ -5,6 +5,7 @@ using DebtsCompass.Domain.Interfaces;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System.Text;
+using Microsoft.Net.Http.Headers;
 
 namespace DebtsCompass.Application.Services
 {
@@ -33,7 +34,7 @@ namespace DebtsCompass.Application.Services
             {
                 Headers =
                 {
-                    {"Authorization",  $"Basic {base64Authentication}"},
+                    {HeaderNames.Authorization,  $"Basic {base64Authentication}"},
                 },
                 Content = new StringContent(data, Encoding.UTF8, "application/x-www-form-urlencoded")
             };
@@ -89,7 +90,7 @@ namespace DebtsCompass.Application.Services
             {
                 Headers =
                 {
-                    {"Authorization", $"Bearer {accessToken}" }
+                    {HeaderNames.Authorization, $"Bearer {accessToken}" }
                 },
                 Content = new StringContent(requestBodyJson, Encoding.UTF8, "application/json")
             };
@@ -123,7 +124,7 @@ namespace DebtsCompass.Application.Services
             {
                 Headers =
                 {
-                    { "Authorization", $"Bearer {accessToken}" }
+                    {HeaderNames.Authorization, $"Bearer {accessToken}" }
                 },
                 Content = new StringContent("{}", Encoding.UTF8, "application/json")
             };
@@ -134,7 +135,6 @@ namespace DebtsCompass.Application.Services
 
             if (!response.IsSuccessStatusCode)
             {
-                // string errorContent = await response.Content.ReadAsStringAsync();
                 throw new BadRequestException();
             }
 

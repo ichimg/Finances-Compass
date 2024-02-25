@@ -87,6 +87,7 @@ namespace DebtsCompass.Presentation.Controllers
 
         [HttpDelete]
         [Route("delete-debt")]
+        [Authorize]
         public async Task<ActionResult<object>> DeleteDebt([FromQuery] string id, [FromQuery] string email)
         {
             if (!IsRequestFromValidUser(email))
@@ -106,6 +107,7 @@ namespace DebtsCompass.Presentation.Controllers
 
         [HttpPut]
         [Route("edit-debt")]
+        [Authorize]
         public async Task<ActionResult<object>> EditDebt([FromBody] EditDebtRequest editDebtRequest, [FromQuery(Name = "email")] string email)
         {
             if (!IsRequestFromValidUser(email))

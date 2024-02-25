@@ -28,10 +28,7 @@ namespace DebtsCompass.Presentation.Controllers
         [Authorize]
         public async Task<ActionResult<PagedList<UserDto>>> GetFriends([FromHeader] string email, [FromQuery] PagedParameters pagedParameters)
         {
-            var userIdentity = User.Identity as ClaimsIdentity;
-            var userEmailClaim = userIdentity.FindFirst(ClaimTypes.Email)?.Value;
-
-            if (!string.Equals(userEmailClaim, email, StringComparison.OrdinalIgnoreCase))
+            if (!IsRequestFromValidUser(email))
             {
                 throw new ForbiddenRequestException();
             }
@@ -62,12 +59,10 @@ namespace DebtsCompass.Presentation.Controllers
 
         [HttpPost]
         [Route("add-friend")]
+        [Authorize]
         public async Task<ActionResult<object>> AddFriend([FromBody] FriendRequest friendRequest)
         {
-            var userIdentity = User.Identity as ClaimsIdentity;
-            var userEmailClaim = userIdentity.FindFirst(ClaimTypes.Email)?.Value;
-
-            if (!string.Equals(userEmailClaim, friendRequest.RequesterUserEmail, StringComparison.OrdinalIgnoreCase))
+            if (!IsRequestFromValidUser(friendRequest.RequesterUserEmail))
             {
                 throw new ForbiddenRequestException();
             }
@@ -84,12 +79,10 @@ namespace DebtsCompass.Presentation.Controllers
 
         [HttpDelete]
         [Route("cancel-friend")]
-        public async Task<ActionResult<object>> CancelFriend([FromBody] DeleteFriendRequest deleteFriendRequest)
+        [Authorize]
+        public async Task<ActionResult<object>> CancelFriend([FromBody] FriendRequestDto deleteFriendRequest)
         {
-            var userIdentity = User.Identity as ClaimsIdentity;
-            var userEmailClaim = userIdentity.FindFirst(ClaimTypes.Email)?.Value;
-
-            if (!string.Equals(userEmailClaim, deleteFriendRequest.RequesterUserEmail, StringComparison.OrdinalIgnoreCase))
+            if (!IsRequestFromValidUser(deleteFriendRequest.RequesterUserEmail))
             {
                 throw new ForbiddenRequestException();
             }
@@ -102,6 +95,55 @@ namespace DebtsCompass.Presentation.Controllers
                 Payload = null,
                 StatusCode = HttpStatusCode.OK
             });
+        }
+
+
+        [HttpPut]
+        [Route("accept-friend-request")]
+        [Authorize]
+        public async Task<ActionResult<object>> AcceptFriendRequest([FromBody] FriendRequestDto friendRequestDto)
+        {
+            if (!IsRequestFromValidUser(friendRequestDto.RequesterUserEmail))
+            {
+                throw new ForbiddenRequestException();
+            }
+
+            await friendshipsService.AcceptFriendRequest(friendRequestDto);
+
+            return Ok(new Response<object>
+            {
+                Message = null,
+                Payload = null,
+                StatusCode = HttpStatusCode.OK
+            });
+        }
+
+        [HttpPut]
+        [Route("reject-friend-request")]
+        [Authorize]
+        public async Task<ActionResult<object>> RejectFriendRequest([FromBody] FriendRequestDto friendRequestDto)
+        {
+            if (!IsRequestFromValidUser(friendRequestDto.RequesterUserEmail))
+            {
+                throw new ForbiddenRequestException();
+            }
+
+            await friendshipsService.RejectFriendRequest(friendRequestDto);
+
+            return Ok(new Response<object>
+            {
+                Message = null,
+                Payload = null,
+                StatusCode = HttpStatusCode.OK
+            });
+        }
+
+        private bool IsRequestFromValidUser(string email)
+        {
+            var userIdentity = User.Identity as ClaimsIdentity;
+            var userEmailClaim = userIdentity.FindFirst(ClaimTypes.Email)?.Value;
+
+            return string.Equals(userEmailClaim, email, StringComparison.OrdinalIgnoreCase);
         }
     }
 }

@@ -8,6 +8,8 @@ namespace DebtsCompass.Domain.Interfaces
     {
         Task AddFriend(FriendRequest friendRequest);
         Task<PagedList<UserDto>> GetUserFriendsById(string email, PagedParameters pagedParameters);
-        Task DeleteFriendRequest(DeleteFriendRequest friendRequest);
+        Task DeleteFriendRequest(FriendRequestDto friendRequestDto);
+        Task AcceptFriendRequest(FriendRequestDto friendRequestDto);
+        Task RejectFriendRequest(FriendRequestDto friendRequestDto);
     }
 }

@@ -70,7 +70,6 @@ namespace DebtsCompass.Application.Services
                 ReceiverInfoDto receiverInfoDto = Mapper.UserToReceiverInfoDto(debtAssignment.SelectedUser);
                 DebtEmailInfoDto createdDebtEmailInfoDto = Mapper.DebtAssignmentToCreatedDebtEmailInfoDto(debtAssignment);
                 await emailService.SendDebtCreatedNotification(receiverInfoDto, createdDebtEmailInfoDto);
-
             }
             else
             {

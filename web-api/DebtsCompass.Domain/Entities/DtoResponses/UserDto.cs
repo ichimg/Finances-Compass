@@ -9,5 +9,6 @@ namespace DebtsCompass.Domain.Entities.DtoResponses
         public string Username { get; set; }
         public string Email { get; set; }
         public string FriendStatus { get; set; }
+        public bool IsPendingFriendRequest { get; set; }
     }
 }

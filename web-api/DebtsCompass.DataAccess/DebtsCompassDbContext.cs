@@ -64,18 +64,18 @@ namespace DebtsCompass.DataAccess
                 .HasForeignKey(da => da.DebtId)
                 .OnDelete(DeleteBehavior.Cascade);
 
-            modelBuilder.Entity<Friendship>().HasKey(f => new { f.UserOneId, f.UserTwoId });
+            modelBuilder.Entity<Friendship>().HasKey(f => new { f.RequesterUserId, f.SelectedUserId });
 
             modelBuilder.Entity<Friendship>()
-                .HasOne(f => f.UserOne)
+                .HasOne(f => f.RequesterUser)
                 .WithMany()
-                .HasForeignKey(f => f.UserOneId)
+                .HasForeignKey(f => f.RequesterUserId)
                 .OnDelete(DeleteBehavior.Restrict);
 
             modelBuilder.Entity<Friendship>()
-                .HasOne(f => f.UserTwo)
+                .HasOne(f => f.SelectedUser)
                 .WithMany()
-                .HasForeignKey(f => f.UserTwoId)
+                .HasForeignKey(f => f.SelectedUserId)
                 .OnDelete(DeleteBehavior.Restrict);
         }
     }

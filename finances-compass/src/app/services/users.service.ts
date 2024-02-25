@@ -2,7 +2,8 @@ import { environment } from './../../environments/environment';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { FriendRequest } from '../entities/friend-request.model';
-import { DeleteFriendRequest } from '../entities/delete-friend-request.model';
+import { FriendRequestDto } from '../entities/friend-request.dto';
+import { lastValueFrom } from 'rxjs';
 
 @Injectable()
 export class UsersService {
@@ -49,15 +50,38 @@ export class UsersService {
     });
   }
 
-  cancelFriendRequest(deleteFriendRequest: DeleteFriendRequest) {
-    const addFriendEndpoint = `${this.apiUrl}/cancel-friend`;
+  cancelFriendRequest(deleteFriendRequest: FriendRequestDto) {
+    const cancelFriendEndpoint = `${this.apiUrl}/cancel-friend`;
     const headers = new HttpHeaders({
       'Content-Type': 'application/json',
     });
 
-    return this.http.delete<any>(addFriendEndpoint, {
+    return this.http.delete<any>(cancelFriendEndpoint, {
       body: deleteFriendRequest,
       headers: headers,
     });
+  }
+
+  async acceptFriendRequest(friendRequestDto: FriendRequestDto) {
+    const acceptFriendRequestEndpoint = `${this.apiUrl}/accept-friend-request`;
+    const headers = new HttpHeaders({
+      'Content-Type': 'application/json',
+    });
+    console.log(friendRequestDto);
+
+    return await lastValueFrom(this.http.put<any>(acceptFriendRequestEndpoint, friendRequestDto, {
+      headers: headers,
+    }));
+  }
+
+  async rejectFriendRequest(friendRequestDto: FriendRequestDto) {
+    const rejectFriendRequestEndpoint = `${this.apiUrl}/reject-friend-request`;
+    const headers = new HttpHeaders({
+      'Content-Type': 'application/json',
+    });
+
+    return await lastValueFrom(this.http.put<any>(rejectFriendRequestEndpoint, friendRequestDto, {
+      headers: headers,
+    }));
   }
 }

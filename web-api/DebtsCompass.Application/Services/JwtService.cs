@@ -59,7 +59,6 @@ namespace DebtsCompass.Application.Services
                 AccessToken = accessToken,
                 RefreshToken = refreshToken
             };
-
         }
         public string GenerateRefreshToken()
         {

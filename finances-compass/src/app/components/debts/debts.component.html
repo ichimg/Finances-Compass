@@ -13,7 +13,7 @@
               />
             </div>
             <div class="text">
-              <h2 class="to-be-collected">Debts to be collected:</h2>
+              <h2 class="to-be-collected">Loans to be collected:</h2>
             </div>
           </div>
           <div
@@ -27,12 +27,12 @@
               height="20"
             />
             <h3 class="to-be-collected">
-              You don't have any debts to be collected.
+              You don't have any loans to collect.
             </h3>
           </div>
           <div class="add-btn" *ngIf="isReceivingDebtsLoaded">
             <button mat-raised-button color="primary" (click)="addDebt()">
-              <mat-icon>add_circle_outline</mat-icon>Add Debt
+              <mat-icon>add_circle_outline</mat-icon>DEBT
             </button>
           </div>
         </div>
@@ -209,7 +209,7 @@
             />
           </div>
           <div class="text">
-            <h2 class="to-be-collected">Your pending debts:</h2>
+            <h2 class="to-be-collected">Your debts:</h2>
           </div>
         </div>
         <div class="text-img" *ngIf="!areDebts() && isUserDebtsLoaded">
@@ -358,11 +358,21 @@
                     color="warn"
                     *ngIf="element.status === 'Accepted' && !element.isPaid"
                     matTooltip="Click to pay"
-                    matTooltipPosition="right"
+                    matTooltipPosition="left"
                     (click)="onPayClick($event, element)"
                   >
                     PAY
                   </button>
+                  <button
+                  mat-flat-button
+                  color="primary"
+                  *ngIf="element.status === 'Accepted' && !element.isPaid"
+                  matTooltip="Click to ask"
+                  matTooltipPosition="right"
+                  (click)="onPayClick($event, element)"
+                >
+                  Extend deadline
+                </button>
                 </div>
               </td></ng-container
             >

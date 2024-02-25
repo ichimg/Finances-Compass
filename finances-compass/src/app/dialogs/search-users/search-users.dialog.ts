@@ -1,3 +1,4 @@
+import { lastValueFrom } from 'rxjs';
 import { NotificationService } from './../../services/notification.service';
 import { AuthenticationService } from './../../services/authentication.service';
 import { UserModel } from './../../entities/user-friend.model';
@@ -7,7 +8,7 @@ import { HttpClient } from '@angular/common/http';
 import { UsersService } from '../../services/users.service';
 import { PaginationService } from '../../services/pagination.service';
 import { FriendRequest } from '../../entities/friend-request.model';
-import { DeleteFriendRequest } from '../../entities/delete-friend-request.model';
+import { FriendRequestDto } from '../../entities/friend-request.dto';
 
 @Component({
   selector: 'app-search-users',
@@ -40,41 +41,9 @@ export class SearchUsersDialog implements OnInit {
         this.paginationService.pageNumber,
         this.paginationService.pageSize
       )
-      .subscribe((response) => {
-        this.users = response.body.payload;
-
-        this.searchedUsers = this.users!.map((user) => {
-          const tuple = this.mapFriendStatusIcon(user.friendStatus);
-          return {
-            userDetails: user,
-            iconName: tuple[0],
-            iconColor: tuple[1],
-            isButtonDisabled: tuple[2],
-          };
-        });
-
-        this.usersTotalCount = JSON.parse(
-          response.headers.get('X-Pagination')!
-        ).TotalCount;
-      },
-      () => {
-        this.notificationService.showError('Something went wrong');
-      }
-    );
-  }
-
-  loadMoreUsers(): void {
-    if (this.users!.length < this.paginationService.totalCount) {
-      this.paginationService.change(this.usersTotalCount);
-
-      this.usersService
-        .getUsersBySearchQuery(
-          this.searchInput.nativeElement.value,
-          this.paginationService.pageNumber,
-          this.paginationService.pageSize
-        )
-        .subscribe((response) => {
-          this.users = this.users!.concat(response.body.payload);
+      .subscribe(
+        (response) => {
+          this.users = response.body.payload;
 
           this.searchedUsers = this.users!.map((user) => {
             const tuple = this.mapFriendStatusIcon(user.friendStatus);
@@ -94,6 +63,40 @@ export class SearchUsersDialog implements OnInit {
           this.notificationService.showError('Something went wrong');
         }
       );
+  }
+
+  loadMoreUsers(): void {
+    if (this.users!.length < this.paginationService.totalCount) {
+      this.paginationService.change(this.usersTotalCount);
+
+      this.usersService
+        .getUsersBySearchQuery(
+          this.searchInput.nativeElement.value,
+          this.paginationService.pageNumber,
+          this.paginationService.pageSize
+        )
+        .subscribe(
+          (response) => {
+            this.users = this.users!.concat(response.body.payload);
+
+            this.searchedUsers = this.users!.map((user) => {
+              const tuple = this.mapFriendStatusIcon(user.friendStatus);
+              return {
+                userDetails: user,
+                iconName: tuple[0],
+                iconColor: tuple[1],
+                isButtonDisabled: tuple[2],
+              };
+            });
+
+            this.usersTotalCount = JSON.parse(
+              response.headers.get('X-Pagination')!
+            ).TotalCount;
+          },
+          () => {
+            this.notificationService.showError('Something went wrong');
+          }
+        );
     }
   }
 
@@ -102,7 +105,7 @@ export class SearchUsersDialog implements OnInit {
     this.users = null;
   }
 
-  addFriend(user: any) {
+  addOrCancelFriendRequest(user: any) {
     const loggedEmail = this.authService.getEmail();
 
     if (user.iconName === 'person_add') {
@@ -112,29 +115,28 @@ export class SearchUsersDialog implements OnInit {
         status: 'Pending',
       };
 
-      this.usersService.addFriend(addFriendRequest).subscribe((response) => {
-        switch (response.statusCode) {
-          case 200:
-            this.notificationService.showSuccess('Friend request sent');
-            user.iconName = 'remove_circle';
-            user.iconColor = 'red';
-            break;
+      this.usersService.addFriend(addFriendRequest).subscribe(
+        (response) => {
+          switch (response.statusCode) {
+            case 200:
+              this.notificationService.showSuccess('Friend request sent');
+              user.iconName = 'remove_circle';
+              user.iconColor = 'red';
+              break;
 
-          default:
-            this.notificationService.showError('Friend request sent failed');
-            break;
-        }
-      },
+            default:
+              this.notificationService.showError('Friend request sent failed');
+              break;
+          }
+        },
         () => {
           this.notificationService.showError('Something went wrong');
         }
       );
-    } 
-    
-    else if (user.iconName === 'remove_circle') {
-      let deleteFriendRequest: DeleteFriendRequest = {
+    } else if (user.iconName === 'remove_circle') {
+      let deleteFriendRequest: FriendRequestDto = {
         requesterUserEmail: loggedEmail!,
-        receiverUserEmail: user.userDetails.email,
+        selectedUserEmail: user.userDetails.email,
       };
 
       this.usersService.cancelFriendRequest(deleteFriendRequest).subscribe(
@@ -157,6 +159,60 @@ export class SearchUsersDialog implements OnInit {
           this.notificationService.showError('Something went wrong');
         }
       );
+    }
+  }
+
+  async acceptFriendRequest(user: any) {
+    const loggedEmail = this.authService.getEmail();
+    let friendRequestDto: FriendRequestDto = {
+      requesterUserEmail: loggedEmail!,
+      selectedUserEmail: user.userDetails.email,
+    };
+
+    const response = await this.usersService.acceptFriendRequest(
+      friendRequestDto
+    );
+
+    switch (response.statusCode) {
+      case 200:
+        this.notificationService.showSuccess('Friend request accepted');
+        user.userDetails.isPendingFriendRequest = false;
+        user.userDetails.friendStatus = 'Accepted';
+        user.iconName = 'how_to_reg';
+        user.iconColor = 'green';
+        user.isButtonDisabled = true;
+        break;
+
+      default:
+        this.notificationService.showError('Please try again later');
+        break;
+    }
+  }
+
+  async rejectFriendRequest(user: any) {
+    const loggedEmail = this.authService.getEmail();
+    let friendRequestDto: FriendRequestDto = {
+      requesterUserEmail: loggedEmail!,
+      selectedUserEmail: user.userDetails.email,
+    };
+
+    const response = await this.usersService.rejectFriendRequest(
+      friendRequestDto
+    );
+
+    switch (response.statusCode) {
+      case 200:
+        this.notificationService.showSuccess('Friend request rejected');
+        user.userDetails.isPendingFriendRequest = false;
+        user.userDetails.friendStatus = 'Rejected';
+        user.iconName = '';
+        user.iconColor = '';
+        user.isButtonDisabled = true;
+        break;
+
+      default:
+        this.notificationService.showError('Please try again later');
+        break;
     }
   }
 

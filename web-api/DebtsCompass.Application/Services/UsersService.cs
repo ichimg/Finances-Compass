@@ -27,19 +27,30 @@ namespace DebtsCompass.Application.Services
             var userDtos = new List<UserDto>();
             foreach (var user in usersFromDb)
             {
-                Friendship friendshipFromDb = await friendshipRepository.GetUsersFriendStatus(currentUser, user);
+                bool isPendingFriendRequest = false;
+                Friendship friendshipFromDb = await friendshipRepository.GetUsersFriendship(currentUser, user);
 
                 Status friendStatus;
                 if (friendshipFromDb is null)
                 {
-                    friendStatus = Status.None;
+                    friendshipFromDb = await friendshipRepository.GetUsersFriendship(user, currentUser);
+
+                    if(friendshipFromDb is null)
+                    {
+                        friendStatus = Status.None;
+                    }
+                    else
+                    {
+                        isPendingFriendRequest =  friendshipFromDb.Status == Status.Pending ?  true : false;
+                        friendStatus = friendshipFromDb.Status;
+                    }
                 }
                 else
                 {
                     friendStatus = friendshipFromDb.Status;
                 }
 
-                UserDto userDto = Mapper.UserToUserDto(user, friendStatus);
+                UserDto userDto = Mapper.UserToUserDto(user, friendStatus, isPendingFriendRequest);
                 userDtos.Add(userDto);
             }
 

@@ -17,20 +17,20 @@ namespace DebtsCompass.DataAccess.Repositories
         public async Task<PagedList<User>> GetUserFriendsById(string userId, PagedParameters pagedParameters)
         {
             return await dbContext.Friendships
-                .Include(f => f.UserOne)
+                .Include(f => f.RequesterUser)
                 .ThenInclude(u => u.UserInfo)
-                .Include(f => f.UserTwo)
+                .Include(f => f.SelectedUser)
                 .ThenInclude(u => u.UserInfo)
-                .Where(f => (f.UserOneId == userId || f.UserTwoId == userId) && (f.Status == Status.Accepted))
-                .Select(f => f.UserOneId == userId ? f.UserTwo : f.UserOne)
+                .Where(f => (f.RequesterUserId == userId || f.SelectedUserId == userId) && (f.Status == Status.Accepted))
+                .Select(f => f.RequesterUserId == userId ? f.SelectedUser : f.RequesterUser)
                 .AsNoTracking()
                 .ToPagedListAsync(pagedParameters.PageNumber, pagedParameters.PageSize);
         }
 
-        public async Task<Friendship> GetUsersFriendStatus(User userOne, User userTwo)
+        public async Task<Friendship> GetUsersFriendship(User userOne, User userTwo)
         {
             var friendshipFromDb = await dbContext.Friendships
-                .Where(f => f.UserOneId.Equals(userOne.Id) && f.UserTwoId.Equals(userTwo.Id)).FirstOrDefaultAsync();
+                .Where(f => f.RequesterUserId.Equals(userOne.Id) && f.SelectedUserId.Equals(userTwo.Id)).FirstOrDefaultAsync();
 
             return friendshipFromDb;
 
@@ -49,6 +49,18 @@ namespace DebtsCompass.DataAccess.Repositories
         public async Task Delete(Friendship friendship)
         {
             dbContext.Friendships.Remove(friendship);
+            await dbContext.SaveChangesAsync();
+        }
+
+        public async Task AcceptFriendRequest(Friendship friendshipFromDb)
+        {
+            friendshipFromDb.Status = Status.Accepted;
+            await dbContext.SaveChangesAsync();
+        }
+
+        public async Task RejectFriendRequest(Friendship friendshipFromDb)
+        {
+            friendshipFromDb.Status = Status.Rejected;
             await dbContext.SaveChangesAsync();
         }
     }

@@ -44,6 +44,13 @@ mat-card {
   font-family: "Trebuchet MS", "Lucida Sans Unicode", "Lucida Grande",
     "Lucida Sans", Arial, sans-serif;
   font-style: italic;
+  font-size: x-large;
+}
+
+.not-found-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
 .spaced {
@@ -52,8 +59,39 @@ mat-card {
   justify-content: space-between;
 }
 
+.shadow-img {
+  -webkit-filter: drop-shadow(5px 5px 5px #222);
+  filter: drop-shadow(5px 5px 5px #222);
+  opacity: 0.8;
+}
+
 .title {
   margin-bottom: 10px;
   font-family: "Trebuchet MS", "Lucida Sans Unicode", "Lucida Grande",
     "Lucida Sans", Arial, sans-serif;
+}
+
+.accept-icon {
+  cursor: pointer;
+  color: rgb(1, 160, 1);
+  transition: 0.3s;
+}
+
+.accept-icon:hover{
+  color: rgb(129, 158, 129);
+}
+
+.reject-icon {
+  cursor: pointer;
+  color: #a6120d;
+  transition: 0.3s;
+}
+
+.reject-icon:hover{
+  color: #774745;
+}
+
+.request-actions {
+  display: flex;
+  gap: 0;
 }

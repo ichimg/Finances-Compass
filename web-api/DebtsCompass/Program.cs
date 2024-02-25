@@ -71,6 +71,7 @@ builder.Services.AddAuthentication(config =>
         config.TokenValidationParameters = new TokenValidationParameters()
         {
             ValidateIssuer = false,
+            ValidateLifetime = true,
             ValidIssuer = "",
             ValidateAudience = false,
             ValidAudience = "",
@@ -146,6 +147,7 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();

@@ -19,7 +19,7 @@ export class PaypalService {
     let amount: string = debt.amount;
     // make transfer in EUR for RON currencies
     if(currency === 'RON') {
-      amount = (parseFloat(debt.amount) * parseFloat(debt.eurExchangeRate)).toString();
+      amount = (parseFloat(debt.amount) * parseFloat(debt.eurExchangeRate)).toFixed(2).toString();
     }
 
     let paypalConfig: IPayPalConfig = {
@@ -31,7 +31,7 @@ export class PaypalService {
             intent: this.intent,
             payeeEmail: debt.email,
             currencyCode: localStorage.getItem('currencyPreference')! === 'RON' ? 'EUR' : currency!,
-            value: amount.toString()
+            value: amount.toString(),
           }));
           return order.payload;
         } catch (error) {

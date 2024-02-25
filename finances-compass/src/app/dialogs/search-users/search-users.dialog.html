@@ -29,19 +29,50 @@
           <mat-list-item class="item">
             {{ user.userDetails.username }}
           </mat-list-item>
+          <div class="request-actions" *ngIf="user.userDetails.isPendingFriendRequest">
+            <button
+            mat-icon-button
+            matTooltip="Click to accept"
+            matTooltipPosition="left"
+            (click)="acceptFriendRequest(user)">
+            <mat-icon
+            class="accept-icon"
+            >done_outline</mat-icon
+          >
+        </button>
           <button
+          mat-icon-button
+          matTooltip="Click to reject"
+          matTooltipPosition="right"
+          (click)="rejectFriendRequest(user)">
+          <mat-icon
+            class="reject-icon"
+            >cancel</mat-icon
+          >
+        </button>
+          </div>
+          <button *ngIf="!user.userDetails.isPendingFriendRequest"
             [style.color]="user.iconColor"
             mat-icon-button
-            (click)="addFriend(user)"
+            (click)="addOrCancelFriendRequest(user)"
             [disabled]="user.isButtonDisabled"
           >
             <mat-icon>{{user.iconName}}</mat-icon>
           </button>
         </div>
       </mat-nav-list>
-      <p class="not-found" *ngIf="users != null && users.length === 0">
+      <div *ngIf="users != null && users.length === 0" class="not-found-container">
+      <p class="not-found">
         No users found
       </p>
+      <img
+      class="shadow-img"
+      src="../../assets/images/sad-face.png"
+      alt=""
+      width="300"
+      height="300"
+    />
+    </div>
     </mat-card-content>
   </mat-card>
 </div>
