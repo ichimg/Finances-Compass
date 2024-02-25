@@ -83,12 +83,6 @@ namespace DebtsCompass.DataAccess.Repositories
             return debtAssignmentFromDb;
         }
 
-        public async Task DeleteDebt(DebtAssignment debtAssignment)
-        {
-            dbContext.DebtAssignments.Remove(debtAssignment);
-            await dbContext.SaveChangesAsync();
-        }
-
         public async Task UpdateDebt(DebtAssignment debtFromDb, DebtAssignment updatedDebt)
         {
             debtFromDb.Debt.Amount = updatedDebt.Debt.Amount;

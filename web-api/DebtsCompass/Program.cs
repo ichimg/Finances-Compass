@@ -100,6 +100,7 @@ builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IDebtAssignmentRepository, DebtAssignmentRepository>();
 builder.Services.AddScoped<IFriendshipRepository, FriendshipRepository>();
 builder.Services.AddScoped<INonUserRepository, NonUserRepository> ();
+builder.Services.AddScoped<IDebtRepository, DebtRepository>();
 
 
 // Email

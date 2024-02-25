@@ -14,6 +14,7 @@ namespace DebtsCompass.Application.Services
     public class DebtsService : IDebtsService
     {
         private readonly IDebtAssignmentRepository debtAssignmentRepository;
+        private readonly IDebtRepository debtRepository;
         private readonly IUserRepository userRepository;
         private readonly INonUserRepository nonUserRepository;
         private readonly IEmailService emailService;
@@ -23,13 +24,15 @@ namespace DebtsCompass.Application.Services
             IUserRepository userRepository,
             INonUserRepository nonUserRepository,
             IEmailService emailService,
-            ICurrencyRatesJob currencyRatesJob)
+            ICurrencyRatesJob currencyRatesJob,
+            IDebtRepository debtRepository)
         {
             this.debtAssignmentRepository = debtAssignmentRepository;
             this.userRepository = userRepository;
             this.nonUserRepository = nonUserRepository;
             this.emailService = emailService;
             this.currencyRatesJob = currencyRatesJob;
+            this.debtRepository = debtRepository;
         }
 
         public async Task<List<DebtDto>> GetAllReceivingDebts(string email)
@@ -140,13 +143,12 @@ namespace DebtsCompass.Application.Services
                 throw new ForbiddenRequestException();
             }
 
-
             if (debtFromDb.SelectedUser is not null)
             {
                 ReceiverInfoDto receiverInfoDto = Mapper.UserToReceiverInfoDto(debtFromDb.SelectedUser);
                 DebtEmailInfoDto deletedDebtEmailInfoDto = Mapper.DebtAssignmentToCreatedDebtEmailInfoDto(debtFromDb);
 
-                await debtAssignmentRepository.DeleteDebt(debtFromDb);
+                await debtRepository.DeleteDebt(debtFromDb.Debt);
                 await emailService.SendDebtDeletedNotification(receiverInfoDto, deletedDebtEmailInfoDto);
             }
             else if (debtFromDb.NonUser is not null)
@@ -154,7 +156,7 @@ namespace DebtsCompass.Application.Services
                 ReceiverInfoDto receiverInfoDto = Mapper.NonUserToReceiverInfoDto(debtFromDb.NonUser);
                 DebtEmailInfoDto deletedDebtEmailInfoDto = Mapper.DebtAssignmentToCreatedDebtEmailInfoDto(debtFromDb);
 
-                await debtAssignmentRepository.DeleteDebt(debtFromDb);
+                await debtRepository.DeleteDebt(debtFromDb.Debt);
                 await emailService.SendDebtDeletedNotification(receiverInfoDto, deletedDebtEmailInfoDto);
             }
         }

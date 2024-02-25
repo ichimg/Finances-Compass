@@ -10,7 +10,6 @@ namespace DebtsCompass.Domain.Interfaces
         Task<List<DebtAssignment>> GetAllNonUserDebtsByEmail(string email);
         Task UpdateRange(IEnumerable<DebtAssignment> debtAssignments);
         Task<DebtAssignment> GetDebtById(string id);
-        Task DeleteDebt(DebtAssignment debtAssignment);
         Task UpdateDebt(DebtAssignment debtFromDb, DebtAssignment debtToUpdate);
         Task ApproveDebt(DebtAssignment debtFromDb);
         Task RejectDebt(DebtAssignment debtAssignmentFromDb);
