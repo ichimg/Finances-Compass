@@ -77,7 +77,8 @@ namespace DebtsCompass.Domain
                 Email = registerRequest.Email,
                 PasswordHash = BCrypt.Net.BCrypt.HashPassword(registerRequest.Password),
                 PhoneNumber = registerRequest.PhoneNumber,
-                UserName = registerRequest.Username
+                UserName = registerRequest.Username,
+                CurrencyPreference = Enum.Parse<CurrencyPreference>(registerRequest.CurrencyPreference)
             };
         }
 

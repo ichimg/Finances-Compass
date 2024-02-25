@@ -2,9 +2,11 @@
 using DebtsCompass.Domain;
 using DebtsCompass.Domain.Entities.Requests;
 using DebtsCompass.Domain.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Org.BouncyCastle.Ocsp;
 using System.Net;
+using System.Security.Claims;
 
 namespace DebtsCompass.Presentation.Controllers
 {
@@ -22,6 +24,7 @@ namespace DebtsCompass.Presentation.Controllers
         }
 
         [HttpGet("access-token")]
+        [Authorize]
         public async Task<ActionResult<string>> GetAccessToken()
         {
             string accessToken = await paypalService.GetAccessToken();
@@ -29,9 +32,13 @@ namespace DebtsCompass.Presentation.Controllers
         }
 
         [HttpPost("create-paypal-order")]
+        [Authorize]
         public async Task<ActionResult<Response<string>>> CreateOrder([FromBody] CreatePaypalOrderRequest createOrderRequest)
         {
-            var response = await paypalService.CreateOrder(createOrderRequest);
+            var userIdentity = User.Identity as ClaimsIdentity;
+            var userEmailClaim = userIdentity.FindFirst(ClaimTypes.Email)?.Value;
+
+            var response = await paypalService.CreateOrder(createOrderRequest, userEmailClaim);
 
             return Ok(new Response<string>
             {
@@ -42,6 +49,7 @@ namespace DebtsCompass.Presentation.Controllers
         }
 
         [HttpPost("complete-paypal-order")]
+        [Authorize]
         public async Task<ActionResult<Response<string>>> CompleteOrder([FromBody] CompletePaypalOrderRequest completeOrderRequest)
         {
             var response = await paypalService.CompleteOrder(completeOrderRequest);

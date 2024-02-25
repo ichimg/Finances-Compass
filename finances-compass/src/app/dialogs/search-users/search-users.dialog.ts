@@ -1,10 +1,8 @@
-import { lastValueFrom } from 'rxjs';
 import { NotificationService } from './../../services/notification.service';
 import { AuthenticationService } from './../../services/authentication.service';
 import { UserModel } from './../../entities/user-friend.model';
 import { MatDialogRef } from '@angular/material/dialog';
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
 import { UsersService } from '../../services/users.service';
 import { PaginationService } from '../../services/pagination.service';
 import { FriendRequest } from '../../entities/friend-request.model';
@@ -25,7 +23,6 @@ export class SearchUsersDialog implements OnInit {
 
   constructor(
     private dialogRef: MatDialogRef<SearchUsersDialog>,
-    private http: HttpClient,
     private usersService: UsersService,
     private paginationService: PaginationService,
     private authService: AuthenticationService,

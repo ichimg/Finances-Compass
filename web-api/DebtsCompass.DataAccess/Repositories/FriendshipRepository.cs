@@ -27,10 +27,10 @@ namespace DebtsCompass.DataAccess.Repositories
                 .ToPagedListAsync(pagedParameters.PageNumber, pagedParameters.PageSize);
         }
 
-        public async Task<Friendship> GetUsersFriendship(User userOne, User userTwo)
+        public async Task<Friendship> GetUsersFriendship(User requesterUser, User receiverUser)
         {
             var friendshipFromDb = await dbContext.Friendships
-                .Where(f => f.RequesterUserId.Equals(userOne.Id) && f.SelectedUserId.Equals(userTwo.Id)).FirstOrDefaultAsync();
+                .Where(f => f.RequesterUserId.Equals(requesterUser.Id) && f.SelectedUserId.Equals(receiverUser.Id)).FirstOrDefaultAsync();
 
             return friendshipFromDb;
 

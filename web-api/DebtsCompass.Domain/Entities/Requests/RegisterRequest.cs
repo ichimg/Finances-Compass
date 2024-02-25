@@ -37,6 +37,9 @@ namespace DebtsCompass.Domain.Entities.Requests
         [MaxLength(100)]
         [Required]
         public string ConfirmPassword { get; set; }
+        [MaxLength(3)]
+        [Required]
+        public string CurrencyPreference { get; set; }
         public string ClientURI { get; set; }
     }
 }

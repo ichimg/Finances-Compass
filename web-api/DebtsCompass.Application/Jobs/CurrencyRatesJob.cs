@@ -18,7 +18,7 @@ namespace DebtsCompass.Application.Jobs
             this.ApiKey = configuration.GetSection("CurrencyApiConfiguration").GetSection("ApiKey").Value;
         }
 
-        public async Task<CurrencyDto> GetLatestCurrencyRates()
+        public async Task<CurrencyDto> GetLatestCurrencyRates ()
         {
             var httpRequestMessage = new HttpRequestMessage(HttpMethod.Get, $"{BaseURL}?apikey={ApiKey}&currencies=EUR%2CUSD&base_currency=RON");
 

@@ -2,12 +2,11 @@ mat-card {
   border-radius: 15px;
   margin: 15px;
   width: 45%;
-  height: fit-content;
 }
 
 .row {
   display: flex;
-  padding:30px;
+  padding: 30px;
   flex-direction: row;
   justify-content: center;
 }
@@ -28,6 +27,7 @@ p {
   flex-direction: column;
   padding: 5px;
   flex: 50%;
+  padding-top: 10px;
 }
 
 .title-font {

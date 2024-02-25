@@ -19,11 +19,24 @@ import { passwordMatchingValidator as passwordMatchingValidator } from '../../va
 })
 export class RegisterComponent implements OnInit {
   countries: Countries[] = countries;
-  countryFormControl = new FormControl('', [Validators.required, countryValidator(), Validators.maxLength(100)]);
-  emailFormControl = new FormControl('', [Validators.required, Validators.email, Validators.maxLength(320)])
-  passwordFormControl = new FormControl('', [Validators.required, passwordValidator(), Validators.maxLength(100)]);
+  countryFormControl = new FormControl('', [
+    Validators.required,
+    countryValidator(),
+    Validators.maxLength(100),
+  ]);
+  emailFormControl = new FormControl('', [
+    Validators.required,
+    Validators.email,
+    Validators.maxLength(320),
+  ]);
+  passwordFormControl = new FormControl('', [
+    Validators.required,
+    passwordValidator(),
+    Validators.maxLength(100),
+  ]);
 
   filteredOptions!: Observable<Countries[]>;
+  currencies: string[] = ['RON', 'EUR', 'USD'];
 
   constructor(
     private authService: AuthenticationService,
@@ -38,21 +51,51 @@ export class RegisterComponent implements OnInit {
     );
   }
 
-
-  registerForm = new FormGroup({
-    firstName: new FormControl('', [Validators.required, Validators.maxLength(20)]),
-    lastName: new FormControl('', [Validators.required, Validators.maxLength(20)]),
-    country: this.countryFormControl,
-    state: new FormControl('', [Validators.required, Validators.maxLength(100)]),
-    city: new FormControl('', [Validators.required, Validators.maxLength(100)]),
-    streetAddress: new FormControl('', [Validators.required, Validators.maxLength(100)]),
-    username: new FormControl('', [Validators.required, Validators.maxLength(50)]),
-    email: this.emailFormControl,
-    phoneNumber: new FormControl('', [Validators.required, Validators.maxLength(20)]),
-    password: this.passwordFormControl,
-    confirmPassword: new FormControl('', [Validators.required, passwordValidator(), Validators.maxLength(100)]),
-  },
-  { validators: passwordMatchingValidator });
+  registerForm = new FormGroup(
+    {
+      firstName: new FormControl('', [
+        Validators.required,
+        Validators.maxLength(20),
+      ]),
+      lastName: new FormControl('', [
+        Validators.required,
+        Validators.maxLength(20),
+      ]),
+      country: this.countryFormControl,
+      state: new FormControl('', [
+        Validators.required,
+        Validators.maxLength(100),
+      ]),
+      city: new FormControl('', [
+        Validators.required,
+        Validators.maxLength(100),
+      ]),
+      streetAddress: new FormControl('', [
+        Validators.required,
+        Validators.maxLength(100),
+      ]),
+      username: new FormControl('', [
+        Validators.required,
+        Validators.maxLength(50),
+      ]),
+      email: this.emailFormControl,
+      phoneNumber: new FormControl('', [
+        Validators.required,
+        Validators.maxLength(20),
+      ]),
+      password: this.passwordFormControl,
+      confirmPassword: new FormControl('', [
+        Validators.required,
+        passwordValidator(),
+        Validators.maxLength(100),
+      ]),
+      currencyPreference: new FormControl('RON', [
+        Validators.required,
+        Validators.maxLength(3),
+      ]),
+    },
+    { validators: passwordMatchingValidator }
+  );
 
   private filter(value: string): Countries[] {
     const filterValue = value.toLowerCase();
@@ -75,14 +118,17 @@ export class RegisterComponent implements OnInit {
       phoneNumber: this.registerForm.value.phoneNumber,
       password: this.registerForm.value.password,
       confirmPassword: this.registerForm.value.confirmPassword,
-      clientURI: 'http://localhost:4200/emailconfirmation'
+      currencyPreference: this.registerForm.value.currencyPreference,
+      clientURI: 'http://localhost:4200/emailconfirmation',
     });
 
     this.authService.register(registerRequest).subscribe((response) => {
       switch (response.statusCode) {
         case 200:
           this.notificationService.showSuccess('You are now registered!');
-          this.router.navigateByUrl('login', { state: { isRedirectFromRegister: true } });
+          this.router.navigateByUrl('login', {
+            state: { isRedirectFromRegister: true },
+          });
           break;
 
         case 400:
@@ -100,5 +146,3 @@ export class RegisterComponent implements OnInit {
     });
   }
 }
-
-

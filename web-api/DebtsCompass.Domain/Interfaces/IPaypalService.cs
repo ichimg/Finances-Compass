@@ -7,7 +7,7 @@ namespace DebtsCompass.Domain.Interfaces
         string BaseUrl { get; }
 
         Task<string> GetAccessToken();
-        Task<string> CreateOrder(CreatePaypalOrderRequest createOrderRequest);
+        Task<string> CreateOrder(CreatePaypalOrderRequest createOrderRequest, string userEmail);
         Task<string> CompleteOrder(CompletePaypalOrderRequest completeOrderRequest);
     }
 }

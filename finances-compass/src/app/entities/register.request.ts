@@ -11,6 +11,6 @@ export interface RegisterRequest {
     phoneNumber: string;
     password: string;
     confirmPassword: string;
-    iban: string;
+    currencyPreference: string;
     clientURI: string;
 }

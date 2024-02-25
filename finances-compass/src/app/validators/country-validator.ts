@@ -4,7 +4,6 @@ import { countries } from "../country-data-store";
 export function countryValidator(): ValidatorFn {
     return (control: AbstractControl): { [key: string]: any } | null => {
         const country = control.value;
-        console.log(country);
         if (!country) {
           return null; 
         }

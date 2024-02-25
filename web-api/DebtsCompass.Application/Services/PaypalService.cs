@@ -6,20 +6,24 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System.Text;
 using Microsoft.Net.Http.Headers;
+using DebtsCompass.Domain.Entities.Models;
+using DebtsCompass.Domain.Enums;
 
 namespace DebtsCompass.Application.Services
 {
     public class PaypalService : IPaypalService
     {
         private readonly PaypalConfiguration configuration;
+        private readonly IUserRepository userRepository;
         private readonly IHttpClientFactory httpClientFactory;
         public string BaseUrl => configuration.Mode == "Live" ? configuration.LiveURL
             : configuration.SandboxURL;
 
-        public PaypalService(PaypalConfiguration configuration, IHttpClientFactory httpClientFactory)
+        public PaypalService(PaypalConfiguration configuration, IHttpClientFactory httpClientFactory, IUserRepository userRepository)
         {
             this.configuration = configuration;
             this.httpClientFactory = httpClientFactory;
+            this.userRepository = userRepository;
         }
 
         public async Task<string> GetAccessToken()
@@ -55,13 +59,20 @@ namespace DebtsCompass.Application.Services
             return accessToken;
         }
 
-        public async Task<string> CreateOrder(CreatePaypalOrderRequest createOrderRequest)
+        public async Task<string> CreateOrder(CreatePaypalOrderRequest createOrderRequest, string userEmail)
         {
             string accessToken = await GetAccessToken();
 
             if (string.IsNullOrEmpty(accessToken))
             {
                 throw new BadRequestException();
+            }
+
+            User payerUser = await userRepository.GetUserByEmail(userEmail);
+
+            if(payerUser.CurrencyPreference is CurrencyPreference.RON)
+            {
+                createOrderRequest.Value = Math.Round(Decimal.Parse(createOrderRequest.Value) * Decimal.Parse(createOrderRequest.EurExchangeRate), 2).ToString();
             }
 
             var requestBody = new
@@ -73,7 +84,8 @@ namespace DebtsCompass.Application.Services
                     {
                         amount = new
                         {
-                            currency_code = createOrderRequest.CurrencyCode,
+                            currency_code = payerUser.CurrencyPreference == CurrencyPreference.RON ? 
+                            CurrencyPreference.EUR.ToString() : payerUser.CurrencyPreference.ToString(),
                             value = createOrderRequest.Value
                         },
                         payee = new
