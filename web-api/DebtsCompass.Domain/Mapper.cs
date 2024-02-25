@@ -25,7 +25,7 @@ namespace DebtsCompass.Domain
 
                 Email = debtAssignment.SelectedUser != null ? debtAssignment.SelectedUser.Email : debtAssignment.NonUser.PersonEmail,
                 Username = debtAssignment.SelectedUser != null ? debtAssignment.SelectedUser.UserName : null,
-                Amount = debtAssignment.Debt.Amount,
+                Amount = Math.Round(debtAssignment.Debt.Amount, 2),
                 BorrowingDate = debtAssignment.Debt.DateOfBorrowing,
                 Deadline = debtAssignment.Debt.DeadlineDate,
                 Reason = debtAssignment.Debt.BorrowReason,
@@ -46,7 +46,7 @@ namespace DebtsCompass.Domain
                 LastName = debtAssignment.CreatorUser.UserInfo.LastName,
                 Username = debtAssignment.CreatorUser.UserName,
                 Email = debtAssignment.CreatorUser.Email,
-                Amount = debtAssignment.Debt.Amount,
+                Amount = Math.Round(debtAssignment.Debt.Amount),
                 BorrowingDate = debtAssignment.Debt.DateOfBorrowing,
                 Deadline = debtAssignment.Debt.DeadlineDate,
                 Reason = debtAssignment.Debt.BorrowReason,

@@ -79,7 +79,7 @@
                 *matCellDef="let element"
                 [ngClass]="element.status === 'Rejected' ? 'rejected-debt' : element.isPaid ? 'paid-debt': ''"
               >
-                {{ element.amount + " " + this.currency }}
+                {{ getCurrency() === 'RON' ? element.amount + " " + getCurrency() : getCurrency() + element.amount }}
               </td>
             </ng-container>
             <ng-container matColumnDef="deadline">
@@ -265,7 +265,7 @@
                 *matCellDef="let element"
                 [ngClass]="element.isPaid && 'paid-debt'"
               >
-                {{ element.amount + " " + this.currency }}
+              {{ getCurrency() === 'RON' ? element.amount + " " + getCurrency() : getCurrency() + element.amount }}
               </td>
             </ng-container>
             <ng-container matColumnDef="deadline">

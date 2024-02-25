@@ -7,15 +7,26 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
   styleUrls: ['./view-debt.dialog.css']
 })
 export class ViewDebtDialog implements OnInit {
-  currency!: string;
   
   constructor( public dialogRef: MatDialogRef<ViewDebtDialog>,
     @Inject(MAT_DIALOG_DATA) public data: any) {}
 
     ngOnInit(): void {
-      this.currency = localStorage.getItem('currencyPreference')!;
     }
     closeDialog(): void {
       this.dialogRef.close();
+    }
+
+    getCurrency(): string {
+      let currency = localStorage.getItem('currencyPreference');
+      if (currency === 'EUR') {
+        return '€';
+      }
+  
+      if (currency === 'USD') {
+        return '$';
+      }
+  
+      return 'RON';
     }
 }

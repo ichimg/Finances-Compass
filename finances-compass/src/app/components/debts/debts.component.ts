@@ -32,7 +32,6 @@ export class DebtsComponent implements OnInit {
 
   isReceivingDebtsLoaded: boolean = false;
   isUserDebtsLoaded: boolean = false;
-  currency!: string;
 
   constructor(
     private liveAnnouncer: LiveAnnouncer,
@@ -57,7 +56,6 @@ export class DebtsComponent implements OnInit {
         this.notificationService.showError('Something went wrong');
       }
     );
-    this.currency = localStorage.getItem('currencyPreference')!;
   }
 
   @ViewChild('debtReceivingTbSort') set debtReceivingTbSort(sort: MatSort) {
@@ -204,5 +202,18 @@ export class DebtsComponent implements OnInit {
       width: '600px',
       data: { debt: debt},
     });
+    }
+
+    getCurrency(): string {
+      let currency = localStorage.getItem('currencyPreference');
+      if (currency === 'EUR') {
+        return '€';
+      }
+  
+      if (currency === 'USD') {
+        return '$';
+      }
+  
+      return 'RON';
     }
 }

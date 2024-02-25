@@ -83,6 +83,19 @@ export class AddOrEditDebtDialog implements OnInit {
       });
   }
 
+  getCurrency(): string {
+    let currency = localStorage.getItem('currencyPreference');
+    if (currency === 'EUR') {
+      return '€';
+    }
+
+    if (currency === 'USD') {
+      return '$';
+    }
+
+    return 'RON';
+  }
+
   debtForm = new FormGroup({
     amount: new FormControl('', [
       Validators.required,
@@ -216,7 +229,9 @@ export class AddOrEditDebtDialog implements OnInit {
   editDebt(): void {
     if (this.isVisible == 0) {
       // Has account
-      let selectedUserFriend = this.userFriends.find(u => u.email === this.selectedUser)!;
+      let selectedUserFriend = this.userFriends.find(
+        (u) => u.email === this.selectedUser
+      )!;
 
       const editUserDebtRequest: Debt = Object.assign({
         guid: this.data.selectedDebt.guid,
@@ -294,7 +309,9 @@ export class AddOrEditDebtDialog implements OnInit {
   createDebt(): void {
     if (this.isVisible == 0) {
       // Has account
-      let selectedUserFriend = this.userFriends.find(u => u.email === this.selectedUser)!;
+      let selectedUserFriend = this.userFriends.find(
+        (u) => u.email === this.selectedUser
+      )!;
 
       const createUserDebtRequest: Debt = Object.assign({
         firstName: selectedUserFriend.firstName,

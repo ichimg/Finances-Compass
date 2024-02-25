@@ -7,6 +7,7 @@ using DebtsCompass.Application.Exceptions;
 using DebtsCompass.Domain.Entities.Dtos;
 using DebtsCompass.Domain.Entities.EmailDtos;
 using EmailSender;
+using DebtsCompass.Domain.Enums;
 
 namespace DebtsCompass.Application.Services
 {
@@ -35,6 +36,17 @@ namespace DebtsCompass.Application.Services
         {
             var debtsFromDb = await debtAssignmentRepository.GetAllReceivingDebtsByEmail(email);
 
+            User user = await userRepository.GetUserByEmail(email);
+
+            if (user.CurrencyPreference == CurrencyPreference.EUR)
+            {
+                debtsFromDb.ForEach(d => d.Debt.Amount = (decimal)(d.Debt.Amount * d.Debt.EurExchangeRate));
+            }
+            else if (user.CurrencyPreference == CurrencyPreference.USD)
+            {
+                debtsFromDb.ForEach(d => d.Debt.Amount = (decimal)(d.Debt.Amount * d.Debt.UsdExchangeRate));
+            }
+
             List<DebtDto> debts = debtsFromDb
                     .Select(Mapper.ReceivingDebtAssignmentDbModelToDebtDto)
                     .ToList();
@@ -46,6 +58,17 @@ namespace DebtsCompass.Application.Services
         {
             var debtsFromDb = await debtAssignmentRepository.GetAllUserDebtsByEmail(email);
 
+            User user = await userRepository.GetUserByEmail(email);
+
+            if (user.CurrencyPreference == CurrencyPreference.EUR)
+            {
+                debtsFromDb.ForEach(d => d.Debt.Amount *= (decimal)d.Debt.EurExchangeRate);
+            }
+            else if (user.CurrencyPreference == CurrencyPreference.USD)
+            {
+                debtsFromDb.ForEach(d => d.Debt.Amount *= (decimal)d.Debt.UsdExchangeRate);
+            }
+
             List<DebtDto> debts = debtsFromDb.Select(Mapper.UserDebtAssignmentDbModelToDebtDto).ToList();
 
             return debts;
@@ -54,15 +77,25 @@ namespace DebtsCompass.Application.Services
         public async Task<Guid> CreateDebt(CreateDebtRequest createDebtRequest, string creatorEmail)
         {
             User creatorUser = await userRepository.GetUserByEmail(creatorEmail) ?? throw new UserNotFoundException(creatorEmail);
-            bool isUserAccount = createDebtRequest.IsUserAccount;
+            User existingAccount = await userRepository.GetUserByEmail(createDebtRequest.Email);
+
+            bool isUserAccount = existingAccount is not null;
 
             CurrencyDto currentCurrencies = await currencyRatesJob.GetLatestCurrencyRates();
+
+            if (creatorUser.CurrencyPreference == CurrencyPreference.EUR)
+            {
+                createDebtRequest.Amount /= currentCurrencies.EurExchangeRate;
+            }
+            else if (creatorUser.CurrencyPreference == CurrencyPreference.USD)
+            {
+                createDebtRequest.Amount /= currentCurrencies.UsdExchangeRate;
+            }
 
             DebtAssignment debtAssignment;
             if (isUserAccount)
             {
-                User selectedUser = await userRepository.GetUserByEmail(createDebtRequest.Email)
-                                    ?? throw new UserNotFoundException(createDebtRequest.Email);
+                User selectedUser = existingAccount;
 
                 debtAssignment = Mapper.CreateDebtRequestToDebtAssignment(createDebtRequest, creatorUser, selectedUser, currentCurrencies);
                 await debtAssignmentRepository.CreateDebt(debtAssignment);
@@ -75,12 +108,12 @@ namespace DebtsCompass.Application.Services
             {
                 NonUser existingNonUser = await nonUserRepository.GetNonUserByEmail(createDebtRequest.Email);
 
-                if (existingNonUser is not null) 
+                if (existingNonUser is not null)
                 {
                     debtAssignment = Mapper.CreateDebtRequestToDebtAssignment(createDebtRequest, creatorUser, existingNonUser, currentCurrencies);
                 }
                 else
-                { 
+                {
                     debtAssignment = Mapper.CreateDebtRequestToDebtAssignment(createDebtRequest, creatorUser, currentCurrencies);
                 }
                 await debtAssignmentRepository.CreateDebt(debtAssignment);

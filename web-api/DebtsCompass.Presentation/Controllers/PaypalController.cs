@@ -4,7 +4,6 @@ using DebtsCompass.Domain.Entities.Requests;
 using DebtsCompass.Domain.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Org.BouncyCastle.Ocsp;
 using System.Net;
 using System.Security.Claims;
 
@@ -64,3 +63,4 @@ namespace DebtsCompass.Presentation.Controllers
         }
     }
 }
+ 
