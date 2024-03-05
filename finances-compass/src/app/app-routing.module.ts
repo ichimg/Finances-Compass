@@ -7,6 +7,7 @@ import { unauthGuard } from './guards/unauth.guard';
 import { RegisterComponent } from './components/register/register.component';
 import { EmailConfirmationComponent } from './components/email-confirmation/email-confirmation.component';
 import { DebtsComponent } from './components/debts/debts.component';
+import { ExpensesComponent } from './components/expenses/expenses.component';
 
 const routes: Routes = [
   {
@@ -15,7 +16,8 @@ const routes: Routes = [
     canActivate: [authGuard],
     children: [
       { path: '', redirectTo: 'debts', pathMatch: 'full' },
-      { path: 'debts', component: DebtsComponent }],
+      { path: 'debts', component: DebtsComponent },
+      { path: 'expenses', component: ExpensesComponent }],
   },
   { path: 'login', component: LoginComponent, canActivate: [unauthGuard] },
   {

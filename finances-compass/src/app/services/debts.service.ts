@@ -42,7 +42,7 @@ export class DebtsService {
     const email = localStorage.getItem('email');
     const createDebtEndpoint = `${this.apiUrl}/create-debt?email=${email}`;
     const headers = new HttpHeaders({
-      'Content-Type': 'application/json'
+      'Content-Type': 'application/json',
     });
 
     return this.httpClient.post<any>(createDebtEndpoint, createDebtRequest, {
@@ -54,17 +54,19 @@ export class DebtsService {
     const email = localStorage.getItem('email');
     const deleteDebtEndpoint = `${this.apiUrl}/delete-debt?id=${id}&email=${email}`;
     const headers = new HttpHeaders({
-      'Content-Type': 'application/json'
+      'Content-Type': 'application/json',
     });
 
-    return this.httpClient.delete<any>(deleteDebtEndpoint, {headers: headers});
+    return this.httpClient.delete<any>(deleteDebtEndpoint, {
+      headers: headers,
+    });
   }
 
   updateDebt(editDebtRequest: Debt) {
     const email = localStorage.getItem('email');
     const editDebtEndpoint = `${this.apiUrl}/edit-debt?email=${email}`;
     const headers = new HttpHeaders({
-      'Content-Type': 'application/json'
+      'Content-Type': 'application/json',
     });
 
     return this.httpClient.put<any>(editDebtEndpoint, editDebtRequest, {
@@ -76,19 +78,28 @@ export class DebtsService {
     const email = localStorage.getItem('email');
     const approveDebtEndpoint = `${this.apiUrl}/approve-debt?debtId=${debtId}&email=${email}`;
     const headers = new HttpHeaders({
-      'Content-Type': 'application/json'
+      'Content-Type': 'application/json',
     });
 
-    return this.httpClient.put<any>(approveDebtEndpoint, {headers: headers});
+    return this.httpClient.put<any>(approveDebtEndpoint, { headers: headers });
   }
 
   rejectDebt(debtId: string) {
     const email = localStorage.getItem('email');
     const approveDebtEndpoint = `${this.apiUrl}/reject-debt?debtId=${debtId}&email=${email}`;
     const headers = new HttpHeaders({
-      'Content-Type': 'application/json'
+      'Content-Type': 'application/json',
     });
 
-    return this.httpClient.put<any>(approveDebtEndpoint, {headers: headers});
+    return this.httpClient.put<any>(approveDebtEndpoint, { headers: headers });
+  }
+
+  markDebtPaid(debtId: string) {
+    const markPaidDebtEndpoint = `${this.apiUrl}/mark-paid?debtId=${debtId}`;
+    const headers = new HttpHeaders({
+      'Content-Type': 'application/json',
+    });
+
+    return this.httpClient.put<any>(markPaidDebtEndpoint, { headers: headers });
   }
 }

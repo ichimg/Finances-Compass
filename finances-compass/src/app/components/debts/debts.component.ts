@@ -27,6 +27,14 @@ export class DebtsComponent implements OnInit {
     'status',
     'action',
   ];
+
+  displayedUserColumns: string[] = [
+    'amount',
+    'deadline',
+    'reason',
+    'status',
+    'action',
+  ];
   dataReceivingDebtsSource = new MatTableDataSource();
   dataUserDebtsSource = new MatTableDataSource();
 
@@ -105,10 +113,17 @@ export class DebtsComponent implements OnInit {
       });
   }
 
-  onRowClick(debt: Debt) {
+  onLoanClick(debt: Debt) {
     const dialogRef = this.dialog.open(ViewDebtDialog, {
       width: '600px',
-      data: { debt },
+      data: { debt: debt, isUserDebt: false },
+    });
+  }
+
+  onDebtClick(debt: Debt) {
+    const dialogRef = this.dialog.open(ViewDebtDialog, {
+      width: '600px',
+      data: { debt: debt, isUserDebt: true },
     });
   }
 

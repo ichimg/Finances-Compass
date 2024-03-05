@@ -165,6 +165,19 @@ namespace DebtsCompass.Presentation.Controllers
             });
         }
 
+        [HttpPut("mark-paid")]
+        [Authorize]
+        public async Task<ActionResult<object>> MarkDebtPaid([FromQuery] string debtId)
+        {
+            await debtsService.MarkPaid(debtId);
+            return Ok(new Response<object>
+            {
+                Message = null,
+                Payload = null,
+                StatusCode = HttpStatusCode.OK
+            });
+        }
+
 
         private bool IsRequestFromValidUser(string email)
         {

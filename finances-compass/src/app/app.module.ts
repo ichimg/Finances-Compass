@@ -54,6 +54,7 @@ import { InfiniteScrollDirective } from './directives/infinite-scroll.directive'
 import { FooterComponent } from './components/footer/footer.component';
 import { NgxPayPalModule } from 'ngx-paypal';
 import { PaymentDialog } from './dialogs/payment-dialog/payment.dialog';
+import { ExpensesComponent } from './components/expenses/expenses.component';
 
 
 const OPTIONS = {
@@ -80,6 +81,7 @@ const OPTIONS = {
     FooterComponent,
     DeleteConfirmationDialog,
     PaymentDialog,
+    ExpensesComponent
   ],
   imports: [
     BrowserModule,

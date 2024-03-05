@@ -132,7 +132,7 @@
                 [ngClass]="element.status === 'Rejected' ? 'rejected-debt' : element.isPaid ? 'paid-debt': ''"
               >
               {{
-                element.isPaid ? "&#x2705; Paid" : (element.status | statusTransform)
+                element.isPaid ? "&#x2705; Collected" : (element.status | statusTransform)
               }}
               </td>
             </ng-container>
@@ -186,7 +186,7 @@
             <tr
               class="record"
               mat-row
-              (click)="onRowClick(row)"
+              (click)="onLoanClick(row)"
               *matRowDef="let row; columns: displayedReceivingColumns"
             ></tr>
           </table>
@@ -384,7 +384,7 @@
             <tr
               class="record"
               mat-row
-              (click)="onRowClick(row)"
+              (click)="onDebtClick(row)"
               *matRowDef="let row; columns: displayedReceivingColumns"
             ></tr>
           </table>

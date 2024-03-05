@@ -200,5 +200,12 @@ namespace DebtsCompass.Application.Services
             DebtAssignment debtAssignmentFromDb = await debtAssignmentRepository.GetDebtById(debtId) ?? throw new EntityNotFoundException();
             await debtAssignmentRepository.PayDebt(debtAssignmentFromDb);
         }
+
+        public async Task MarkPaid(string debtId)
+        {
+            DebtAssignment debtAssignmentFromDb = await debtAssignmentRepository.GetDebtById(debtId) ?? throw new EntityNotFoundException();
+            await debtAssignmentRepository.PayDebt(debtAssignmentFromDb);
+            // TODO: send e-mail notification
+        }
     }
 }
