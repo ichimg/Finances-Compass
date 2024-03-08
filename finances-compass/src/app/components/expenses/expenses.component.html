@@ -1,1 +1,9 @@
-<p>expenses works!</p>
+<mat-card class="calendar-container">
+  <mat-card-content>
+    <div class="calendar-buttons">
+    <button mat-raised-button color="warn" class="btn" (click)="addExpense()"> <mat-icon>add_circle_outline</mat-icon>EXPENSE</button>
+    <button mat-raised-button color="primary" class="btn"> <mat-icon>add_circle_outline</mat-icon>INCOME</button>
+  </div>
+    <full-calendar #calendar [options]="calendarOptions" class="calendar"></full-calendar>
+  </mat-card-content>
+</mat-card>

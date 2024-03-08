@@ -13,6 +13,8 @@ namespace DebtsCompass.DataAccess
         public DbSet<Friendship> Friendships { get; set; }
 
         public DbSet<NonUser> NonUsers { get; set; }
+        public DbSet<Expense> Expenses { get; set; }
+        public DbSet<ExpenseCategory> ExpenseCategories { get; set; }
         public DebtsCompassDbContext(DbContextOptions options)
        : base(options)
         { }
@@ -77,6 +79,36 @@ namespace DebtsCompass.DataAccess
                 .WithMany()
                 .HasForeignKey(f => f.SelectedUserId)
                 .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<Expense>()
+                .HasOne(e => e.Category)
+                .WithMany(c => c.Expenses)
+                .HasForeignKey(e => e.CategoryId)
+                .IsRequired(false)
+                .OnDelete(DeleteBehavior.NoAction);
+
+            modelBuilder.Entity<Expense>()
+                .HasOne(e => e.User)
+                .WithMany(u => u.Expenses)
+                .HasForeignKey(e => e.UserId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<Expense>().Property(e => e.Note).IsRequired(false);
+
+            modelBuilder.Entity<ExpenseCategory>()
+                .HasOne(c => c.User)
+                .WithMany(u => u.Categories)
+                .HasForeignKey(c => c.UserId)
+                .IsRequired(false)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<ExpenseCategory>().HasData(
+                new ExpenseCategory { Id= Guid.NewGuid(), Name = "Food" },
+                new ExpenseCategory { Id = Guid.NewGuid(), Name = "Clothes" },
+                new ExpenseCategory { Id = Guid.NewGuid(), Name = "Invoices" },
+                new ExpenseCategory { Id = Guid.NewGuid(), Name = "Rent" },
+                new ExpenseCategory { Id = Guid.NewGuid(), Name = "Car" }
+                );
         }
     }
 }

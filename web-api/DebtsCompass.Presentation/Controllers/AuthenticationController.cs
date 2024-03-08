@@ -1,10 +1,8 @@
-﻿using DebtsCompass.Application.Exceptions;
-using DebtsCompass.Domain;
+﻿using DebtsCompass.Domain;
 using DebtsCompass.Domain.Interfaces;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using System.Net;
-using System.Security.Claims;
 using DebtsCompass.Domain.Entities.DtoResponses;
 using DebtsCompass.Domain.Entities.Models;
 using DebtsCompass.Domain.Entities.Requests;
@@ -76,11 +74,8 @@ namespace DebtsCompass.Presentation.Controllers
                 return BadRequest("Invalid request");
             }
 
-            var userIdentity = User.Identity as ClaimsIdentity;
-            var userEmailClaim = userIdentity.FindFirst(ClaimTypes.Email)?.Value;
-
-            var refreshTokenResponse = await jwtService.GetRefreshToken(userEmailClaim, refreshTokenRequest);
-            await jwtService.UpdateRefreshToken(userEmailClaim, refreshTokenResponse.RefreshToken);
+            var refreshTokenResponse = await jwtService.GetRefreshToken(refreshTokenRequest.Email, refreshTokenRequest);
+            await jwtService.UpdateRefreshToken(refreshTokenRequest.Email, refreshTokenResponse.RefreshToken);
 
             return Ok(new Response<RefreshTokenResponse>
             {

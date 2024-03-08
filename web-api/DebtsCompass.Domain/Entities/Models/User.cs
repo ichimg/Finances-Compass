@@ -12,5 +12,7 @@ namespace DebtsCompass.Domain.Entities.Models
         public DateTime? RefreshTokenExpireTime { get; set; }
         public ICollection<DebtAssignment> CreatedDebts { get; set; }
         public ICollection<DebtAssignment> DebtsAssigned { get; set; }
+        public ICollection<Expense> Expenses { get; set; }
+        public ICollection<ExpenseCategory> Categories { get; set; }
     }
 }

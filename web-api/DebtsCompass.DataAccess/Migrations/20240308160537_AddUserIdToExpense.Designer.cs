@@ -4,6 +4,7 @@ using DebtsCompass.DataAccess;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DebtsCompass.DataAccess.Migrations
 {
     [DbContext(typeof(DebtsCompassDbContext))]
-    partial class DebtsCompassDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240308160537_AddUserIdToExpense")]
+    partial class AddUserIdToExpense
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -47,6 +50,21 @@ namespace DebtsCompass.DataAccess.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Address");
+                });
+
+            modelBuilder.Entity("DebtsCompass.Domain.Entities.Models.Category", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Category");
                 });
 
             modelBuilder.Entity("DebtsCompass.Domain.Entities.Models.Debt", b =>
@@ -126,7 +144,7 @@ namespace DebtsCompass.DataAccess.Migrations
                     b.Property<decimal>("Amount")
                         .HasColumnType("decimal(18,4)");
 
-                    b.Property<Guid?>("CategoryId")
+                    b.Property<Guid>("CategoryId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<DateTime>("Date")
@@ -136,6 +154,7 @@ namespace DebtsCompass.DataAccess.Migrations
                         .HasColumnType("decimal(18,4)");
 
                     b.Property<string>("Note")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<decimal?>("UsdExchangeRate")
@@ -152,53 +171,6 @@ namespace DebtsCompass.DataAccess.Migrations
                     b.HasIndex("UserId");
 
                     b.ToTable("Expenses");
-                });
-
-            modelBuilder.Entity("DebtsCompass.Domain.Entities.Models.ExpenseCategory", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("UserId")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("ExpenseCategories");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = new Guid("f88db836-cd33-402a-8bd6-38f97a30f765"),
-                            Name = "Food"
-                        },
-                        new
-                        {
-                            Id = new Guid("d23e35c3-3c68-4a3d-8978-3622e9ac0744"),
-                            Name = "Clothes"
-                        },
-                        new
-                        {
-                            Id = new Guid("b8c0ef9e-93d7-4bc7-95ee-f08b95a6fbd1"),
-                            Name = "Invoices"
-                        },
-                        new
-                        {
-                            Id = new Guid("5f72ade7-b58a-4bc7-b48e-1e1c99608205"),
-                            Name = "Rent"
-                        },
-                        new
-                        {
-                            Id = new Guid("e04105ff-5183-484b-9c9d-66746af18d08"),
-                            Name = "Car"
-                        });
                 });
 
             modelBuilder.Entity("DebtsCompass.Domain.Entities.Models.Friendship", b =>
@@ -365,10 +337,11 @@ namespace DebtsCompass.DataAccess.Migrations
 
             modelBuilder.Entity("DebtsCompass.Domain.Entities.Models.Expense", b =>
                 {
-                    b.HasOne("DebtsCompass.Domain.Entities.Models.ExpenseCategory", "Category")
+                    b.HasOne("DebtsCompass.Domain.Entities.Models.Category", "Category")
                         .WithMany("Expenses")
                         .HasForeignKey("CategoryId")
-                        .OnDelete(DeleteBehavior.NoAction);
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.HasOne("DebtsCompass.Domain.Entities.Models.User", "User")
                         .WithMany("Expenses")
@@ -377,16 +350,6 @@ namespace DebtsCompass.DataAccess.Migrations
                         .IsRequired();
 
                     b.Navigation("Category");
-
-                    b.Navigation("User");
-                });
-
-            modelBuilder.Entity("DebtsCompass.Domain.Entities.Models.ExpenseCategory", b =>
-                {
-                    b.HasOne("DebtsCompass.Domain.Entities.Models.User", "User")
-                        .WithMany("Categories")
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade);
 
                     b.Navigation("User");
                 });
@@ -432,20 +395,18 @@ namespace DebtsCompass.DataAccess.Migrations
                     b.Navigation("Address");
                 });
 
+            modelBuilder.Entity("DebtsCompass.Domain.Entities.Models.Category", b =>
+                {
+                    b.Navigation("Expenses");
+                });
+
             modelBuilder.Entity("DebtsCompass.Domain.Entities.Models.Debt", b =>
                 {
                     b.Navigation("DebtAssignments");
                 });
 
-            modelBuilder.Entity("DebtsCompass.Domain.Entities.Models.ExpenseCategory", b =>
-                {
-                    b.Navigation("Expenses");
-                });
-
             modelBuilder.Entity("DebtsCompass.Domain.Entities.Models.User", b =>
                 {
-                    b.Navigation("Categories");
-
                     b.Navigation("CreatedDebts");
 
                     b.Navigation("DebtsAssigned");

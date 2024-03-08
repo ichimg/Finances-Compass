@@ -115,7 +115,7 @@ namespace DebtsCompass.Domain
             };
         }
 
-        public static DebtAssignment CreateDebtRequestToDebtAssignment(CreateDebtRequest createDebtRequest, User creatorUser, 
+        public static DebtAssignment CreateDebtRequestToDebtAssignment(CreateDebtRequest createDebtRequest, User creatorUser,
             User selectedUser, CurrencyDto currentCurrencies)
         {
             if (Enum.TryParse(createDebtRequest.Status, out Status debtStatus))
@@ -265,5 +265,28 @@ namespace DebtsCompass.Domain
                 Status = Enum.Parse<Status>(friendRequest.Status)
             };
         }
+
+        public static Expense CreateExpenseRequestToExpense(CreateExpenseRequest createExpenseRequest, User user,
+            CurrencyDto currentCurrencies, ExpenseCategory category)
+        {
+            return new Expense
+            {
+                Amount = createExpenseRequest.Amount,
+                Date = DateTime.Parse(createExpenseRequest.Date),
+                Category = category,
+                Note = createExpenseRequest.Note,
+                User = user,
+                EurExchangeRate = currentCurrencies.EurExchangeRate,
+                UsdExchangeRate = currentCurrencies.UsdExchangeRate
+            };
+        }
+
+        public static ExpenseCategoryDto ExpenseCategoryToExpenseCategoryDto(ExpenseCategory expenseCategory)
+        {
+            return new ExpenseCategoryDto
+            {
+                Name = expenseCategory.Name
+            };
+        } 
     }
 }

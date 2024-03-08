@@ -55,6 +55,9 @@ import { FooterComponent } from './components/footer/footer.component';
 import { NgxPayPalModule } from 'ngx-paypal';
 import { PaymentDialog } from './dialogs/payment-dialog/payment.dialog';
 import { ExpensesComponent } from './components/expenses/expenses.component';
+import { FullCalendarModule } from '@fullcalendar/angular';
+import { AddOrEditExpenseDialog } from './dialogs/add-or-edit-expense-dialog/add-or-edit-expense-dialog';
+import { TextFieldModule } from '@angular/cdk/text-field';
 
 
 const OPTIONS = {
@@ -81,7 +84,8 @@ const OPTIONS = {
     FooterComponent,
     DeleteConfirmationDialog,
     PaymentDialog,
-    ExpensesComponent
+    ExpensesComponent,
+    AddOrEditExpenseDialog
   ],
   imports: [
     BrowserModule,
@@ -118,7 +122,9 @@ const OPTIONS = {
     LoadingBarModule,
     LoadingBarHttpClientModule, 
     LoadingBarRouterModule,
-    NgxPayPalModule
+    NgxPayPalModule,
+    FullCalendarModule,
+    TextFieldModule 
   ],
   providers: [
     { provide: JWT_OPTIONS, useValue: JWT_OPTIONS },

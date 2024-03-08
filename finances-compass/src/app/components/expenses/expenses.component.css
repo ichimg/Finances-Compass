@@ -1,0 +1,17 @@
+.calendar-container {
+margin: 30px 80px 30px;
+}
+.calendar {
+    padding: 10px;
+}
+
+.calendar-buttons {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 5px;
+}
+
+.btn {
+    width: 150px;
+}

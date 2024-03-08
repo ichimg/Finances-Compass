@@ -7,6 +7,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { UserModel } from '../../entities/user-friend.model';
 import { SearchUsersDialog } from '../../dialogs/search-users/search-users.dialog';
 import { SidebarService } from '../../services/sidebar.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-layout',
@@ -25,7 +26,8 @@ export class LayoutComponent implements OnInit {
   constructor(
     private sidebarService: SidebarService,
     private breakpointObserver: BreakpointObserver,
-    private dialog: MatDialog
+    private dialog: MatDialog,
+    private router: Router
   ) {
     this.breakpointObserver
       .observe([Breakpoints.Handset])
@@ -46,10 +48,29 @@ export class LayoutComponent implements OnInit {
     this.sidebarService.rightSideNavToggleSubject.subscribe(() => {
       this.rightSidebar?.toggle();
     });
+
+    this.router.events.subscribe(() => {
+      if (this.router.url === '/expenses') {
+        this.sidenavMode = 'over';
+      } else {
+        this.sidenavMode = 'side';
+      }
+    });
+  }
+
+  goToExpenses(): void {
+    if (this.leftSidebar?.opened) {
+      this.leftSidebar?.toggle();
+      window.location.assign('/expenses');
+    }
+
+    if (this.rightSidebar?.opened) {
+      this.rightSidebar?.toggle();
+      window.location.assign('/expenses');
+    }
   }
 
   openSearchUsersDialog(): void {
     this.dialog.open(SearchUsersDialog);
-
   }
 }

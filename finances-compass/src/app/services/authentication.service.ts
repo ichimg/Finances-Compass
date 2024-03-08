@@ -53,7 +53,13 @@ export class AuthenticationService {
 
   async isTokenExpired(): Promise<boolean> {
     const token = localStorage.getItem('accessToken') ?? null;
+    console.log(this.jwtHelper.decodeToken(token!).email);
     return await this.jwtHelper.isTokenExpired(Promise.resolve(token!));
+  }
+
+  getEmailFromToken(): string {
+    const token = localStorage.getItem('accessToken') ?? null;
+    return this.jwtHelper.decodeToken(token!).email;
   }
 
   async refreshTokens(token: string): Promise<boolean> {
@@ -64,6 +70,7 @@ export class AuthenticationService {
     }
 
     const tokenModel = JSON.stringify({
+      email: this.getEmailFromToken(),
       accessToken: token,
       refreshToken: refreshToken,
     });
@@ -76,7 +83,7 @@ export class AuthenticationService {
           headers: this.headers,
         })
       );
-      console.log(`Refresh response: ${(<any>response).payload}`);
+      console.log(`Refresh response: ${Object.keys((<any>response).payload)}`);
       const newToken = (<any>response).payload.accessToken;
       const newRefreshToken = (<any>response).payload.refreshToken;
       localStorage.setItem('accessToken', newToken);

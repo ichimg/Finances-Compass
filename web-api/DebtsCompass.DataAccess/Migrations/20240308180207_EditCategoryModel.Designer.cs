@@ -4,6 +4,7 @@ using DebtsCompass.DataAccess;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DebtsCompass.DataAccess.Migrations
 {
     [DbContext(typeof(DebtsCompassDbContext))]
-    partial class DebtsCompassDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240308180207_EditCategoryModel")]
+    partial class EditCategoryModel
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -136,6 +139,7 @@ namespace DebtsCompass.DataAccess.Migrations
                         .HasColumnType("decimal(18,4)");
 
                     b.Property<string>("Note")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<decimal?>("UsdExchangeRate")
@@ -176,27 +180,27 @@ namespace DebtsCompass.DataAccess.Migrations
                     b.HasData(
                         new
                         {
-                            Id = new Guid("f88db836-cd33-402a-8bd6-38f97a30f765"),
+                            Id = new Guid("7d5eb5bc-a264-4042-bca8-88107dc07688"),
                             Name = "Food"
                         },
                         new
                         {
-                            Id = new Guid("d23e35c3-3c68-4a3d-8978-3622e9ac0744"),
+                            Id = new Guid("dfa36a12-c45c-4fc5-ae7b-a3cc437a0323"),
                             Name = "Clothes"
                         },
                         new
                         {
-                            Id = new Guid("b8c0ef9e-93d7-4bc7-95ee-f08b95a6fbd1"),
+                            Id = new Guid("27026b06-3709-4a8c-86ce-5c771ad2e6a4"),
                             Name = "Invoices"
                         },
                         new
                         {
-                            Id = new Guid("5f72ade7-b58a-4bc7-b48e-1e1c99608205"),
+                            Id = new Guid("58a82f45-2f6c-40a1-932e-92d82e40954c"),
                             Name = "Rent"
                         },
                         new
                         {
-                            Id = new Guid("e04105ff-5183-484b-9c9d-66746af18d08"),
+                            Id = new Guid("0b29bd9a-5f09-4446-9602-c82ab0258e25"),
                             Name = "Car"
                         });
                 });
