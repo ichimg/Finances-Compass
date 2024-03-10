@@ -10,8 +10,21 @@ export class CategoriesService {
 
   constructor(private httpClient: HttpClient) {}
   
-  getAll() {
-    const getAllEndpoint = `${this.apiUrl}/get-categories`;
+  getAllExpense() {
+    const getAllEndpoint = `${this.apiUrl}/get-expense-categories`;
+
+    const email = localStorage.getItem('email') || '';
+    const headers = new HttpHeaders({
+      'Content-Type': 'application/json',
+    }).set('email', email);
+
+    return this.httpClient.get<any>(getAllEndpoint, {
+      headers: headers,
+    });
+  }
+
+  getAllIncome() {
+    const getAllEndpoint = `${this.apiUrl}/get-income-categories`;
 
     const email = localStorage.getItem('email') || '';
     const headers = new HttpHeaders({

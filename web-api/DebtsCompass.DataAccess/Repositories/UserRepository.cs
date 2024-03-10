@@ -23,6 +23,19 @@ namespace DebtsCompass.DataAccess.Repositories
             return userFromDb;
         }
 
+        public async Task<User> GetUserByEmailWithExpenses(string email)
+        {
+            User userFromDb = await dbContext.Users
+                    .Include(u => u.Expenses)
+                    .ThenInclude(e => e.Category)
+                    .Include(u => u.Incomes)
+                    .ThenInclude(i => i.Category)
+                    .Where(u => u.Email.Equals(email))
+                    .FirstOrDefaultAsync();
+
+            return userFromDb;
+        }
+
         public async Task<User> GetUserByUsername(string username)
         {
             User userFromDb = await dbContext.Users

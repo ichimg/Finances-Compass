@@ -1,7 +1,4 @@
-﻿using DebtsCompass.Application.Exceptions;
-using DebtsCompass.Application.Services;
-using DebtsCompass.Domain.Entities.DtoResponses;
-using DebtsCompass.Domain;
+﻿using DebtsCompass.Domain;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Net;
@@ -22,13 +19,30 @@ namespace DebtsCompass.Presentation.Controllers
         }
 
         [HttpGet]
-        [Route("get-categories")]
+        [Route("get-expense-categories")]
         [Authorize]
-        public async Task<ActionResult<List<ExpenseCategoryDto>>> GetCategories([FromHeader] string email)
+        public async Task<ActionResult<List<CategoryDto>>> GetExpenseCategories([FromHeader] string email)
         {
-            var categories = await categoriesService.GetAllByEmail(email);
+            var categories = await categoriesService.GetAllExpenseCategoriesByEmail(email);
 
-            Response<List<ExpenseCategoryDto>> response = new Response<List<ExpenseCategoryDto>>
+            Response<List<CategoryDto>> response = new Response<List<CategoryDto>>
+            {
+                Message = null,
+                Payload = categories,
+                StatusCode = HttpStatusCode.OK
+            };
+
+            return Ok(response);
+        }
+
+        [HttpGet]
+        [Route("get-income-categories")]
+        [Authorize]
+        public async Task<ActionResult<List<CategoryDto>>> GetIncomeCategories([FromHeader] string email)
+        {
+            var categories = await categoriesService.GetAllIncomeCategoriesByEmail(email);
+
+            Response<List<CategoryDto>> response = new Response<List<CategoryDto>>
             {
                 Message = null,
                 Payload = categories,

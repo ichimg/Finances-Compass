@@ -13,9 +13,9 @@ namespace DebtsCompass.Application.Services
         private readonly IExpenseRepository expenseRepository;
         private readonly IUserRepository userRepository;
         private readonly ICurrencyRatesJob currencyRatesJob;
-        private readonly ICategoryRepository categoryRepository;
+        private readonly IExpenseCategoryRepository categoryRepository;
 
-        public ExpensesService(IExpenseRepository expenseRepository, IUserRepository userRepository, ICurrencyRatesJob currencyRatesJob, ICategoryRepository categoryRepository)
+        public ExpensesService(IExpenseRepository expenseRepository, IUserRepository userRepository, ICurrencyRatesJob currencyRatesJob, IExpenseCategoryRepository categoryRepository)
         {
             this.expenseRepository = expenseRepository;
             this.userRepository = userRepository;
@@ -45,6 +45,76 @@ namespace DebtsCompass.Application.Services
             await expenseRepository.CreateExpense(expense);
 
             return expense.Id;
+        }
+
+        public async Task DeleteExpense(string id, string email)
+        {
+            var expenseFromDb = await expenseRepository.GetExpenseById(id);
+
+            if (expenseFromDb is null)
+            {
+                throw new EntityNotFoundException();
+            }
+
+            if (!expenseFromDb.User.Email.Equals(email))
+            {
+                throw new ForbiddenRequestException();
+            }
+
+            await expenseRepository.DeleteExpense(expenseFromDb);
+        }
+
+        public async Task EditExpense(EditExpenseRequest editExpenseRequest, string email)
+        {
+            User user = await userRepository.GetUserByEmail(email) ?? throw new UserNotFoundException(email);
+            Expense expenseFromDb = await expenseRepository.GetExpenseById(editExpenseRequest.Guid) ?? throw new EntityNotFoundException();
+
+            CurrencyDto currentCurrencies = await currencyRatesJob.GetLatestCurrencyRates();
+
+            if (user.CurrencyPreference == CurrencyPreference.EUR)
+            {
+                editExpenseRequest.Amount /= currentCurrencies.EurExchangeRate;
+            }
+            else if (user.CurrencyPreference == CurrencyPreference.USD)
+            {
+                editExpenseRequest.Amount /= currentCurrencies.UsdExchangeRate;
+            }
+
+            ExpenseCategory category = await categoryRepository.GetByName(editExpenseRequest.Category);
+            Expense updatedExpense = Mapper.EditExpenseRequestToExpense(editExpenseRequest, category);
+
+            await expenseRepository.UpdateDebt(expenseFromDb, updatedExpense);
+        }
+
+        public async Task<List<ExpenseOrIncomeDto>> GetAllByEmail(string email)
+        {
+            User user = await userRepository.GetUserByEmailWithExpenses(email);
+            var expensesFromDb = user.Expenses.ToList();
+            var incomesFromDb = user.Incomes.ToList();
+
+            if (user.CurrencyPreference == CurrencyPreference.EUR)
+            {
+                expensesFromDb.ForEach(e => e.Amount *= (decimal)e.EurExchangeRate);
+            }
+            else if (user.CurrencyPreference == CurrencyPreference.USD)
+            {
+                expensesFromDb.ForEach(e => e.Amount *= (decimal)e.UsdExchangeRate);
+            }
+            List<ExpenseOrIncomeDto> expenses = expensesFromDb.Select(Mapper.ExpenseToExpenseOrIncomeDto).ToList();
+
+            if (user.CurrencyPreference == CurrencyPreference.EUR)
+            {
+                incomesFromDb.ForEach(i => i.Amount *= (decimal)i.EurExchangeRate);
+            }
+            else if (user.CurrencyPreference == CurrencyPreference.USD)
+            {
+                incomesFromDb.ForEach(i => i.Amount *= (decimal)i.UsdExchangeRate);
+            }
+            List<ExpenseOrIncomeDto> incomes = incomesFromDb.Select(Mapper.IncomeToExpenseOrIncomeDto).ToList();
+            var expenseOrIncomes = expenses.Concat(incomes);
+
+
+            return expenseOrIncomes.ToList();
         }
     }
 }

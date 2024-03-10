@@ -4,6 +4,10 @@ using DebtsCompass.Domain.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Net;
+using DebtsCompass.Application.Exceptions;
+using System.Security.Claims;
+using DebtsCompass.Application.Services;
+using DebtsCompass.Domain.Entities.DtoResponses;
 
 namespace DebtsCompass.Presentation.Controllers
 {
@@ -33,5 +37,74 @@ namespace DebtsCompass.Presentation.Controllers
             });
         }
 
+        [HttpDelete]
+        [Route("delete-expense")]
+        [Authorize]
+        public async Task<ActionResult<object>> DeleteDebt([FromQuery] string id, [FromQuery] string email)
+        {
+            if (!IsRequestFromValidUser(email))
+            {
+                throw new ForbiddenRequestException();
+            }
+
+            await expensesService.DeleteExpense(id, email);
+
+            return Ok(new Response<object>
+            {
+                Message = null,
+                Payload = null,
+                StatusCode = HttpStatusCode.OK
+            });
+        }
+
+        [HttpPut]
+        [Route("edit-expense")]
+        [Authorize]
+        public async Task<ActionResult<object>> EditExpense([FromBody] EditExpenseRequest editExpenseRequest, [FromQuery(Name = "email")] string email)
+        {
+            if (!IsRequestFromValidUser(email))
+            {
+                throw new ForbiddenRequestException();
+            }
+
+            await expensesService.EditExpense(editExpenseRequest, email);
+
+            return Ok(new Response<object>
+            {
+                Message = null,
+                Payload = null,
+                StatusCode = HttpStatusCode.OK
+            });
+        }
+
+        [HttpGet]
+        [Route("get-expenses-incomes")]
+        [Authorize]
+        public async Task<ActionResult<List<ExpenseOrIncomeDto>>> GetReceivingDebts([FromHeader] string email)
+        {
+            if (!IsRequestFromValidUser(email))
+            {
+                throw new ForbiddenRequestException();
+            }
+
+            var debts = await expensesService.GetAllByEmail(email);
+
+            Response<List<ExpenseOrIncomeDto>> response = new Response<List<ExpenseOrIncomeDto>>
+            {
+                Message = null,
+                Payload = debts,
+                StatusCode = HttpStatusCode.OK
+            };
+
+            return Ok(response);
+        }
+
+        private bool IsRequestFromValidUser(string email)
+        {
+            var userIdentity = User.Identity as ClaimsIdentity;
+            var userEmailClaim = userIdentity.FindFirst(ClaimTypes.Email)?.Value;
+
+            return string.Equals(userEmailClaim, email, StringComparison.OrdinalIgnoreCase);
+        }
     }
 }

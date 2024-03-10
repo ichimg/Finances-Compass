@@ -1,9 +1,9 @@
 <div class="mat-dialog-container">
-  <form [formGroup]="expenseForm" (ngSubmit)="onSubmit()">
+  <form [formGroup]="form" (ngSubmit)="onSubmit()">
     <mat-card>
       <mat-card-header>
-        <mat-card-title>Add expense</mat-card-title>
-        <mat-card-title *ngIf="false">Edit expense</mat-card-title>
+        <mat-card-title *ngIf="data.isExpense">Add expense</mat-card-title>
+        <mat-card-title *ngIf="!data.isExpense">Add income</mat-card-title>
       </mat-card-header>
       <div class="flex-column">
         <mat-form-field floatLabel="always" color="accent">
@@ -36,7 +36,7 @@
           <mat-label>Select category</mat-label>
           <mat-select name="category" formControlName="categorySelect">
             <mat-option
-              *ngFor="let category of categories"
+              *ngFor="let category of data.isExpense ? expenseCategories : incomeCategories"
               [value]="category.name"
             >
               {{category.name}}
@@ -61,7 +61,7 @@
           mat-raised-button
           color="primary"
           type="submit"
-          [disabled]="!expenseForm.valid"
+          [disabled]="!form.valid"
         >
           OK
         </button>

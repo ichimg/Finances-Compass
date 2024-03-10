@@ -37,3 +37,8 @@ p {
   cursor: pointer;
   color: #DC143C;
 }
+
+input::-ms-reveal,
+input::-ms-clear {
+  display: none;
+}

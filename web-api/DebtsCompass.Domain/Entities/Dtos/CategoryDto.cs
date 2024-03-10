@@ -1,6 +1,6 @@
 ﻿namespace DebtsCompass.Domain.Entities.Dtos
 {
-    public class ExpenseCategoryDto
+    public class CategoryDto
     {
         public string Name { get; set; }
     }

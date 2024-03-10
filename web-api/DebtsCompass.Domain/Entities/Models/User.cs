@@ -13,6 +13,9 @@ namespace DebtsCompass.Domain.Entities.Models
         public ICollection<DebtAssignment> CreatedDebts { get; set; }
         public ICollection<DebtAssignment> DebtsAssigned { get; set; }
         public ICollection<Expense> Expenses { get; set; }
-        public ICollection<ExpenseCategory> Categories { get; set; }
+        public ICollection<Income> Incomes { get; set; }
+        public ICollection<ExpenseCategory> ExpenseCategories { get; set; }
+        public ICollection<IncomeCategory> IncomeCategories { get; set; }
+
     }
 }

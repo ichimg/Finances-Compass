@@ -11,7 +11,7 @@ export class ExpensesService {
 
   constructor(private httpClient: HttpClient) {}
 
-  createDebt(createExpenseRequest: Expense) {
+  createExpense(createExpenseRequest: Expense) {
     const email = localStorage.getItem('email');
     const createExpenseEndpoint = `${this.apiUrl}/create-expense?email=${email}`;
     const headers = new HttpHeaders({
@@ -19,6 +19,43 @@ export class ExpensesService {
     });
 
     return this.httpClient.post<any>(createExpenseEndpoint, createExpenseRequest, {
+      headers: headers,
+    });
+  }
+
+  deleteExpense(id: string) {
+    const email = localStorage.getItem('email');
+    const deleteExpenseEndpoint = `${this.apiUrl}/delete-expense?id=${id}&email=${email}`;
+    const headers = new HttpHeaders({
+      'Content-Type': 'application/json',
+    });
+
+    return this.httpClient.delete<any>(deleteExpenseEndpoint, {
+      headers: headers,
+    });
+  }
+
+  updateExpense(editExpenseRequest: Expense) {
+    const email = localStorage.getItem('email');
+    const editExpenseEndpoint = `${this.apiUrl}/edit-expense?email=${email}`;
+    const headers = new HttpHeaders({
+      'Content-Type': 'application/json',
+    });
+
+    return this.httpClient.put<any>(editExpenseEndpoint, editExpenseRequest, {
+      headers: headers,
+    });
+  }
+
+  getAllExpensesAndIncomes() {
+    const getAllEndpoint = `${this.apiUrl}/get-expenses-incomes`;
+
+    const email = localStorage.getItem('email') || '';
+    const headers = new HttpHeaders({
+      'Content-Type': 'application/json',
+    }).set('email', email);
+
+    return this.httpClient.get<any>(getAllEndpoint, {
       headers: headers,
     });
   }

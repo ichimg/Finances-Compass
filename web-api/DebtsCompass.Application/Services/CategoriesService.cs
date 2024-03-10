@@ -6,18 +6,29 @@ namespace DebtsCompass.Application.Services
 {
     public class CategoriesService : ICategoriesService
     {
-        private readonly ICategoryRepository categoryRepository;
+        private readonly IExpenseCategoryRepository expenseCategoryRepository;
+        private readonly IIncomeCategoryRepository incomeCategoryRepository;
 
-        public CategoriesService(ICategoryRepository categoryRepository)
+        public CategoriesService(IExpenseCategoryRepository expenseCategoryRepository, IIncomeCategoryRepository incomeCategoryRepository)
         {
-            this.categoryRepository = categoryRepository;
+            this.expenseCategoryRepository = expenseCategoryRepository;
+            this.incomeCategoryRepository = incomeCategoryRepository;
         }
 
-        public async Task<List<ExpenseCategoryDto>> GetAllByEmail(string userEmail)
+        public async Task<List<CategoryDto>> GetAllExpenseCategoriesByEmail(string userEmail)
         {
-            var categoriesFromDb = await categoryRepository.GetAllByEmail(userEmail);
+            var categoriesFromDb = await expenseCategoryRepository.GetAllByEmail(userEmail);
 
-            List<ExpenseCategoryDto> categories = categoriesFromDb.Select(Mapper.ExpenseCategoryToExpenseCategoryDto).ToList();
+            List<CategoryDto> categories = categoriesFromDb.Select(Mapper.ExpenseCategoryToCategoryDto).ToList();
+
+            return categories;
+        }
+
+        public async Task<List<CategoryDto>> GetAllIncomeCategoriesByEmail(string userEmail)
+        {
+            var categoriesFromDb = await incomeCategoryRepository.GetAllByEmail(userEmail);
+
+            List<CategoryDto> categories = categoriesFromDb.Select(Mapper.IncomeCategoryToCategoryDto).ToList();
 
             return categories;
         }

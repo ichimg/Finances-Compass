@@ -15,6 +15,8 @@ namespace DebtsCompass.DataAccess
         public DbSet<NonUser> NonUsers { get; set; }
         public DbSet<Expense> Expenses { get; set; }
         public DbSet<ExpenseCategory> ExpenseCategories { get; set; }
+        public DbSet<Income> Incomes { get; set; }
+        public DbSet<IncomeCategory> IncomeCategories { get; set; }
         public DebtsCompassDbContext(DbContextOptions options)
        : base(options)
         { }
@@ -97,17 +99,44 @@ namespace DebtsCompass.DataAccess
 
             modelBuilder.Entity<ExpenseCategory>()
                 .HasOne(c => c.User)
-                .WithMany(u => u.Categories)
+                .WithMany(u => u.ExpenseCategories)
                 .HasForeignKey(c => c.UserId)
                 .IsRequired(false)
                 .OnDelete(DeleteBehavior.Cascade);
 
             modelBuilder.Entity<ExpenseCategory>().HasData(
-                new ExpenseCategory { Id= Guid.NewGuid(), Name = "Food" },
+                new ExpenseCategory { Id = Guid.NewGuid(), Name = "Food" },
                 new ExpenseCategory { Id = Guid.NewGuid(), Name = "Clothes" },
                 new ExpenseCategory { Id = Guid.NewGuid(), Name = "Invoices" },
                 new ExpenseCategory { Id = Guid.NewGuid(), Name = "Rent" },
                 new ExpenseCategory { Id = Guid.NewGuid(), Name = "Car" }
+                );
+
+            modelBuilder.Entity<Income>()
+              .HasOne(e => e.Category)
+              .WithMany(c => c.Incomes)
+              .HasForeignKey(e => e.CategoryId)
+              .IsRequired(false)
+              .OnDelete(DeleteBehavior.NoAction);
+
+            modelBuilder.Entity<Income>()
+                .HasOne(e => e.User)
+                .WithMany(u => u.Incomes)
+                .HasForeignKey(e => e.UserId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<Income>().Property(e => e.Note).IsRequired(false);
+
+            modelBuilder.Entity<IncomeCategory>()
+                .HasOne(c => c.User)
+                .WithMany(u => u.IncomeCategories)
+                .HasForeignKey(c => c.UserId)
+                .IsRequired(false)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<IncomeCategory>().HasData(
+                new IncomeCategory { Id = Guid.NewGuid(), Name = "Salary" },
+                new IncomeCategory { Id = Guid.NewGuid(), Name = "Savings" }
                 );
         }
     }

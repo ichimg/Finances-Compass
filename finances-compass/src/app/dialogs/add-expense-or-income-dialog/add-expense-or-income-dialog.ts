@@ -17,12 +17,12 @@ import {
 } from '@angular/material-moment-adapter';
 import { MY_DATE_FORMAT } from 'src/app/configurations/my-date-format';
 import { ExpensesService } from '../../services/expenses.service';
-import { CategoriesService } from '../../services/categories.service';
+import { IncomesService } from '../../services/incomes.service';
 
 @Component({
-  selector: 'app-add-or-edit-expense-dialog',
-  templateUrl: './add-or-edit-expense-dialog.html',
-  styleUrls: ['./add-or-edit-expense-dialog.css'],
+  selector: 'app-add-expense-dialog',
+  templateUrl: './add-expense-or-income-dialog.html',
+  styleUrls: ['./add-expense-or-income-dialog.css'],
   providers: [
     {
       provide: DateAdapter,
@@ -33,29 +33,28 @@ import { CategoriesService } from '../../services/categories.service';
     { provide: MAT_MOMENT_DATE_ADAPTER_OPTIONS, useValue: { useUtc: true } },
   ],
 })
-export class AddOrEditExpenseDialog implements OnInit {
-  categories!: Category[];
+export class AddExpenseOrIncomeDialog implements OnInit {
+  expenseCategories!: Category[];
+  incomeCategories!: Category[];
   calendarApi!: Calendar;
   constructor(
-    public dialogRef: MatDialogRef<AddOrEditExpenseDialog>,
+    public dialogRef: MatDialogRef<AddExpenseOrIncomeDialog>,
     @Inject(MAT_DIALOG_DATA) public data: any,
     private notificationService: NotificationService,
     private expensesService: ExpensesService,
-    private categoriesService: CategoriesService
+    private incomesService: IncomesService
   ) {}
 
   async ngOnInit(): Promise<void> {
     this.calendarApi = this.data.calendarApi;
-    const response = await lastValueFrom(this.categoriesService.getAll());
-    if (response.statusCode === 200) {
-      this.categories = response.payload;
-    }
-    else {
-      this.notificationService.showError('Something went wrong');
+    if (this.data.isExpense) {
+      this.expenseCategories = this.data.expenseCategories;
+    } else {
+      this.incomeCategories = this.data.incomeCategories;
     }
   }
 
-  expenseForm = new FormGroup({
+  form = new FormGroup({
     amount: new FormControl('', [
       Validators.required,
       Validators.maxLength(50),
@@ -66,44 +65,47 @@ export class AddOrEditExpenseDialog implements OnInit {
   });
 
   async onSubmit(): Promise<void> {
-    if (this.data.selectedExpense !== undefined) {
-      this.editExpense();
-    } else {
-      await this.createExpense();
+    if(this.data.isExpense){
+    await this.createExpense();}
+    else {
+      await this.createIncome();
     }
   }
 
   async createExpense(): Promise<void> {
     const createExpenseRequest: Expense = Object.assign({
-      amount: this.expenseForm.value.amount,
-      date: this.expenseForm.value.date,
-      category: this.expenseForm.value.categorySelect,
-      note: this.expenseForm.value.note,
+      amount: this.form.value.amount,
+      date: this.form.value.date,
+      category: this.form.value.categorySelect,
+      note: this.form.value.note,
     });
 
-    console.log(createExpenseRequest);
-
     const response = await lastValueFrom(
-      this.expensesService.createDebt(createExpenseRequest)
+      this.expensesService.createExpense(createExpenseRequest)
     );
-    console.log("statusCode", response.statusCode);
     switch (response.statusCode) {
       case 201:
         createExpenseRequest.guid = response.payload;
-       // this.data.expenses.push(createExpenseRequest);
+        const date = new Date(createExpenseRequest.date.toString());
+        const utcDate = new Date(
+          date.getTime() - date.getTimezoneOffset() * 60000
+        );
+
         this.notificationService.showSuccess('Expense added successfully!');
         let expense: EventInput = {
           id: createExpenseRequest.guid,
           extendedProps: {
+            amount: createExpenseRequest.amount,
             categoryName: createExpenseRequest.category,
-            note: createExpenseRequest.note
+            note: createExpenseRequest.note,
+            isExpense: true
           },
-          title: `Expense - ${
+          title: `Expense -${
             this.getCurrency() === 'RON'
               ? createExpenseRequest.amount + ' ' + this.getCurrency()
               : this.getCurrency() + createExpenseRequest.amount
           }`,
-          date: `${createExpenseRequest.date.toISOString().split('T', 1)[0]}`,
+          date: `${utcDate.toISOString().split('T', 1)[0]}`,
           color: 'red',
         };
 
@@ -117,10 +119,55 @@ export class AddOrEditExpenseDialog implements OnInit {
     }
   }
 
-  editExpense(): void {}
+  async createIncome(): Promise<void> {
+    const createIncomeRequest: Expense = Object.assign({
+      amount: this.form.value.amount,
+      date: this.form.value.date,
+      category: this.form.value.categorySelect,
+      note: this.form.value.note,
+    });
+
+    const response = await lastValueFrom(
+      this.incomesService.createIncome(createIncomeRequest)
+    );
+    switch (response.statusCode) {
+      case 201:
+        createIncomeRequest.guid = response.payload;
+        const date = new Date(createIncomeRequest.date.toString());
+        const utcDate = new Date(
+          date.getTime() - date.getTimezoneOffset() * 60000
+        );
+
+        this.notificationService.showSuccess('Income added successfully!');
+        let expense: EventInput = {
+          id: createIncomeRequest.guid,
+          extendedProps: {
+            amount: createIncomeRequest.amount,
+            categoryName: createIncomeRequest.category,
+            note: createIncomeRequest.note,
+            isExpense: false
+          },
+          title: `Income +${
+            this.getCurrency() === 'RON'
+              ? createIncomeRequest.amount + ' ' + this.getCurrency()
+              : this.getCurrency() + createIncomeRequest.amount
+          }`,
+          date: `${utcDate.toISOString().split('T', 1)[0]}`,
+          color: 'green',
+        };
+
+        this.calendarApi.addEvent(expense);
+        this.closeDialog();
+        break;
+
+      default:
+        this.notificationService.showError('Something went wrong');
+        break;
+    }
+  }
 
   closeDialog(): void {
-    this.dialogRef.close(); //this.debts);
+    this.dialogRef.close();
   }
 
   getCurrency(): string {

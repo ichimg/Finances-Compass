@@ -56,8 +56,9 @@ import { NgxPayPalModule } from 'ngx-paypal';
 import { PaymentDialog } from './dialogs/payment-dialog/payment.dialog';
 import { ExpensesComponent } from './components/expenses/expenses.component';
 import { FullCalendarModule } from '@fullcalendar/angular';
-import { AddOrEditExpenseDialog } from './dialogs/add-or-edit-expense-dialog/add-or-edit-expense-dialog';
+import { AddExpenseOrIncomeDialog } from './dialogs/add-expense-or-income-dialog/add-expense-or-income-dialog';
 import { TextFieldModule } from '@angular/cdk/text-field';
+import { ViewOrEditExpenseDialog } from './dialogs/view-or-edit-expense-dialog/view-or-edit-expense-dialog';
 
 
 const OPTIONS = {
@@ -85,7 +86,8 @@ const OPTIONS = {
     DeleteConfirmationDialog,
     PaymentDialog,
     ExpensesComponent,
-    AddOrEditExpenseDialog
+    AddExpenseOrIncomeDialog,
+    ViewOrEditExpenseDialog
   ],
   imports: [
     BrowserModule,

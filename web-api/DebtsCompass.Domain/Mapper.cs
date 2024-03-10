@@ -46,7 +46,7 @@ namespace DebtsCompass.Domain
                 LastName = debtAssignment.CreatorUser.UserInfo.LastName,
                 Username = debtAssignment.CreatorUser.UserName,
                 Email = debtAssignment.CreatorUser.Email,
-                Amount = Math.Round(debtAssignment.Debt.Amount),
+                Amount = Math.Round(debtAssignment.Debt.Amount, 2),
                 BorrowingDate = debtAssignment.Debt.DateOfBorrowing,
                 Deadline = debtAssignment.Debt.DeadlineDate,
                 Reason = debtAssignment.Debt.BorrowReason,
@@ -281,12 +281,80 @@ namespace DebtsCompass.Domain
             };
         }
 
-        public static ExpenseCategoryDto ExpenseCategoryToExpenseCategoryDto(ExpenseCategory expenseCategory)
+        public static CategoryDto ExpenseCategoryToCategoryDto(ExpenseCategory expenseCategory)
         {
-            return new ExpenseCategoryDto
+            return new CategoryDto
             {
                 Name = expenseCategory.Name
             };
-        } 
+        }
+
+        public static CategoryDto IncomeCategoryToCategoryDto(IncomeCategory incomeCategory)
+        {
+            return new CategoryDto
+            {
+                Name = incomeCategory.Name
+            };
+        }
+
+        public static Expense EditExpenseRequestToExpense(EditExpenseRequest editExpenseRequest, ExpenseCategory category)
+        {
+            return new Expense
+            {
+                Amount = editExpenseRequest.Amount,
+                Category = category,
+                Note = editExpenseRequest.Note,
+            };
+        }
+
+        public static Income CreateIncomeRequestToIncome(CreateIncomeRequest createIncomeRequest, User user, CurrencyDto currentCurrencies, IncomeCategory category)
+        {
+            return new Income
+            {
+                Amount = createIncomeRequest.Amount,
+                Date = DateTime.Parse(createIncomeRequest.Date),
+                Category = category,
+                Note = createIncomeRequest.Note,
+                User = user,
+                EurExchangeRate = currentCurrencies.EurExchangeRate,
+                UsdExchangeRate = currentCurrencies.UsdExchangeRate
+            };
+        }
+
+        public static Income EditIncomeRequestToIncome(EditIncomeRequest editIncomeRequest, IncomeCategory category)
+        {
+            return new Income
+            {
+                Amount = editIncomeRequest.Amount,
+                Category = category,
+                Note = editIncomeRequest.Note,
+            };
+        }
+
+        public static ExpenseOrIncomeDto ExpenseToExpenseOrIncomeDto(Expense expense)
+        {
+            return new ExpenseOrIncomeDto
+            {
+                Id = expense.Id.ToString(),
+                Amount = Math.Round(expense.Amount, 2),
+                Date = expense.Date,
+                Category = expense.Category.Name,
+                Note = expense.Note,
+                IsExpense = true
+            };
+        }
+
+        public static ExpenseOrIncomeDto IncomeToExpenseOrIncomeDto(Income income)
+        {
+            return new ExpenseOrIncomeDto
+            {
+                Id = income.Id.ToString(),
+                Amount = Math.Round(income.Amount, 2),
+                Date = income.Date,
+                Category = income.Category.Name,
+                Note = income.Note,
+                IsExpense = false
+            };
+        }
     }
 }

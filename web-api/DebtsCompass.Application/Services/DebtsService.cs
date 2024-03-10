@@ -164,6 +164,18 @@ namespace DebtsCompass.Application.Services
         public async Task EditDebt(EditDebtRequest editDebtRequest, string email)
         {
             DebtAssignment debtAssignmentFromDb = await debtAssignmentRepository.GetDebtById(editDebtRequest.Guid) ?? throw new EntityNotFoundException();
+            User user = await userRepository.GetUserByEmail(email) ?? throw new UserNotFoundException(email);
+
+            CurrencyDto currentCurrencies = await currencyRatesJob.GetLatestCurrencyRates();
+
+            if (user.CurrencyPreference == CurrencyPreference.EUR)
+            {
+                editDebtRequest.Amount /= currentCurrencies.EurExchangeRate;
+            }
+            else if (user.CurrencyPreference == CurrencyPreference.USD)
+            {
+                editDebtRequest.Amount /= currentCurrencies.UsdExchangeRate;
+            }
 
             bool isUserAccount = editDebtRequest.IsUserAccount;
             DebtAssignment updatedDebt;

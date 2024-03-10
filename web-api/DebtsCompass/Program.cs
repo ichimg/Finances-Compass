@@ -91,6 +91,7 @@ builder.Services.AddScoped<IUsersService, UsersService>();
 builder.Services.AddScoped<IPaypalService, PaypalService>();
 builder.Services.AddScoped<IExpensesService, ExpensesService>();
 builder.Services.AddScoped<ICategoriesService, CategoriesService>();
+builder.Services.AddScoped<IIncomesService, IncomesService>();
 builder.Services.AddScoped<EmailValidator>();
 builder.Services.AddScoped<PasswordValidator>();
 
@@ -104,7 +105,9 @@ builder.Services.AddScoped<IFriendshipRepository, FriendshipRepository>();
 builder.Services.AddScoped<INonUserRepository, NonUserRepository> ();
 builder.Services.AddScoped<IDebtRepository, DebtRepository>();
 builder.Services.AddScoped<IExpenseRepository, ExpenseRepository>();
-builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
+builder.Services.AddScoped<IExpenseCategoryRepository, ExpenseCategoryRepository>();
+builder.Services.AddScoped<IIncomeRepository, IncomeRepository>();
+builder.Services.AddScoped<IIncomeCategoryRepository, IncomeCategoryRepository>();
 
 // Email
 var emailConfig = builder.Configuration.GetSection("EmailConfiguration").Get<EmailConfiguration>();

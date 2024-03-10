@@ -4,11 +4,11 @@ using DebtsCompass.Domain.Interfaces;
 
 namespace DebtsCompass.DataAccess.Repositories
 {
-    public class CategoryRepository : ICategoryRepository
+    public class ExpenseCategoryRepository : IExpenseCategoryRepository
     {
         private readonly DebtsCompassDbContext dbContext;
 
-        public CategoryRepository(DebtsCompassDbContext dbContext)
+        public ExpenseCategoryRepository(DebtsCompassDbContext dbContext)
         {
             this.dbContext = dbContext;
         }

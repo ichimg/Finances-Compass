@@ -1,4 +1,4 @@
-export interface Expense {
+export interface Income {
     guid: string;
     amount: string;
     date: Date;
