@@ -5,6 +5,7 @@ using DebtsCompass.Domain.Entities.Models;
 using DebtsCompass.Domain.Entities.Requests;
 using DebtsCompass.Domain.Enums;
 using DebtsCompass.Domain.Interfaces;
+using DebtsCompass.Domain.TotalList;
 
 namespace DebtsCompass.Application.Services
 {
@@ -23,19 +24,22 @@ namespace DebtsCompass.Application.Services
             this.categoryRepository = categoryRepository;
         }
 
-        public async Task<Guid> CreateExpense(CreateExpenseRequest createExpenseRequest, string creatorEmail)
+        public async Task<Guid> CreateExpense(CreateExpenseRequest createExpenseRequest, string creatorEmail, bool isRonCurrency = false)
         {
             User user = await userRepository.GetUserByEmail(creatorEmail) ?? throw new UserNotFoundException(creatorEmail);
 
             CurrencyDto currentCurrencies = await currencyRatesJob.GetLatestCurrencyRates();
 
-            if (user.CurrencyPreference == CurrencyPreference.EUR)
+            if (!isRonCurrency)
             {
-                createExpenseRequest.Amount /= currentCurrencies.EurExchangeRate;
-            }
-            else if (user.CurrencyPreference == CurrencyPreference.USD)
-            {
-                createExpenseRequest.Amount /= currentCurrencies.UsdExchangeRate;
+                if (user.CurrencyPreference == CurrencyPreference.EUR)
+                {
+                    createExpenseRequest.Amount /= currentCurrencies.EurExchangeRate;
+                }
+                else if (user.CurrencyPreference == CurrencyPreference.USD)
+                {
+                    createExpenseRequest.Amount /= currentCurrencies.UsdExchangeRate;
+                }
             }
 
             ExpenseCategory category = await categoryRepository.GetByName(createExpenseRequest.Category);
@@ -86,9 +90,9 @@ namespace DebtsCompass.Application.Services
             await expenseRepository.UpdateDebt(expenseFromDb, updatedExpense);
         }
 
-        public async Task<List<ExpenseOrIncomeDto>> GetAllByEmail(string email)
+        public async Task<TotalList<ExpenseOrIncomeDto>> GetAllByEmail(string email, YearMonthDto yearMonthDto)
         {
-            User user = await userRepository.GetUserByEmailWithExpenses(email);
+            User user = await userRepository.GetUserByEmailWithExpenses(email, yearMonthDto);
             var expensesFromDb = user.Expenses.ToList();
             var incomesFromDb = user.Incomes.ToList();
 
@@ -101,6 +105,7 @@ namespace DebtsCompass.Application.Services
                 expensesFromDb.ForEach(e => e.Amount *= (decimal)e.UsdExchangeRate);
             }
             List<ExpenseOrIncomeDto> expenses = expensesFromDb.Select(Mapper.ExpenseToExpenseOrIncomeDto).ToList();
+            decimal totalExpenses = expenses.Sum(e => e.Amount);  
 
             if (user.CurrencyPreference == CurrencyPreference.EUR)
             {
@@ -111,10 +116,11 @@ namespace DebtsCompass.Application.Services
                 incomesFromDb.ForEach(i => i.Amount *= (decimal)i.UsdExchangeRate);
             }
             List<ExpenseOrIncomeDto> incomes = incomesFromDb.Select(Mapper.IncomeToExpenseOrIncomeDto).ToList();
+            decimal totalIncomes = incomes.Sum(i => i.Amount);
             var expenseOrIncomes = expenses.Concat(incomes);
 
 
-            return expenseOrIncomes.ToList();
+            return new TotalList<ExpenseOrIncomeDto>(expenseOrIncomes.ToList(), totalExpenses, totalIncomes);
         }
     }
 }

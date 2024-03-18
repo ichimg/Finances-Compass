@@ -132,7 +132,7 @@ builder.Services.AddCors(options =>
         builder.WithOrigins(allowedOrigins)
                .AllowAnyHeader()
                .AllowAnyMethod()
-               .WithExposedHeaders("X-Pagination");
+               .WithExposedHeaders("X-Pagination", "X-Total");
     });
 });
 

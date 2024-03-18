@@ -13,7 +13,6 @@ namespace DebtsCompass.Domain.Entities.Requests
         [Required]
         public string Category { get; set; }
         [MaxLength(500)]
-        [Required]
-        public string Note { get; set; }
+        public string? Note { get; set; }
     }
 }

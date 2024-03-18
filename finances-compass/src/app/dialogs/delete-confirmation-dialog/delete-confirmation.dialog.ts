@@ -68,28 +68,27 @@ export class DeleteConfirmationDialog {
               break;
           }
         });
-    }
-    else {
+    } else {
       this.incomesService
-      .deleteIncome(this.data.item.id)
-      .subscribe((response) => {
-        switch (response.statusCode) {
-          case 200:
-            this.notificationService.showSuccess('Income deleted');
-            this.closeDialog();
-            break;
+        .deleteIncome(this.data.item.id)
+        .subscribe((response) => {
+          switch (response.statusCode) {
+            case 200:
+              this.notificationService.showSuccess('Income deleted');
+              this.closeDialog();
+              break;
 
-          case 204:
-            alert('Income already deleted');
-            window.location.reload();
-            break;
+            case 204:
+              alert('Income already deleted');
+              window.location.reload();
+              break;
 
-          default:
-            this.notificationService.showError('Something went wrong!');
-            this.closeDialog(false);
-            break;
-        }
-      });
+            default:
+              this.notificationService.showError('Something went wrong!');
+              this.closeDialog(false);
+              break;
+          }
+        });
     }
   }
 
@@ -98,8 +97,11 @@ export class DeleteConfirmationDialog {
       this.dialogRef.close(this.data.debtsList);
     }
 
-    if(this.data.item !== undefined) {
-      this.dialogRef.close(isSuccess);
+    if (this.data.item !== undefined) {
+      this.dialogRef.close({
+        isSuccess: isSuccess,
+        amount: this.data.item.extendedProps['amount'],
+      });
     }
   }
 }

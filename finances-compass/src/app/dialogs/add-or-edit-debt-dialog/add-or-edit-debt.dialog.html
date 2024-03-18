@@ -111,7 +111,7 @@
           mat-raised-button
           color="primary"
           type="submit"
-          [disabled]="!debtForm.valid || !isDebtEdited"
+          [disabled]="!debtForm.valid || this.data.selectedDebt !== undefined && !isDebtEdited"
         >
           OK
         </button>

@@ -32,9 +32,7 @@ export class AuthenticationService {
   }
 
   logout(): void {
-    localStorage.removeItem('email');
-    localStorage.removeItem('accessToken');
-    localStorage.removeItem('refreshToken');
+    localStorage.clear();
   }
 
   register(registerRequest: RegisterRequest) {
@@ -73,6 +71,8 @@ export class AuthenticationService {
       accessToken: token,
       refreshToken: refreshToken,
     });
+
+    console.log(tokenModel);
     const refreshEndpoint = `${this.apiUrl}/refresh-token`;
 
     let isRefreshSuccess: boolean;
@@ -85,6 +85,7 @@ export class AuthenticationService {
       console.log(`Refresh response: ${Object.keys((<any>response).payload)}`);
       const newToken = (<any>response).payload.accessToken;
       const newRefreshToken = (<any>response).payload.refreshToken;
+      console.log(newRefreshToken);
       localStorage.setItem('accessToken', newToken);
       localStorage.setItem('refreshToken', newRefreshToken);
       isRefreshSuccess = true;

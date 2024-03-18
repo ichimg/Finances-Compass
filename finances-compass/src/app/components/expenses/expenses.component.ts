@@ -1,7 +1,7 @@
-import { AfterViewInit, Component, OnInit, ViewChild } from '@angular/core';
-import { CalendarOptions, EventInput } from '@fullcalendar/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
+import { CalendarOptions } from '@fullcalendar/core';
 import dayGridPlugin from '@fullcalendar/daygrid';
-import interactionPlugin, { DateClickArg } from '@fullcalendar/interaction';
+import interactionPlugin from '@fullcalendar/interaction';
 import { FullCalendarComponent } from '@fullcalendar/angular';
 import { MatDialog } from '@angular/material/dialog';
 import { AddExpenseOrIncomeDialog } from '../../dialogs/add-expense-or-income-dialog/add-expense-or-income-dialog';
@@ -13,13 +13,14 @@ import { Category } from '../../entities/category.model';
 import { lastValueFrom } from 'rxjs';
 import { CategoriesService } from '../../services/categories.service';
 import { NotificationService } from '../../services/notification.service';
+import { BaseChartDirective } from 'ng2-charts';
 
 @Component({
   selector: 'app-expenses',
   templateUrl: './expenses.component.html',
   styleUrls: ['./expenses.component.css'],
 })
-export class ExpensesComponent implements AfterViewInit, OnInit {
+export class ExpensesComponent implements OnInit {
   @ViewChild('calendar') calendarComponent!: FullCalendarComponent;
 
   calendarOptions: CalendarOptions = {
@@ -27,40 +28,74 @@ export class ExpensesComponent implements AfterViewInit, OnInit {
     plugins: [dayGridPlugin, interactionPlugin],
     height: 500,
     aspectRatio: 1.5,
-    dateClick: (arg) => this.onDateClick(arg),
-    // events: [
-    //   {
-    //     title: 'Expense -500 RON',
-    //     date: '2024-03-01',
-    //     color: 'red',
-    //     id: 'guid1',
-    //     extendedProps: {
-    //       amount: 500,
-    //       categoryName: 'Food',
-    //       note: 'testing',
-    //     },
-    //   },
-    //   {
-    //     title: 'Income +500 RON',
-    //     date: '2024-03-01',
-    //     color: 'green',
-    //     id: 'guid1',
-    //     extendedProps: {
-    //       amount: 500,
-    //       categoryName: 'Food',
-    //       note: 'testing',
-    //     },
-    //   },
-    //   { title: 'event 2', date: '2019-04-02' },
-    // ],
     firstDay: 1,
     eventClick: (info) => this.onEventClick(info),
+    datesSet: async (dateInfo) => {
+      let midDate = new Date(
+        (dateInfo.start.getTime() + dateInfo.end.getTime()) / 2
+      );
+
+    await this.getExpensesAndIncomes(midDate.getFullYear(), midDate.getMonth() + 1);
+    let calendar = this.calendarComponent.getApi();
+    calendar.removeAllEventSources();
+    calendar.addEventSource(this.expensesAndIncomes);
+    this.chart.chart?.update();
+    },
   };
 
   expenses!: Expense[];
   expenseCategories!: Category[];
   incomeCategories!: Category[];
   expensesAndIncomes!: any[];
+  balanceTitle!: string;
+  balance!: number;
+
+  data: any = {
+    labels: [''],
+    datasets: [
+      {
+        label: 'Expense',
+        data: [50],
+        backgroundColor: '#FF5733',
+        barThickness: 150,
+        hoverBackgroundColor: '#cc4427',
+      },
+      {
+        label: 'Income',
+        data: [50],
+        backgroundColor: 'green',
+        barThickness: 150,
+        hoverBackgroundColor: '#085410',
+      },
+    ],
+  };
+
+  options: any = {
+    maintainAspectRatio: true,
+    responsive: true,
+    indexAxis: 'y',
+    scales: {
+      x: {
+        stacked: true,
+        display: false,
+      },
+      y: {
+        stacked: true,
+        display: false,
+      },
+    },
+    plugins: {
+      legend: {
+        display: true,
+        position: 'bottom',
+        align: 'center',
+        labels: {
+          textAlign: 'center',
+        },
+      },
+    },
+  };
+  @ViewChild(BaseChartDirective, { static: false }) chart!: BaseChartDirective;
 
   constructor(
     private dialog: MatDialog,
@@ -74,20 +109,14 @@ export class ExpensesComponent implements AfterViewInit, OnInit {
     await this.getIncomeCategories();
   }
 
-  async ngAfterViewInit(): Promise<void> {
-    let calendar = this.calendarComponent.getApi();
-    await this.getExpensesAndIncomes();
-    calendar.addEventSource(this.expensesAndIncomes);
-  }
-
-  async getExpensesAndIncomes(): Promise<void> {
+  async getExpensesAndIncomes(year: number, month: number): Promise<void> {
     try {
       const response = await lastValueFrom(
-        this.expensesService.getAllExpensesAndIncomes()
+        this.expensesService.getAllExpensesAndIncomes(year, month)
       );
 
-      if (response.statusCode === 200) {
-        this.expensesAndIncomes = response.payload.map((item: any) => {
+      if (response.body.statusCode === 200) {
+        this.expensesAndIncomes = response.body.payload.map((item: any) => {
           if (item.isExpense) {
             return {
               title: `Expense -${
@@ -95,8 +124,8 @@ export class ExpensesComponent implements AfterViewInit, OnInit {
                   ? item.amount + ' ' + this.getCurrency()
                   : this.getCurrency() + item.amount
               }`,
-              date: item.date.split("T")[0],
-              color: 'red',
+              date: item.date.split('T')[0],
+              color: '#FF5733',
               id: item.id,
               extendedProps: {
                 amount: item.amount,
@@ -112,7 +141,7 @@ export class ExpensesComponent implements AfterViewInit, OnInit {
                   ? item.amount + ' ' + this.getCurrency()
                   : this.getCurrency() + item.amount
               }`,
-              date: item.date.split("T")[0],
+              date: item.date.split('T')[0],
               color: 'green',
               id: item.id,
               extendedProps: {
@@ -125,7 +154,24 @@ export class ExpensesComponent implements AfterViewInit, OnInit {
           }
         });
       }
+      let totalExpenses = JSON.parse(
+        response.headers.get('X-Total')!
+      ).TotalAmountExpenses;
+      let totalIncomes = JSON.parse(
+        response.headers.get('X-Total')!
+      ).TotalAmountIncomes;
+      this.balance = parseFloat((totalIncomes - totalExpenses).toFixed(2));
+      this.data.datasets[0].data[0] = totalExpenses;
+      this.data.datasets[1].data[0] = totalIncomes;
+
+      this.balanceTitle = `${
+        this.getCurrency() === 'RON'
+          ? this.balance + ' ' + this.getCurrency()
+          : this.getCurrency() + this.balance
+      }`;
+      console.log(response);
     } catch (error) {
+      console.log(error);
       this.notificationService.showError('Something went wrong');
     }
   }
@@ -178,51 +224,69 @@ export class ExpensesComponent implements AfterViewInit, OnInit {
         .replace(/\./g, '/');
 
     let calendar = this.calendarComponent.getApi();
-    const dialogRef = this.dialog.open(ViewOrEditExpenseDialog, {
-      width: '25%',
-      data: {
-        calendarApi: calendar,
-        item: info.event,
-        expenseCategories: this.expenseCategories,
-        incomeCategories: this.incomeCategories,
-        titleDate: formattedDate,
-      },
-    });
+    const dialogRef = this.dialog
+      .open(ViewOrEditExpenseDialog, {
+        width: '25%',
+        data: {
+          calendarApi: calendar,
+          item: info.event,
+          expenseCategories: this.expenseCategories,
+          incomeCategories: this.incomeCategories,
+          titleDate: formattedDate,
+          chartData: this.data,
+          chart: this.chart.chart,
+          balanceTitle: this.balanceTitle,
+          balance: this.balance,
+        },
+      })
+      .afterClosed()
+      .subscribe((resp) => {
+        this.balanceTitle = resp.title;
+        this.balance = resp.remainingBalance;
+      });
   }
 
   addExpense(): void {
     let calendar = this.calendarComponent.getApi();
-    const dialogRef = this.dialog.open(AddExpenseOrIncomeDialog, {
-      data: {
-        calendarApi: calendar,
-        expenses: this.expenses,
-        expenseCategories: this.expenseCategories,
-        isExpense: true,
-      },
-    });
+    const dialogRef = this.dialog
+      .open(AddExpenseOrIncomeDialog, {
+        data: {
+          calendarApi: calendar,
+          expenses: this.expenses,
+          expenseCategories: this.expenseCategories,
+          isExpense: true,
+          chartData: this.data,
+          chart: this.chart.chart,
+          balanceTitle: this.balanceTitle,
+          balance: this.balance,
+        },
+      })
+      .afterClosed()
+      .subscribe((resp) => {
+        this.balanceTitle = resp.title;
+        this.balance = resp.remainingBalance;
+      });
   }
 
   addIncome(): void {
     let calendar = this.calendarComponent.getApi();
-    const dialogRef = this.dialog.open(AddExpenseOrIncomeDialog, {
-      data: {
-        calendarApi: calendar,
-        expenses: this.expenses,
-        incomeCategories: this.incomeCategories,
-        isExpense: false,
-      },
-    });
-  }
-
-  onDateClick(arg: DateClickArg) {
-    let calendarApi = this.calendarComponent.getApi();
-    console.log('ce are');
-    //this.calendarOptions.events = [{ title: 'Expense - 500 RON', date: arg.dateStr }];
-    calendarApi.addEvent({
-      title: 'Expense - 500 RON',
-      date: arg.dateStr,
-      color: 'red',
-    });
-    let event: EventInput = { title: 'Expense - 500 RON', date: arg.dateStr };
+    const dialogRef = this.dialog
+      .open(AddExpenseOrIncomeDialog, {
+        data: {
+          calendarApi: calendar,
+          expenses: this.expenses,
+          incomeCategories: this.incomeCategories,
+          isExpense: false,
+          chartData: this.data,
+          chart: this.chart.chart,
+          balanceTitle: this.balanceTitle,
+          balance: this.balance,
+        },
+      })
+      .afterClosed()
+      .subscribe((resp) => {
+        this.balanceTitle = resp.title;
+        this.balance = resp.remainingBalance;
+      });
   }
 }

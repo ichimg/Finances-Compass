@@ -47,7 +47,22 @@ export class ExpensesService {
     });
   }
 
-  getAllExpensesAndIncomes() {
+  getAllExpensesAndIncomes(year: number, month: number) {
+    const getAllEndpoint = `${this.apiUrl}/get-expenses-incomes?year=${year}&month=${month}`;
+
+    const email = localStorage.getItem('email') || '';
+    const headers = new HttpHeaders({
+      'Content-Type': 'application/json',
+    }).set('email', email);
+
+
+    return this.httpClient.get<any>(getAllEndpoint, {
+      headers: headers,
+      observe: 'response'
+    });
+  }
+
+  getAmounts() {
     const getAllEndpoint = `${this.apiUrl}/get-expenses-incomes`;
 
     const email = localStorage.getItem('email') || '';

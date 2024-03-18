@@ -50,7 +50,10 @@ export class ViewOrEditExpenseDialog implements OnInit {
   });
 
   closeDialog(): void {
-    this.dialogRef.close();
+    this.dialogRef.close({
+      title: this.data.balanceTitle,
+      remainingBalance: this.data.balance,
+    });
   }
 
   getCurrency(): string {
@@ -66,35 +69,66 @@ export class ViewOrEditExpenseDialog implements OnInit {
     return 'RON';
   }
 
-  async activateExpenseEdit(): Promise<void> {
+  async activateEditForm(): Promise<void> {
     this.isEditingModal = true;
     this.fillEditModalForm();
   }
 
-  async deleteExpense(): Promise<void> {
+  async delete(): Promise<void> {
     const dialogRef = this.dialog
       .open(DeleteConfirmationDialog, {
         width: '600px',
         data: { item: this.data.item },
       })
       .afterClosed()
-      .subscribe((isSuccess) => {
-        console.log('success', isSuccess);
-        if (isSuccess) {
+      .subscribe((result) => {
+        if (result.isSuccess) {
           let event = this.calendarApi.getEventById(this.data.item.id);
           event?.remove();
+          console.log(result.amount);
+
+          if (this.data.item.extendedProps['isExpense']) {
+            this.data.chartData.datasets[0].data[0] =
+              parseFloat(this.data.chartData.datasets[0].data[0]) -
+              parseFloat(result.amount);
+            this.data.chart.update();
+            this.data.balance = (
+              parseFloat(this.data.balance) + parseFloat(result.amount)
+            ).toFixed(2);
+            this.data.balanceTitle = `${
+              this.getCurrency() === 'RON'
+                ? this.data.balance + ' ' + this.getCurrency()
+                : this.getCurrency() + this.data.balance
+            }`;
+
+            console.log(this.data.balanceTitle);
+          } else {
+            this.data.chartData.datasets[1].data[0] =
+              parseFloat(this.data.chartData.datasets[1].data[0]) -
+              parseFloat(result.amount);
+            this.data.chart.update();
+            this.data.balance = (
+              parseFloat(this.data.balance) - parseFloat(result.amount)
+            ).toFixed(2);
+            this.data.balanceTitle = `${
+              this.getCurrency() === 'RON'
+                ? this.data.balance + ' ' + this.getCurrency()
+                : this.getCurrency() + this.data.balance
+            }`;
+          }
+
           this.closeDialog();
         }
       });
   }
 
   async edit(): Promise<void> {
-    if (this.data.item.isExpense) {
+    if (this.data.item.extendedProps['isExpense']) {
       const editExpenseRequest: Expense = Object.assign({
         guid: this.data.item.id,
         amount: this.form.value.amount,
         category: this.form.value.categorySelect,
-        note: this.form.value.note,
+        note: this.form.value.note
       });
 
       this.expensesService
@@ -105,6 +139,26 @@ export class ViewOrEditExpenseDialog implements OnInit {
               this.notificationService.showSuccess(
                 'Expense updated successfully!'
               );
+
+              this.data.chartData.datasets[0].data[0] =
+                parseFloat(this.data.chartData.datasets[1].data[0]) -
+                parseFloat(this.data.item.extendedProps['amount']);
+              this.data.chartData.datasets[0].data[0] =
+                parseFloat(this.data.chartData.datasets[1].data[0]) +
+                parseFloat(editExpenseRequest.amount);
+              this.data.balance =
+                parseFloat(this.data.balance) +
+                parseFloat(this.data.item.extendedProps['amount']);
+              this.data.balance = (
+                parseFloat(this.data.balance) -
+                parseFloat(editExpenseRequest.amount)
+              ).toFixed(2);
+              this.data.balanceTitle = `${
+                this.getCurrency() === 'RON'
+                  ? this.data.balance + ' ' + this.getCurrency()
+                  : this.getCurrency() + this.data.balance
+              }`;
+              this.data.chart.update();
 
               let event = this.calendarApi.getEventById(
                 editExpenseRequest.guid
@@ -121,6 +175,7 @@ export class ViewOrEditExpenseDialog implements OnInit {
                   amount: editExpenseRequest.amount,
                   categoryName: editExpenseRequest.category,
                   note: editExpenseRequest.note,
+                  isExpense: true,
                 },
                 title: `Expense -${
                   this.getCurrency() === 'RON'
@@ -128,7 +183,7 @@ export class ViewOrEditExpenseDialog implements OnInit {
                     : this.getCurrency() + editExpenseRequest.amount
                 }`,
                 date: `${utcDate.toISOString().split('T', 1)[0]}`,
-                color: 'red',
+                color: '#FF5733',
               };
 
               this.calendarApi.addEvent(expense);
@@ -145,7 +200,7 @@ export class ViewOrEditExpenseDialog implements OnInit {
         guid: this.data.item.id,
         amount: this.form.value.amount,
         category: this.form.value.categorySelect,
-        note: this.form.value.note,
+        note: this.form.value.note
       });
 
       this.incomesService
@@ -156,6 +211,26 @@ export class ViewOrEditExpenseDialog implements OnInit {
               this.notificationService.showSuccess(
                 'Income updated successfully!'
               );
+
+              this.data.chartData.datasets[1].data[0] =
+                parseFloat(this.data.chartData.datasets[1].data[0]) -
+                parseFloat(this.data.item.extendedProps['amount']);
+              this.data.chartData.datasets[1].data[0] =
+                parseFloat(this.data.chartData.datasets[1].data[0]) +
+                parseFloat(editIncomeRequest.amount);
+              this.data.balance =
+                parseFloat(this.data.balance) -
+                parseFloat(this.data.item.extendedProps['amount']);
+              this.data.balance = (
+                parseFloat(this.data.balance) +
+                parseFloat(editIncomeRequest.amount)
+              ).toFixed(2);
+              this.data.balanceTitle = `${
+                this.getCurrency() === 'RON'
+                  ? this.data.balance + ' ' + this.getCurrency()
+                  : this.getCurrency() + this.data.balance
+              }`;
+              this.data.chart.update();
 
               let event = this.calendarApi.getEventById(editIncomeRequest.guid);
               const date = new Date(event?.start?.toDateString()!);
@@ -170,6 +245,7 @@ export class ViewOrEditExpenseDialog implements OnInit {
                   amount: editIncomeRequest.amount,
                   categoryName: editIncomeRequest.category,
                   note: editIncomeRequest.note,
+                  isExpense: false
                 },
                 title: `Income +${
                   this.getCurrency() === 'RON'

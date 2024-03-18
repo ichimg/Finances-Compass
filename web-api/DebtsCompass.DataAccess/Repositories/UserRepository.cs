@@ -1,4 +1,5 @@
 ﻿using DebtsCompass.Domain.Entities.Models;
+using DebtsCompass.Domain.Entities.Requests;
 using DebtsCompass.Domain.Interfaces;
 using DebtsCompass.Domain.Pagination;
 using Microsoft.EntityFrameworkCore;
@@ -23,12 +24,14 @@ namespace DebtsCompass.DataAccess.Repositories
             return userFromDb;
         }
 
-        public async Task<User> GetUserByEmailWithExpenses(string email)
+        public async Task<User> GetUserByEmailWithExpenses(string email, YearMonthDto yearMonthDto)
         {
+            var startOfMonth = new DateTime(Int32.Parse(yearMonthDto.Year), Int32.Parse(yearMonthDto.Month), 1);
+            var endOfMonth = startOfMonth.AddMonths(1).AddDays(-1);
             User userFromDb = await dbContext.Users
-                    .Include(u => u.Expenses)
+                    .Include(u => u.Expenses.Where(e => e.Date >= startOfMonth && e.Date <= endOfMonth))
                     .ThenInclude(e => e.Category)
-                    .Include(u => u.Incomes)
+                    .Include(u => u.Incomes.Where(i => i.Date >= startOfMonth && i.Date <= endOfMonth))
                     .ThenInclude(i => i.Category)
                     .Where(u => u.Email.Equals(email))
                     .FirstOrDefaultAsync();

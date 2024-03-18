@@ -10,3 +10,8 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
     font-weight: bold;
 }
 
+.fc #fc-dom-1{
+    font-weight: 400;
+}
+
+

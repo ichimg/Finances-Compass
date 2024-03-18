@@ -8,6 +8,8 @@ using DebtsCompass.Application.Exceptions;
 using System.Security.Claims;
 using DebtsCompass.Application.Services;
 using DebtsCompass.Domain.Entities.DtoResponses;
+using DebtsCompass.Domain.Entities.Models;
+using Newtonsoft.Json;
 
 namespace DebtsCompass.Presentation.Controllers
 {
@@ -80,19 +82,28 @@ namespace DebtsCompass.Presentation.Controllers
         [HttpGet]
         [Route("get-expenses-incomes")]
         [Authorize]
-        public async Task<ActionResult<List<ExpenseOrIncomeDto>>> GetReceivingDebts([FromHeader] string email)
+        public async Task<ActionResult<List<ExpenseOrIncomeDto>>> GetAllExpensesAndIncomes([FromHeader] string email ,
+            [FromQuery] YearMonthDto yearMonthDto)
         {
             if (!IsRequestFromValidUser(email))
             {
                 throw new ForbiddenRequestException();
             }
 
-            var debts = await expensesService.GetAllByEmail(email);
+            var expensesAndIncomes = await expensesService.GetAllByEmail(email, yearMonthDto);
+
+            var metadata = new
+            {
+                expensesAndIncomes.TotalAmountExpenses,
+                expensesAndIncomes.TotalAmountIncomes,
+            };
+
+            Response.Headers.Add("X-Total", JsonConvert.SerializeObject(metadata));
 
             Response<List<ExpenseOrIncomeDto>> response = new Response<List<ExpenseOrIncomeDto>>
             {
                 Message = null,
-                Payload = debts,
+                Payload = expensesAndIncomes,
                 StatusCode = HttpStatusCode.OK
             };
 

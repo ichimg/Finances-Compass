@@ -65,9 +65,9 @@ export class AddExpenseOrIncomeDialog implements OnInit {
   });
 
   async onSubmit(): Promise<void> {
-    if(this.data.isExpense){
-    await this.createExpense();}
-    else {
+    if (this.data.isExpense) {
+      await this.createExpense();
+    } else {
       await this.createIncome();
     }
   }
@@ -98,7 +98,7 @@ export class AddExpenseOrIncomeDialog implements OnInit {
             amount: createExpenseRequest.amount,
             categoryName: createExpenseRequest.category,
             note: createExpenseRequest.note,
-            isExpense: true
+            isExpense: true,
           },
           title: `Expense -${
             this.getCurrency() === 'RON'
@@ -106,10 +106,22 @@ export class AddExpenseOrIncomeDialog implements OnInit {
               : this.getCurrency() + createExpenseRequest.amount
           }`,
           date: `${utcDate.toISOString().split('T', 1)[0]}`,
-          color: 'red',
+          color: '#FF5733',
         };
-
+        this.data.chartData.datasets[0].data[0] =
+          parseFloat(this.data.chartData.datasets[0].data[0]) +
+          parseFloat(createExpenseRequest.amount);
         this.calendarApi.addEvent(expense);
+        this.data.chart.update();
+        this.data.balance =
+          (parseFloat(this.data.balance) -
+          parseFloat(createExpenseRequest.amount)).toFixed(2);
+        this.data.balanceTitle = `${
+          this.getCurrency() === 'RON'
+            ? this.data.balance + ' ' + this.getCurrency()
+            : this.getCurrency() + this.data.balance
+        }`;
+
         this.closeDialog();
         break;
 
@@ -145,7 +157,7 @@ export class AddExpenseOrIncomeDialog implements OnInit {
             amount: createIncomeRequest.amount,
             categoryName: createIncomeRequest.category,
             note: createIncomeRequest.note,
-            isExpense: false
+            isExpense: false,
           },
           title: `Income +${
             this.getCurrency() === 'RON'
@@ -157,6 +169,20 @@ export class AddExpenseOrIncomeDialog implements OnInit {
         };
 
         this.calendarApi.addEvent(expense);
+        this.data.chartData.datasets[0].data[0] =
+          parseFloat(this.data.chartData.datasets[1].data[0]) +
+          parseFloat(createIncomeRequest.amount);
+        this.calendarApi.addEvent(expense);
+        this.data.chart.update();
+        this.data.balance =
+          (parseFloat(this.data.balance) +
+          parseFloat(createIncomeRequest.amount)).toFixed(2);
+        this.data.balanceTitle = `${
+          this.getCurrency() === 'RON'
+            ? this.data.balance + ' ' + this.getCurrency()
+            : this.getCurrency() + this.data.balance
+        }`;
+
         this.closeDialog();
         break;
 
@@ -167,7 +193,7 @@ export class AddExpenseOrIncomeDialog implements OnInit {
   }
 
   closeDialog(): void {
-    this.dialogRef.close();
+    this.dialogRef.close({title: this.data.balanceTitle, remainingBalance: this.data.balance});
   }
 
   getCurrency(): string {

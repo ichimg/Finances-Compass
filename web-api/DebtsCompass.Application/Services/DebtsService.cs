@@ -19,13 +19,21 @@ namespace DebtsCompass.Application.Services
         private readonly INonUserRepository nonUserRepository;
         private readonly IEmailService emailService;
         private readonly ICurrencyRatesJob currencyRatesJob;
+        private readonly IExpenseCategoryRepository expenseCategoryRepository;
+        private readonly IIncomeCategoryRepository incomeCategoryRepository;
+        private readonly IExpensesService expensesService;
+        private readonly IIncomesService incomesService;
 
         public DebtsService(IDebtAssignmentRepository debtAssignmentRepository,
             IUserRepository userRepository,
             INonUserRepository nonUserRepository,
             IEmailService emailService,
             ICurrencyRatesJob currencyRatesJob,
-            IDebtRepository debtRepository)
+            IDebtRepository debtRepository,
+            IExpenseCategoryRepository expenseCategoryRepository,
+            IIncomeCategoryRepository incomeCategoryRepository,
+            IExpensesService expensesService,
+            IIncomesService incomesService)
         {
             this.debtAssignmentRepository = debtAssignmentRepository;
             this.userRepository = userRepository;
@@ -33,6 +41,10 @@ namespace DebtsCompass.Application.Services
             this.emailService = emailService;
             this.currencyRatesJob = currencyRatesJob;
             this.debtRepository = debtRepository;
+            this.expenseCategoryRepository = expenseCategoryRepository;
+            this.incomeCategoryRepository = incomeCategoryRepository;
+            this.expensesService = expensesService;
+            this.incomesService = incomesService;
         }
 
         public async Task<List<DebtDto>> GetAllReceivingDebts(string email)
@@ -120,13 +132,32 @@ namespace DebtsCompass.Application.Services
                     debtAssignment = Mapper.CreateDebtRequestToDebtAssignment(createDebtRequest, creatorUser, currentCurrencies);
                 }
                 await debtAssignmentRepository.CreateDebt(debtAssignment);
+               
 
                 ReceiverInfoDto receiverInfoDto = Mapper.NonUserToReceiverInfoDto(debtAssignment.NonUser);
                 DebtEmailInfoDto createdDebtEmailInfoDto = Mapper.UserToCreatedDebtEmailInfoDto(creatorUser);
                 await emailService.SendNoAccountDebtCreatedNotification(receiverInfoDto, createdDebtEmailInfoDto);
             }
 
+            await CreateExpenseRelatedToDebt(debtAssignment, creatorEmail);
+
             return debtAssignment.Id;
+        }
+
+        private async Task CreateExpenseRelatedToDebt(DebtAssignment debtAssignment, string creatorEmail)
+        {
+            ExpenseCategory category = await expenseCategoryRepository.GetByName("Debts");
+            CreateExpenseRequest createExpenseRequest = new CreateExpenseRequest
+            {
+                Amount = debtAssignment.Debt.Amount,
+                Date = debtAssignment.Debt.DateOfBorrowing.ToString(),
+                Category = category.Name,
+                Note = debtAssignment.SelectedUser != null ? 
+                $"Loaned to {debtAssignment.SelectedUser.UserInfo.FirstName} {debtAssignment.SelectedUser.UserInfo.LastName}." :
+                $"Loaned to {debtAssignment.NonUser.PersonFirstName} {debtAssignment.NonUser.PersonLastName}."
+            };
+
+            await expensesService.CreateExpense(createExpenseRequest, creatorEmail, true);
         }
 
         public async Task DeleteDebt(string id, string email)

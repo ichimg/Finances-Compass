@@ -109,7 +109,8 @@ namespace DebtsCompass.DataAccess
                 new ExpenseCategory { Id = Guid.NewGuid(), Name = "Clothes" },
                 new ExpenseCategory { Id = Guid.NewGuid(), Name = "Invoices" },
                 new ExpenseCategory { Id = Guid.NewGuid(), Name = "Rent" },
-                new ExpenseCategory { Id = Guid.NewGuid(), Name = "Car" }
+                new ExpenseCategory { Id = Guid.NewGuid(), Name = "Car" },
+                new ExpenseCategory { Id = Guid.NewGuid(), Name = "Debts" }
                 );
 
             modelBuilder.Entity<Income>()
@@ -136,7 +137,8 @@ namespace DebtsCompass.DataAccess
 
             modelBuilder.Entity<IncomeCategory>().HasData(
                 new IncomeCategory { Id = Guid.NewGuid(), Name = "Salary" },
-                new IncomeCategory { Id = Guid.NewGuid(), Name = "Savings" }
+                new IncomeCategory { Id = Guid.NewGuid(), Name = "Savings" },
+                new IncomeCategory { Id = Guid.NewGuid(), Name = "Debts" }
                 );
         }
     }

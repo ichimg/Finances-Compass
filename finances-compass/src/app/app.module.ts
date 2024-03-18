@@ -59,7 +59,7 @@ import { FullCalendarModule } from '@fullcalendar/angular';
 import { AddExpenseOrIncomeDialog } from './dialogs/add-expense-or-income-dialog/add-expense-or-income-dialog';
 import { TextFieldModule } from '@angular/cdk/text-field';
 import { ViewOrEditExpenseDialog } from './dialogs/view-or-edit-expense-dialog/view-or-edit-expense-dialog';
-
+import { NgChartsModule } from 'ng2-charts';
 
 const OPTIONS = {
   appereance: 'outline',
@@ -126,7 +126,8 @@ const OPTIONS = {
     LoadingBarRouterModule,
     NgxPayPalModule,
     FullCalendarModule,
-    TextFieldModule 
+    TextFieldModule,
+    NgChartsModule
   ],
   providers: [
     { provide: JWT_OPTIONS, useValue: JWT_OPTIONS },

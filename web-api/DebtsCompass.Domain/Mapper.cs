@@ -248,7 +248,11 @@ namespace DebtsCompass.Domain
             {
                 CreatorFirstName = debtAssignment.CreatorUser.UserInfo.FirstName,
                 CreatorLastName = debtAssignment.CreatorUser.UserInfo.LastName,
-                Amount = debtAssignment.Debt.Amount.ToString("#.##"),
+                Amount = debtAssignment.SelectedUser.CurrencyPreference == CurrencyPreference.EUR ? 
+                (debtAssignment.Debt.Amount *= (decimal)debtAssignment.Debt.EurExchangeRate).ToString("#.##") :
+                debtAssignment.SelectedUser.CurrencyPreference == CurrencyPreference.USD ? 
+                (debtAssignment.Debt.Amount *= (decimal)debtAssignment.Debt.UsdExchangeRate).ToString("#.##") :
+                debtAssignment.Debt.Amount.ToString("#.##"),
                 Reason = debtAssignment.Debt.BorrowReason,
                 Currency = debtAssignment.SelectedUser.CurrencyPreference.ToString(),
                 DateOfBorrowing = debtAssignment.Debt.DateOfBorrowing.ToString("dd MMM yyyy"),
