@@ -8,6 +8,7 @@ using DebtsCompass.Domain.Entities.Dtos;
 using DebtsCompass.Domain.Entities.EmailDtos;
 using EmailSender;
 using DebtsCompass.Domain.Enums;
+using Hangfire;
 
 namespace DebtsCompass.Application.Services
 {
@@ -24,6 +25,8 @@ namespace DebtsCompass.Application.Services
         private readonly IExpensesService expensesService;
         private readonly IIncomesService incomesService;
 
+        private readonly IBackgroundJobClient backgroundJobClient;
+
         public DebtsService(IDebtAssignmentRepository debtAssignmentRepository,
             IUserRepository userRepository,
             INonUserRepository nonUserRepository,
@@ -33,7 +36,8 @@ namespace DebtsCompass.Application.Services
             IExpenseCategoryRepository expenseCategoryRepository,
             IIncomeCategoryRepository incomeCategoryRepository,
             IExpensesService expensesService,
-            IIncomesService incomesService)
+            IIncomesService incomesService,
+            IBackgroundJobClient backgroundJobClient)
         {
             this.debtAssignmentRepository = debtAssignmentRepository;
             this.userRepository = userRepository;
@@ -45,6 +49,7 @@ namespace DebtsCompass.Application.Services
             this.incomeCategoryRepository = incomeCategoryRepository;
             this.expensesService = expensesService;
             this.incomesService = incomesService;
+            this.backgroundJobClient = backgroundJobClient;
         }
 
         public async Task<List<DebtDto>> GetAllReceivingDebts(string email)
@@ -118,6 +123,8 @@ namespace DebtsCompass.Application.Services
                 ReceiverInfoDto receiverInfoDto = Mapper.UserToReceiverInfoDto(debtAssignment.SelectedUser);
                 DebtEmailInfoDto createdDebtEmailInfoDto = Mapper.DebtAssignmentToCreatedDebtEmailInfoDto(debtAssignment);
                 await emailService.SendDebtCreatedNotification(receiverInfoDto, createdDebtEmailInfoDto);
+                backgroundJobClient.Schedule(() => Console.WriteLine($"[HANGFIRE] Debt created at {debtAssignment.Debt.DeadlineDate}"), 
+                    TimeSpan.FromMinutes(1));
             }
             else
             {
@@ -132,32 +139,13 @@ namespace DebtsCompass.Application.Services
                     debtAssignment = Mapper.CreateDebtRequestToDebtAssignment(createDebtRequest, creatorUser, currentCurrencies);
                 }
                 await debtAssignmentRepository.CreateDebt(debtAssignment);
-               
+
 
                 ReceiverInfoDto receiverInfoDto = Mapper.NonUserToReceiverInfoDto(debtAssignment.NonUser);
                 DebtEmailInfoDto createdDebtEmailInfoDto = Mapper.UserToCreatedDebtEmailInfoDto(creatorUser);
                 await emailService.SendNoAccountDebtCreatedNotification(receiverInfoDto, createdDebtEmailInfoDto);
             }
-
-            await CreateExpenseRelatedToDebt(debtAssignment, creatorEmail);
-
             return debtAssignment.Id;
-        }
-
-        private async Task CreateExpenseRelatedToDebt(DebtAssignment debtAssignment, string creatorEmail)
-        {
-            ExpenseCategory category = await expenseCategoryRepository.GetByName("Debts");
-            CreateExpenseRequest createExpenseRequest = new CreateExpenseRequest
-            {
-                Amount = debtAssignment.Debt.Amount,
-                Date = debtAssignment.Debt.DateOfBorrowing.ToString(),
-                Category = category.Name,
-                Note = debtAssignment.SelectedUser != null ? 
-                $"Loaned to {debtAssignment.SelectedUser.UserInfo.FirstName} {debtAssignment.SelectedUser.UserInfo.LastName}." :
-                $"Loaned to {debtAssignment.NonUser.PersonFirstName} {debtAssignment.NonUser.PersonLastName}."
-            };
-
-            await expensesService.CreateExpense(createExpenseRequest, creatorEmail, true);
         }
 
         public async Task DeleteDebt(string id, string email)
@@ -228,6 +216,11 @@ namespace DebtsCompass.Application.Services
         {
             DebtAssignment debtAssignmentFromDb = await debtAssignmentRepository.GetDebtById(debtId) ?? throw new EntityNotFoundException();
             await debtAssignmentRepository.ApproveDebt(debtAssignmentFromDb);
+
+            await CreateExpenseRelatedToDebt(debtAssignmentFromDb, debtAssignmentFromDb.Debt.DateOfBorrowing, debtAssignmentFromDb.CreatorUser,
+                $"Loaned to {debtAssignmentFromDb.SelectedUser.UserInfo.FirstName} {debtAssignmentFromDb.SelectedUser.UserInfo.LastName}");
+            await CreateIncomeRelatedToDebt(debtAssignmentFromDb, debtAssignmentFromDb.Debt.DateOfBorrowing, debtAssignmentFromDb.SelectedUser,
+                $"Loaned from {debtAssignmentFromDb.CreatorUser.UserInfo.FirstName} {debtAssignmentFromDb.CreatorUser.UserInfo.LastName}.");
             // TODO: send e-mail notification
         }
 
@@ -238,17 +231,45 @@ namespace DebtsCompass.Application.Services
             // TODO: send e-mail notification
         }
 
-        public async Task PayDebt(string debtId)
-        {
-            DebtAssignment debtAssignmentFromDb = await debtAssignmentRepository.GetDebtById(debtId) ?? throw new EntityNotFoundException();
-            await debtAssignmentRepository.PayDebt(debtAssignmentFromDb);
-        }
-
         public async Task MarkPaid(string debtId)
         {
             DebtAssignment debtAssignmentFromDb = await debtAssignmentRepository.GetDebtById(debtId) ?? throw new EntityNotFoundException();
             await debtAssignmentRepository.PayDebt(debtAssignmentFromDb);
+
+            await CreateExpenseRelatedToDebt(debtAssignmentFromDb, DateTime.UtcNow, debtAssignmentFromDb.SelectedUser,
+                $"Debt paid to {debtAssignmentFromDb.CreatorUser.UserInfo.FirstName} {debtAssignmentFromDb.CreatorUser.UserInfo.LastName}");
+            await CreateIncomeRelatedToDebt(debtAssignmentFromDb, DateTime.UtcNow, debtAssignmentFromDb.CreatorUser,
+                $"Debt collected from {debtAssignmentFromDb.SelectedUser.UserInfo.FirstName} {debtAssignmentFromDb.SelectedUser.UserInfo.LastName}.");
+
             // TODO: send e-mail notification
+        }
+
+        private async Task CreateExpenseRelatedToDebt(DebtAssignment debtAssignment, DateTime date, User user, string message)
+        {
+            ExpenseCategory category = await expenseCategoryRepository.GetByName("Debts");
+            CreateExpenseRequest createExpenseRequest = new CreateExpenseRequest
+            {
+                Amount = debtAssignment.Debt.Amount,
+                Date = date.ToString(),
+                Category = category.Name,
+                Note = message
+            };
+
+            await expensesService.CreateExpense(createExpenseRequest, user.Email, true);
+        }
+
+        private async Task CreateIncomeRelatedToDebt(DebtAssignment debtAssignment, DateTime date, User user, string message)
+        {
+            IncomeCategory category = await incomeCategoryRepository.GetByName("Debts");
+            CreateIncomeRequest createIncomeRequest = new CreateIncomeRequest
+            {
+                Amount = debtAssignment.Debt.Amount,
+                Date = date.ToString(),
+                Category = category.Name,
+                Note = message
+            };
+
+            await incomesService.CreateIncome(createIncomeRequest, user.Email, true);
         }
     }
 }

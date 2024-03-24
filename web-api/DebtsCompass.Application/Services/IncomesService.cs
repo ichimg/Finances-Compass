@@ -24,19 +24,22 @@ namespace DebtsCompass.Application.Services
             this.categoryRepository = categoryRepository;
         }
 
-        public async Task<Guid> CreateIncome(CreateIncomeRequest createIncomeRequest, string creatorEmail)
+        public async Task<Guid> CreateIncome(CreateIncomeRequest createIncomeRequest, string creatorEmail, bool isRonCurrency = false)
         {
             User user = await userRepository.GetUserByEmail(creatorEmail) ?? throw new UserNotFoundException(creatorEmail);
 
             CurrencyDto currentCurrencies = await currencyRatesJob.GetLatestCurrencyRates();
 
-            if (user.CurrencyPreference == CurrencyPreference.EUR)
+            if (!isRonCurrency)
             {
-                createIncomeRequest.Amount /= currentCurrencies.EurExchangeRate;
-            }
-            else if (user.CurrencyPreference == CurrencyPreference.USD)
-            {
-                createIncomeRequest.Amount /= currentCurrencies.UsdExchangeRate;
+                if (user.CurrencyPreference == CurrencyPreference.EUR)
+                {
+                    createIncomeRequest.Amount /= currentCurrencies.EurExchangeRate;
+                }
+                else if (user.CurrencyPreference == CurrencyPreference.USD)
+                {
+                    createIncomeRequest.Amount /= currentCurrencies.UsdExchangeRate;
+                }
             }
 
             IncomeCategory category = await categoryRepository.GetByName(createIncomeRequest.Category);

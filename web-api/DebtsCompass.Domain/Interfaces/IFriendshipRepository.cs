@@ -12,5 +12,6 @@ namespace DebtsCompass.Domain.Interfaces
         Task Delete(Friendship friendship);
         Task AcceptFriendRequest(Friendship friendshipFromDb);
         Task RejectFriendRequest(Friendship friendshipFromDb);
+        Task<PagedList<User>> GetUserFriendRequestsById(string userId, PagedParameters pagedParameters);
     }
 }

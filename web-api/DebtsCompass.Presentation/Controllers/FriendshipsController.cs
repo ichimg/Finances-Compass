@@ -57,6 +57,40 @@ namespace DebtsCompass.Presentation.Controllers
             return Ok(response);
         }
 
+        [HttpGet]
+        [Route("friend-requests")]
+        [Authorize]
+        public async Task<ActionResult<PagedList<UserDto>>> GetFriendRequests([FromHeader] string email, [FromQuery] PagedParameters pagedParameters)
+        {
+            if (!IsRequestFromValidUser(email))
+            {
+                throw new ForbiddenRequestException();
+            }
+
+            var friends = await friendshipsService.GetUserFriendRequestsById(email, pagedParameters);
+
+            var metadata = new
+            {
+                friends.TotalCount,
+                friends.PageSize,
+                friends.CurrentPage,
+                friends.TotalPages,
+                friends.HasNext,
+                friends.HasPrevious
+            };
+
+            Response.Headers.Add("X-Pagination", JsonConvert.SerializeObject(metadata));
+
+            Response<List<UserDto>> response = new Response<List<UserDto>>
+            {
+                Message = null,
+                Payload = friends,
+                StatusCode = HttpStatusCode.OK
+            };
+
+            return Ok(response);
+        }
+
         [HttpPost]
         [Route("add-friend")]
         [Authorize]

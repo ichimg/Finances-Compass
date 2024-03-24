@@ -8,6 +8,7 @@ import { UserModel } from '../../entities/user-friend.model';
 import { SearchUsersDialog } from '../../dialogs/search-users/search-users.dialog';
 import { SidebarService } from '../../services/sidebar.service';
 import { Router } from '@angular/router';
+import { FriendsDialog } from 'src/app/dialogs/friends-dialog/friends-dialog.dialog';
 
 @Component({
   selector: 'app-layout',
@@ -72,5 +73,9 @@ export class LayoutComponent implements OnInit {
 
   openSearchUsersDialog(): void {
     this.dialog.open(SearchUsersDialog);
+  }
+
+  openFriendsDialog(): void {
+    this.dialog.open(FriendsDialog);
   }
 }

@@ -1,5 +1,4 @@
-﻿using DebtsCompass.Application.Exceptions;
-using DebtsCompass.Domain;
+﻿using DebtsCompass.Domain;
 using DebtsCompass.Domain.Entities.Requests;
 using DebtsCompass.Domain.Interfaces;
 using Microsoft.AspNetCore.Authorization;
@@ -52,7 +51,7 @@ namespace DebtsCompass.Presentation.Controllers
         public async Task<ActionResult<Response<string>>> CompleteOrder([FromBody] CompletePaypalOrderRequest completeOrderRequest)
         {
             var response = await paypalService.CompleteOrder(completeOrderRequest);
-            await debtsService.PayDebt(completeOrderRequest.DebtId);
+            await debtsService.MarkPaid(completeOrderRequest.DebtId);
 
             return Ok(new Response<string>
             {

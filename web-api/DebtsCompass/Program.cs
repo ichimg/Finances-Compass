@@ -8,6 +8,7 @@ using DebtsCompass.DataAccess.Repositories;
 using DebtsCompass.Domain.Entities.Models;
 using DebtsCompass.Domain.Interfaces;
 using EmailSender;
+using Hangfire;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -119,6 +120,10 @@ builder.Services.AddScoped<EmailTemplatesService>();
 var paypalConfig = builder.Configuration.GetSection("PaypalConfiguration").Get<PaypalConfiguration>();
 builder.Services.AddSingleton(paypalConfig);
 
+// Hangfire 
+builder.Services.AddHangfire(c => c.UseSqlServerStorage(builder.Configuration.GetConnectionString("DebtsCompassConnectionString")));
+builder.Services.AddHangfireServer();
+
 builder.Services.AddHttpClient();
 
 
@@ -159,5 +164,7 @@ app.UseAuthorization();
 app.MapControllers();
 
 app.UseCors();
+
+app.UseHangfireDashboard();
 
 app.Run();

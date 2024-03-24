@@ -1,6 +1,7 @@
 import { Component, Inject, OnInit } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { lastValueFrom } from 'rxjs';
+import { Debt } from 'src/app/entities/debt';
 import { DebtsService } from 'src/app/services/debts.service';
 import { NotificationService } from 'src/app/services/notification.service';
 
@@ -53,5 +54,9 @@ export class ViewDebtDialog implements OnInit {
         this.notificationService.showError('Something went wrong');
         break;
     }
+  }
+
+  isDeadlinePassed(debt: Debt): boolean {
+    return !debt.isPaid && new Date(debt.deadline) < new Date();
   }
 }

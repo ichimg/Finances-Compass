@@ -151,7 +151,7 @@ export class AddExpenseOrIncomeDialog implements OnInit {
         );
 
         this.notificationService.showSuccess('Income added successfully!');
-        let expense: EventInput = {
+        let income: EventInput = {
           id: createIncomeRequest.guid,
           extendedProps: {
             amount: createIncomeRequest.amount,
@@ -168,11 +168,10 @@ export class AddExpenseOrIncomeDialog implements OnInit {
           color: 'green',
         };
 
-        this.calendarApi.addEvent(expense);
-        this.data.chartData.datasets[0].data[0] =
+        this.calendarApi.addEvent(income);
+        this.data.chartData.datasets[1].data[0] =
           parseFloat(this.data.chartData.datasets[1].data[0]) +
           parseFloat(createIncomeRequest.amount);
-        this.calendarApi.addEvent(expense);
         this.data.chart.update();
         this.data.balance =
           (parseFloat(this.data.balance) +

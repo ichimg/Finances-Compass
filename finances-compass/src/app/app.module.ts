@@ -60,6 +60,9 @@ import { AddExpenseOrIncomeDialog } from './dialogs/add-expense-or-income-dialog
 import { TextFieldModule } from '@angular/cdk/text-field';
 import { ViewOrEditExpenseDialog } from './dialogs/view-or-edit-expense-dialog/view-or-edit-expense-dialog';
 import { NgChartsModule } from 'ng2-charts';
+import { FriendsDialog } from './dialogs/friends-dialog/friends-dialog.dialog';
+import { MatTabsModule } from '@angular/material/tabs';
+import { ScrollingModule } from '@angular/cdk/scrolling';
 
 const OPTIONS = {
   appereance: 'outline',
@@ -87,7 +90,8 @@ const OPTIONS = {
     PaymentDialog,
     ExpensesComponent,
     AddExpenseOrIncomeDialog,
-    ViewOrEditExpenseDialog
+    ViewOrEditExpenseDialog,
+    FriendsDialog
   ],
   imports: [
     BrowserModule,
@@ -127,7 +131,9 @@ const OPTIONS = {
     NgxPayPalModule,
     FullCalendarModule,
     TextFieldModule,
-    NgChartsModule
+    NgChartsModule,
+    MatTabsModule,
+    ScrollingModule
   ],
   providers: [
     { provide: JWT_OPTIONS, useValue: JWT_OPTIONS },

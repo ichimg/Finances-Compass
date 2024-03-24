@@ -38,12 +38,11 @@
           >
         </div>
       </div>
-      <div class="form-buttons" *ngIf="!isEditingModal">
-        <button
-          mat-raised-button
-          color="primary"
-          (click)="activateEditForm()"
-        >
+      <div
+        class="form-buttons"
+        *ngIf="!isEditingModal && data.item.extendedProps['categoryName'] !== 'Debts'"
+      >
+        <button mat-raised-button color="primary" (click)="activateEditForm()">
           Edit
         </button>
         <button mat-raised-button color="warn" (click)="delete()">

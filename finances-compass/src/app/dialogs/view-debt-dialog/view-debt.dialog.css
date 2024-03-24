@@ -33,9 +33,27 @@
   color: #504f4f;
 }
 
-.value {
+.value, .value-warn {
   flex-basis: 60%;
   text-align: right;
+}
+
+.value-warn {
+  cursor: help;
+  display: flex;
+  gap: 3px;
+  justify-content: end;
+  color: #f4ca16;
+  font-weight: 600;
+}
+
+.value-warn:hover {
+  color: #8e7814;
+  transition: 0.4s;
+}
+
+.warn-icon {
+  font-size: 20px;
 }
 
 mat-card-content {

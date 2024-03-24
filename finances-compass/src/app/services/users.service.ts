@@ -25,6 +25,20 @@ export class UsersService {
     });
   }
 
+  getAllFriendRequests(pageNumber: number, pageSize: number) {
+    const getAllEndpoint = `${this.apiUrl}/friend-requests?pageNumber=${pageNumber}&pageSize=${pageSize}`;
+
+    const email = localStorage.getItem('email') || '';
+    const headers = new HttpHeaders({
+      'Content-Type': 'application/json',
+    }).set('email', email);
+
+    return this.http.get<any>(getAllEndpoint, {
+      headers: headers,
+      observe: 'response',
+    });
+  }
+
   getUsersBySearchQuery(query: string, pageNumber: number, pageSize: number) {
     const searchUsersEndpoint = `${this.apiUrl}/search-users?searchQuery=${query}&pageNumber=${pageNumber}&pageSize=${pageSize}`;
 

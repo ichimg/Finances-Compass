@@ -36,6 +36,22 @@ namespace DebtsCompass.Application.Services
             return userDtosPagedList;
         }
 
+        public async Task<PagedList<UserDto>> GetUserFriendRequestsById(string email, PagedParameters pagedParameters)
+        {
+            User userFromDb = await userRepository.GetUserByEmail(email) ?? throw new UserNotFoundException(email);
+            PagedList<User> friendsFromDb = await friendshipRepository.GetUserFriendRequestsById(userFromDb.Id, pagedParameters);
+
+            var userDtos = friendsFromDb.Select(u =>
+            {
+                return Mapper.UserToUserDto(u, Status.Pending, true); // assuming it's indeed a friend request that has mandatory the request pending
+            }).ToList();
+
+            var userDtosPagedList =
+                new PagedList<UserDto>(userDtos, friendsFromDb.TotalCount, friendsFromDb.CurrentPage, friendsFromDb.PageSize);
+
+            return userDtosPagedList;
+        }
+
         public async Task AddFriend(FriendRequest friendRequest)
         {
             User requesterUser = await userRepository.GetUserByEmail(friendRequest.RequesterUserEmail) ?? throw new UserNotFoundException(friendRequest.RequesterUserEmail);

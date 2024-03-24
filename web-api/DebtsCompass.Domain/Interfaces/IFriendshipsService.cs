@@ -11,5 +11,6 @@ namespace DebtsCompass.Domain.Interfaces
         Task DeleteFriendRequest(FriendRequestDto friendRequestDto);
         Task AcceptFriendRequest(FriendRequestDto friendRequestDto);
         Task RejectFriendRequest(FriendRequestDto friendRequestDto);
+        Task<PagedList<UserDto>> GetUserFriendRequestsById(string email, PagedParameters pagedParameters);
     }
 }

@@ -38,9 +38,12 @@
         </div>
         <div class="detail-row">
           <span class="label">Deadline:</span>
-          <span class="value"
-            >{{data.debt.deadline | date : "dd MMM yyyy"}}</span
+          <div class="value-warn" *ngIf="isDeadlinePassed(data.debt)" matTooltip="The deadline has passed!"
+            ><mat-icon class="warn-icon">warning</mat-icon>{{data.debt.deadline | date : "dd MMM yyyy"}}</div
           >
+          <span class="value" *ngIf="!isDeadlinePassed(data.debt)"
+          >{{data.debt.deadline | date : "dd MMM yyyy"}}</span
+        >
         </div>
         <div class="detail-row">
           <span class="label">Reason:</span>

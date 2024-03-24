@@ -1,3 +1,4 @@
+import { Category } from './../../entities/category.model';
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { CalendarOptions } from '@fullcalendar/core';
 import dayGridPlugin from '@fullcalendar/daygrid';
@@ -9,7 +10,6 @@ import { Expense } from '../../entities/expense.model';
 import { ExpensesService } from '../../services/expenses.service';
 import { ViewOrEditExpenseDialog } from '../../dialogs/view-or-edit-expense-dialog/view-or-edit-expense-dialog';
 import { a1 } from '@fullcalendar/core/internal-common';
-import { Category } from '../../entities/category.model';
 import { lastValueFrom } from 'rxjs';
 import { CategoriesService } from '../../services/categories.service';
 import { NotificationService } from '../../services/notification.service';
@@ -35,11 +35,14 @@ export class ExpensesComponent implements OnInit {
         (dateInfo.start.getTime() + dateInfo.end.getTime()) / 2
       );
 
-    await this.getExpensesAndIncomes(midDate.getFullYear(), midDate.getMonth() + 1);
-    let calendar = this.calendarComponent.getApi();
-    calendar.removeAllEventSources();
-    calendar.addEventSource(this.expensesAndIncomes);
-    this.chart.chart?.update();
+      await this.getExpensesAndIncomes(
+        midDate.getFullYear(),
+        midDate.getMonth() + 1
+      );
+      let calendar = this.calendarComponent.getApi();
+      calendar.removeAllEventSources();
+      calendar.addEventSource(this.expensesAndIncomes);
+      this.chart.chart?.update();
     },
   };
 
@@ -194,7 +197,9 @@ export class ExpensesComponent implements OnInit {
       this.categoriesService.getAllExpense()
     );
     if (response.statusCode === 200) {
-      this.expenseCategories = response.payload;
+      this.expenseCategories = response.payload.filter(
+        (category: Category) => category.name != 'Debts'
+      );
     } else {
       this.notificationService.showError('Something went wrong');
     }
@@ -203,7 +208,9 @@ export class ExpensesComponent implements OnInit {
   async getIncomeCategories(): Promise<void> {
     const response = await lastValueFrom(this.categoriesService.getAllIncome());
     if (response.statusCode === 200) {
-      this.incomeCategories = response.payload;
+      this.incomeCategories = response.payload.filter(
+        (category: Category) => category.name != 'Debts'
+      );
     } else {
       this.notificationService.showError('Something went wrong');
     }
