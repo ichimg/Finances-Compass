@@ -13,5 +13,6 @@ namespace DebtsCompass.Domain.Interfaces
         Task ApproveDebt(string debtId, string email);
         Task RejectDebt(string debtId, string email);
         Task MarkPaid(string debtId);
+        Task<TotalLoansAndDebtsDto> GetLoansAndDebtsTotalCount(string email);
     }
 }

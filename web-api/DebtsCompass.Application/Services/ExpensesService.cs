@@ -92,7 +92,7 @@ namespace DebtsCompass.Application.Services
 
         public async Task<TotalList<ExpenseOrIncomeDto>> GetAllByEmail(string email, YearMonthDto yearMonthDto)
         {
-            User user = await userRepository.GetUserByEmailWithExpenses(email, yearMonthDto);
+            User user = await userRepository.GetUserByEmailWithExpensesByMonth(email, yearMonthDto);
             var expensesFromDb = user.Expenses.ToList();
             var incomesFromDb = user.Incomes.ToList();
 
@@ -121,6 +121,33 @@ namespace DebtsCompass.Application.Services
 
 
             return new TotalList<ExpenseOrIncomeDto>(expenseOrIncomes.ToList(), totalExpenses, totalIncomes);
+        }
+
+        public async Task<TotalExpensesAndIncomesDto> GetExpensesAndIncomesTotalCount(string email)
+        {
+            User user = await userRepository.GetUserByEmail(email);
+            var expensesFromDb = user.Expenses.ToList();
+            var incomesFromDb = user.Incomes.ToList();
+
+            if (user.CurrencyPreference == CurrencyPreference.EUR)
+            {
+                expensesFromDb.ForEach(e => e.Amount *= (decimal)e.EurExchangeRate);
+                incomesFromDb.ForEach(i => i.Amount *= (decimal)i.EurExchangeRate);
+            }
+            else if (user.CurrencyPreference == CurrencyPreference.USD)
+            {
+                expensesFromDb.ForEach(e => e.Amount *= (decimal)e.UsdExchangeRate);
+                incomesFromDb.ForEach(i => i.Amount *= (decimal)i.EurExchangeRate);
+            }
+
+            decimal totalExpenses = expensesFromDb.Sum(e => e.Amount);
+            decimal totalIncomes = incomesFromDb.Sum(e => e.Amount);
+
+            return new TotalExpensesAndIncomesDto
+            {
+                TotalExpenses = totalExpenses,
+                TotalIncomes = totalIncomes
+            };
         }
     }
 }

@@ -218,7 +218,7 @@ namespace DebtsCompass.Application.Services
             await debtAssignmentRepository.ApproveDebt(debtAssignmentFromDb);
 
             await CreateExpenseRelatedToDebt(debtAssignmentFromDb, debtAssignmentFromDb.Debt.DateOfBorrowing, debtAssignmentFromDb.CreatorUser,
-                $"Loaned to {debtAssignmentFromDb.SelectedUser.UserInfo.FirstName} {debtAssignmentFromDb.SelectedUser.UserInfo.LastName}");
+                $"Loaned to {debtAssignmentFromDb.SelectedUser.UserInfo.FirstName} {debtAssignmentFromDb.SelectedUser.UserInfo.LastName}.");
             await CreateIncomeRelatedToDebt(debtAssignmentFromDb, debtAssignmentFromDb.Debt.DateOfBorrowing, debtAssignmentFromDb.SelectedUser,
                 $"Loaned from {debtAssignmentFromDb.CreatorUser.UserInfo.FirstName} {debtAssignmentFromDb.CreatorUser.UserInfo.LastName}.");
             // TODO: send e-mail notification
@@ -237,11 +237,38 @@ namespace DebtsCompass.Application.Services
             await debtAssignmentRepository.PayDebt(debtAssignmentFromDb);
 
             await CreateExpenseRelatedToDebt(debtAssignmentFromDb, DateTime.UtcNow, debtAssignmentFromDb.SelectedUser,
-                $"Debt paid to {debtAssignmentFromDb.CreatorUser.UserInfo.FirstName} {debtAssignmentFromDb.CreatorUser.UserInfo.LastName}");
+                $"Debt paid to {debtAssignmentFromDb.CreatorUser.UserInfo.FirstName} {debtAssignmentFromDb.CreatorUser.UserInfo.LastName}.");
             await CreateIncomeRelatedToDebt(debtAssignmentFromDb, DateTime.UtcNow, debtAssignmentFromDb.CreatorUser,
                 $"Debt collected from {debtAssignmentFromDb.SelectedUser.UserInfo.FirstName} {debtAssignmentFromDb.SelectedUser.UserInfo.LastName}.");
 
             // TODO: send e-mail notification
+        }
+
+        public async Task<TotalLoansAndDebtsDto> GetLoansAndDebtsTotalCount(string email)
+        {
+            User user = await userRepository.GetUserByEmail(email);
+            var loansFromDb = await debtAssignmentRepository.GetAllReceivingDebtsByEmail(email);
+            var debtsFromDb = await debtAssignmentRepository.GetAllUserDebtsByEmail(email);
+
+            if (user.CurrencyPreference == CurrencyPreference.EUR)
+            {
+                loansFromDb.ForEach(d => d.Debt.Amount *= (decimal)d.Debt.EurExchangeRate);
+                debtsFromDb.ForEach(d => d.Debt.Amount *= (decimal)d.Debt.EurExchangeRate);
+            }
+            else if (user.CurrencyPreference == CurrencyPreference.USD)
+            {
+                loansFromDb.ForEach(d => d.Debt.Amount *= (decimal)d.Debt.UsdExchangeRate);
+                debtsFromDb.ForEach(d => d.Debt.Amount *= (decimal)d.Debt.EurExchangeRate);
+            }
+
+            decimal totalLoans = loansFromDb.Sum(e => e.Debt.Amount);
+            decimal totalDebts = debtsFromDb.Sum(e => e.Debt.Amount);
+
+            return new TotalLoansAndDebtsDto
+            {
+                TotalLoans = totalLoans,
+                TotalDebts = totalDebts
+            };
         }
 
         private async Task CreateExpenseRelatedToDebt(DebtAssignment debtAssignment, DateTime date, User user, string message)

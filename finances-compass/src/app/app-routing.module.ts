@@ -8,6 +8,7 @@ import { RegisterComponent } from './components/register/register.component';
 import { EmailConfirmationComponent } from './components/email-confirmation/email-confirmation.component';
 import { DebtsComponent } from './components/debts/debts.component';
 import { ExpensesComponent } from './components/expenses/expenses.component';
+import { DashboardComponent } from './components/dashboard/dashboard.component';
 
 const routes: Routes = [
   {
@@ -17,7 +18,8 @@ const routes: Routes = [
     children: [
       { path: '', redirectTo: 'debts', pathMatch: 'full' },
       { path: 'debts', component: DebtsComponent },
-      { path: 'expenses', component: ExpensesComponent }],
+      { path: 'expenses', component: ExpensesComponent },
+      { path: 'dashboard', component: DashboardComponent }],
   },
   { path: 'login', component: LoginComponent, canActivate: [unauthGuard] },
   {

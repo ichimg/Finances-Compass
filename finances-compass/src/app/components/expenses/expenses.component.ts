@@ -26,9 +26,13 @@ export class ExpensesComponent implements OnInit {
   calendarOptions: CalendarOptions = {
     initialView: 'dayGridMonth',
     plugins: [dayGridPlugin, interactionPlugin],
-    height: 500,
+    height: 550,
     aspectRatio: 1.5,
     firstDay: 1,
+    headerToolbar: {
+      right: 'today prev,next prevYear,nextYear',
+      left: 'title',
+    },
     eventClick: (info) => this.onEventClick(info),
     datesSet: async (dateInfo) => {
       let midDate = new Date(
@@ -115,7 +119,7 @@ export class ExpensesComponent implements OnInit {
   async getExpensesAndIncomes(year: number, month: number): Promise<void> {
     try {
       const response = await lastValueFrom(
-        this.expensesService.getAllExpensesAndIncomes(year, month)
+        this.expensesService.getAllExpensesAndIncomesByMonth(year, month)
       );
 
       if (response.body.statusCode === 200) {
@@ -172,9 +176,7 @@ export class ExpensesComponent implements OnInit {
           ? this.balance + ' ' + this.getCurrency()
           : this.getCurrency() + this.balance
       }`;
-      console.log(response);
     } catch (error) {
-      console.log(error);
       this.notificationService.showError('Something went wrong');
     }
   }

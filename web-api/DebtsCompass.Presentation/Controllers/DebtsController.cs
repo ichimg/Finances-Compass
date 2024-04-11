@@ -1,4 +1,5 @@
 ﻿using DebtsCompass.Application.Exceptions;
+using DebtsCompass.Application.Services;
 using DebtsCompass.Domain;
 using DebtsCompass.Domain.Entities.DtoResponses;
 using DebtsCompass.Domain.Entities.Requests;
@@ -176,6 +177,28 @@ namespace DebtsCompass.Presentation.Controllers
                 Payload = null,
                 StatusCode = HttpStatusCode.OK
             });
+        }
+
+        [HttpGet]
+        [Route("get-loans-debts-count")]
+        [Authorize]
+        public async Task<ActionResult<TotalLoansAndDebtsDto>> GetExpensesAndIncomesTotalCount([FromHeader] string email)
+        {
+            if (!IsRequestFromValidUser(email))
+            {
+                throw new ForbiddenRequestException();
+            }
+
+            TotalLoansAndDebtsDto expensesAndIncomes = await debtsService.GetLoansAndDebtsTotalCount(email);
+
+            Response<TotalLoansAndDebtsDto> response = new Response<TotalLoansAndDebtsDto>
+            {
+                Message = null,
+                Payload = expensesAndIncomes,
+                StatusCode = HttpStatusCode.OK
+            };
+
+            return Ok(response);
         }
 
 

@@ -17,6 +17,8 @@ namespace DebtsCompass.DataAccess.Repositories
         public async Task<User> GetUserByEmail(string email)
         {
             User userFromDb = await dbContext.Users
+                .Include(u => u.Expenses)
+                .Include(u => u.Incomes)
                 .Include(u => u.UserInfo)
                 .ThenInclude(u => u.Address)
                 .Where(u => u.Email.Equals(email)).FirstOrDefaultAsync();
@@ -24,7 +26,7 @@ namespace DebtsCompass.DataAccess.Repositories
             return userFromDb;
         }
 
-        public async Task<User> GetUserByEmailWithExpenses(string email, YearMonthDto yearMonthDto)
+        public async Task<User> GetUserByEmailWithExpensesByMonth(string email, YearMonthDto yearMonthDto)
         {
             var startOfMonth = new DateTime(Int32.Parse(yearMonthDto.Year), Int32.Parse(yearMonthDto.Month), 1);
             var endOfMonth = startOfMonth.AddMonths(1).AddDays(-1);

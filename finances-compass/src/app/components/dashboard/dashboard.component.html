@@ -1,0 +1,77 @@
+<h1 class="page-title">Welcome back, {{ username }}! 👋</h1>
+<div class="container">
+  <mat-card class="chart-container">
+    <mat-card-title class="title">Overall balance</mat-card-title>
+    <div class="overall-balance-chart">
+      <canvas
+        baseChart
+        [type]="'pie'"
+        [options]="overallBalanceOptions"
+        [data]="overallBalanceData"
+        [width]="300"
+        [height]="200"
+      >
+      </canvas>
+      <div class="chart-stats">
+        <p>Total Incomes:</p>
+        <span class="overall-balance-inc">{{
+          overallBalanceStats.totalIncomes
+        }}</span>
+        <p>Total Expenses:</p>
+        <span class="overall-balance-exp">{{
+          overallBalanceStats.totalExpenses
+        }}</span>
+      </div>
+    </div>
+  </mat-card>
+  <mat-card class="chart-container">
+    <mat-card-title class="title">Loans & Debts</mat-card-title>
+    <div class="overall-balance-chart">
+      <canvas
+        baseChart
+        [type]="'pie'"
+        [options]="loansDebtsOptions"
+        [data]="loansDebtsData"
+        [width]="500"
+        [height]="300"
+      >
+      </canvas>
+      <div class="chart-stats">
+        <p>Total Loans:</p>
+        <span class="overall-balance-loa">{{
+          loansDebtsStats.totalLoans
+        }}</span>
+        <p>Total Debts:</p>
+        <span class="overall-balance-deb">{{
+          loansDebtsStats.totalDebts
+        }}</span>
+      </div>
+    </div>
+  </mat-card>
+  <mat-card class="chart-container">
+    <div class="overall-balance-chart">
+      <canvas
+        baseChart
+        [type]="'pie'"
+        [options]="overallBalanceOptions"
+        [data]="overallBalanceData"
+        [width]="500"
+        [height]="300"
+      >
+      </canvas>
+    </div>
+  </mat-card>
+  <mat-card class="chart-container">
+    <div class="overall-balance-chart">
+      <canvas
+        baseChart
+        [type]="'pie'"
+        [options]="overallBalanceOptions"
+        [data]="overallBalanceData"
+        [width]="500"
+        [height]="300"
+      >
+      </canvas>
+    </div>
+  </mat-card>
+</div>

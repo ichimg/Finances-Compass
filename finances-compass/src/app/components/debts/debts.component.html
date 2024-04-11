@@ -59,7 +59,13 @@
               <td
                 mat-cell
                 *matCellDef="let element"
-                [ngClass]="element.status === 'Rejected' ? 'rejected-debt' : element.isPaid ? 'paid-debt': ''"
+                [ngClass]="
+                  element.status === 'Rejected'
+                    ? 'rejected-debt'
+                    : element.isPaid
+                    ? 'paid-debt'
+                    : ''
+                "
               >
                 {{ element.firstName + " " + element.lastName }}
               </td>
@@ -77,9 +83,19 @@
               <td
                 mat-cell
                 *matCellDef="let element"
-                [ngClass]="element.status === 'Rejected' ? 'rejected-debt' : element.isPaid ? 'paid-debt': ''"
+                [ngClass]="
+                  element.status === 'Rejected'
+                    ? 'rejected-debt'
+                    : element.isPaid
+                    ? 'paid-debt'
+                    : ''
+                "
               >
-                {{ getCurrency() === 'RON' ? element.amount + " " + getCurrency() : getCurrency() + element.amount }}
+                {{
+                  getCurrency() === "RON"
+                    ? element.amount + " " + getCurrency()
+                    : getCurrency() + element.amount
+                }}
               </td>
             </ng-container>
             <ng-container matColumnDef="deadline">
@@ -94,7 +110,13 @@
               <td
                 mat-cell
                 *matCellDef="let element"
-                [ngClass]="element.status === 'Rejected' ? 'rejected-debt' : element.isPaid ? 'paid-debt': ''"
+                [ngClass]="
+                  element.status === 'Rejected'
+                    ? 'rejected-debt'
+                    : element.isPaid
+                    ? 'paid-debt'
+                    : ''
+                "
               >
                 {{ element.deadline | date : "dd MMM yyyy" }}
               </td>
@@ -112,7 +134,13 @@
               <td
                 mat-cell
                 *matCellDef="let element"
-                [ngClass]="element.status === 'Rejected' ? 'rejected-debt' : element.isPaid ? 'paid-debt': ''"
+                [ngClass]="
+                  element.status === 'Rejected'
+                    ? 'rejected-debt'
+                    : element.isPaid
+                    ? 'paid-debt'
+                    : ''
+                "
               >
                 {{ element.reason }}
               </td>
@@ -129,11 +157,19 @@
               <td
                 mat-cell
                 *matCellDef="let element"
-                [ngClass]="element.status === 'Rejected' ? 'rejected-debt' : element.isPaid ? 'paid-debt': ''"
+                [ngClass]="
+                  element.status === 'Rejected'
+                    ? 'rejected-debt'
+                    : element.isPaid
+                    ? 'paid-debt'
+                    : ''
+                "
               >
-              {{
-                element.isPaid ? "&#x2705; Collected" : (element.status | statusTransform)
-              }}
+                {{
+                  element.isPaid
+                    ? "&#x2705; Collected"
+                    : (element.status | statusTransform)
+                }}
               </td>
             </ng-container>
 
@@ -142,7 +178,13 @@
               <td
                 mat-cell
                 *matCellDef="let element"
-                [ngClass]="element.status === 'Rejected' ? 'rejected-debt' : element.isPaid ? 'paid-debt': ''"
+                [ngClass]="
+                  element.status === 'Rejected'
+                    ? 'rejected-debt'
+                    : element.isPaid
+                    ? 'paid-debt'
+                    : ''
+                "
               >
                 <div class="action-icons">
                   <mat-icon
@@ -190,6 +232,12 @@
               *matRowDef="let row; columns: displayedReceivingColumns"
             ></tr>
           </table>
+          <mat-paginator
+            [ngClass]="areDebtsToReceive() ? 'block' : 'hidden'"
+            #receivingPaginator
+            [pageSizeOptions]="[5, 10, 15]"
+            showFirstLastButtons
+          ></mat-paginator>
         </div>
       </div>
     </mat-card>
@@ -265,7 +313,11 @@
                 *matCellDef="let element"
                 [ngClass]="element.isPaid && 'paid-debt'"
               >
-              {{ getCurrency() === 'RON' ? element.amount + " " + getCurrency() : getCurrency() + element.amount }}
+                {{
+                  getCurrency() === "RON"
+                    ? element.amount + " " + getCurrency()
+                    : getCurrency() + element.amount
+                }}
               </td>
             </ng-container>
             <ng-container matColumnDef="deadline">
@@ -318,7 +370,9 @@
                 [ngClass]="element.isPaid && 'paid-debt'"
               >
                 {{
-                  element.isPaid ? "&#x2705; Paid" : (element.status | statusTransform)
+                  element.isPaid
+                    ? "&#x2705; Paid"
+                    : (element.status | statusTransform)
                 }}
               </td>
             </ng-container>
@@ -363,16 +417,6 @@
                   >
                     PAY
                   </button>
-                  <button
-                  mat-flat-button
-                  color="primary"
-                  *ngIf="element.status === 'Accepted' && !element.isPaid"
-                  matTooltip="Click to ask"
-                  matTooltipPosition="right"
-                  (click)="onPayClick($event, element)"
-                >
-                  Extend deadline
-                </button>
                 </div>
               </td></ng-container
             >
@@ -388,6 +432,12 @@
               *matRowDef="let row; columns: displayedReceivingColumns"
             ></tr>
           </table>
+          <mat-paginator
+            [ngClass]="areDebts() ? 'block' : 'hidden'"
+            #userPaginator
+            [pageSizeOptions]="[5, 10, 15]"
+            showFirstLastButtons
+          ></mat-paginator>
         </div>
       </div>
     </mat-card>

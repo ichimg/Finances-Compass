@@ -102,4 +102,17 @@ export class DebtsService {
 
     return this.httpClient.put<any>(markPaidDebtEndpoint, { headers: headers });
   }
+
+  getAllLoansAndDebts() {
+    const getAllEndpoint = `${this.apiUrl}/get-loans-debts-count`;
+
+    const email = localStorage.getItem('email') || '';
+    const headers = new HttpHeaders({
+      'Content-Type': 'application/json',
+    }).set('email', email);
+
+    return this.httpClient.get<any>(getAllEndpoint, {
+      headers: headers,
+    });
+  }
 }

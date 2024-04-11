@@ -63,8 +63,8 @@ export class SearchUsersDialog implements OnInit {
   }
 
   loadMoreUsers(): void {
-    if (this.users!.length < this.paginationService.totalCount) {
-      this.paginationService.change(this.usersTotalCount);
+    if (this.users!.length < this.usersTotalCount) {
+      this.paginationService.increasePageNumber();
 
       this.usersService
         .getUsersBySearchQuery(
@@ -85,10 +85,6 @@ export class SearchUsersDialog implements OnInit {
                 isButtonDisabled: tuple[2],
               };
             });
-
-            this.usersTotalCount = JSON.parse(
-              response.headers.get('X-Pagination')!
-            ).TotalCount;
           },
           () => {
             this.notificationService.showError('Something went wrong');

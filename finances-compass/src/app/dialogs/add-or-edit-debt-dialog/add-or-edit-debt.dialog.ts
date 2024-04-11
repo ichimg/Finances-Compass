@@ -66,21 +66,16 @@ export class AddOrEditDebtDialog implements OnInit {
   ngOnInit(): void {
     this.debts = this.data.debts;
 
-    this.usersService
-      .getAllFriends(
-        this.paginationService.pageNumber,
-        this.paginationService.pageSize
-      )
-      .subscribe((response) => {
-        this.userFriends = response.body.payload;
-        this.userFriendsTotalCount = JSON.parse(
-          response.headers.get('X-Pagination')!
-        ).TotalCount;
+    this.usersService.getAllFriends().subscribe((response) => {
+      this.userFriends = response.body.payload;
+      this.userFriendsTotalCount = JSON.parse(
+        response.headers.get('X-Pagination')!
+      ).TotalCount;
 
-        if (this.data.selectedDebt !== undefined) {
-          this.fillEditModalForm();
-        }
-      });
+      if (this.data.selectedDebt !== undefined) {
+        this.fillEditModalForm();
+      }
+    });
   }
 
   getCurrency(): string {
@@ -381,24 +376,6 @@ export class AddOrEditDebtDialog implements OnInit {
     } else {
       console.log('face asta');
       this.createDebt();
-    }
-  }
-
-  loadMoreFriends(): void {
-    if (this.userFriends.length < this.paginationService.totalCount) {
-      this.paginationService.change(this.userFriendsTotalCount);
-
-      this.usersService
-        .getAllFriends(
-          this.paginationService.pageNumber,
-          this.paginationService.pageSize
-        )
-        .subscribe((response) => {
-          this.userFriends = this.userFriends.concat(response.body.payload);
-          this.userFriendsTotalCount = JSON.parse(
-            response.headers.get('X-Pagination')!
-          ).TotalCount;
-        });
     }
   }
 }

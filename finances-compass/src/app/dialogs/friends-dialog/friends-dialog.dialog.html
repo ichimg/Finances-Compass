@@ -2,11 +2,16 @@
   <mat-tab-group [dynamicHeight]="true" [animationDuration]="300">
     <mat-tab label="Friends">
       <mat-card-content>
-        <mat-card-title *ngIf="userFriends.length === 0" class="title"
-        >Kinda quiet around here...</mat-card-title
-      >
-        <mat-nav-list *ngIf="userFriends.length !== 0">
-          <cdk-virtual-scroll-viewport [itemSize]="10" class="example-viewport">
+        <mat-card-title *ngIf="userFriends?.length === 0" class="title"
+          >Kinda quiet around here...</mat-card-title
+        >
+        <mat-nav-list *ngIf="userFriends?.length !== 0">
+          <cdk-virtual-scroll-viewport
+            [itemSize]="10"
+            class="example-viewport"
+            appInfiniteScroll
+            (scrolled)="loadMoreFriends()"
+          >
             <div class="item" *ngFor="let friend of userFriends">
               <img
                 class="shadow-img"
@@ -27,11 +32,16 @@
     </mat-tab>
     <mat-tab label="Requests">
       <mat-card-content>
-        <mat-card-title *ngIf="friendRequests.length === 0" class="title"
+        <mat-card-title *ngIf="friendRequests?.length === 0" class="title"
           >You have no pending requests.</mat-card-title
         >
-        <mat-nav-list *ngIf="friendRequests.length !== 0">
-          <cdk-virtual-scroll-viewport [itemSize]="10" class="example-viewport">
+        <mat-nav-list *ngIf="friendRequests?.length !== 0">
+          <cdk-virtual-scroll-viewport
+            [itemSize]="10"
+            class="example-viewport"
+            appInfiniteScroll
+            (scrolled)="loadMoreFriendRequests()"
+          >
             <div class="item" *ngFor="let friendRequest of friendRequests">
               <img
                 class="shadow-img"

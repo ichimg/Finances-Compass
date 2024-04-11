@@ -7,7 +7,8 @@ namespace DebtsCompass.Domain.Interfaces
     public interface IFriendshipsService
     {
         Task AddFriend(FriendRequest friendRequest);
-        Task<PagedList<UserDto>> GetUserFriendsById(string email, PagedParameters pagedParameters);
+        Task<PagedList<UserDto>> GetUserFriendsByEmail(string email, PagedParameters pagedParameters);
+        Task<List<UserDto>> GetAllUserFriends(string email);
         Task DeleteFriendRequest(FriendRequestDto friendRequestDto);
         Task AcceptFriendRequest(FriendRequestDto friendRequestDto);
         Task RejectFriendRequest(FriendRequestDto friendRequestDto);

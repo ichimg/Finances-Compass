@@ -92,8 +92,7 @@
       >
         <mat-label>Select user</mat-label>
         <mat-select
-          appInfiniteScroll
-          (scrolled)="loadMoreFriends()"
+          class="matSelect"
           [(ngModel)]="selectedUser"
           name="friend"
           formControlName="userSelect"

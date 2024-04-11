@@ -10,5 +10,6 @@ namespace DebtsCompass.Domain.Interfaces
         Task DeleteExpense(string id, string email);
         Task EditExpense(EditExpenseRequest editExpenseRequest, string email);
         Task<TotalList<ExpenseOrIncomeDto>> GetAllByEmail(string email, YearMonthDto yearMonthDto);
+        Task<TotalExpensesAndIncomesDto> GetExpensesAndIncomesTotalCount(string email);
     }
 }

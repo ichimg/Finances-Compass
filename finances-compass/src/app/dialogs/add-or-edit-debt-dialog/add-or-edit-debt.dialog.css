@@ -18,6 +18,10 @@
   padding-bottom: 10px;
   padding-right: 10px;
 }
+.matSelect {
+  padding: 1px;
+  margin: 1px;
+}
 
 .right-align {
   text-align: right;

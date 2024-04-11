@@ -20,7 +20,7 @@ namespace DebtsCompass.Application.Services
             this.userRepository = userRepository;
         }
 
-        public async Task<PagedList<UserDto>> GetUserFriendsById(string email, PagedParameters pagedParameters)
+        public async Task<PagedList<UserDto>> GetUserFriendsByEmail(string email, PagedParameters pagedParameters)
         {
             User userFromDb = await userRepository.GetUserByEmail(email) ?? throw new UserNotFoundException(email);
             PagedList<User> friendsFromDb = await friendshipRepository.GetUserFriendsById(userFromDb.Id, pagedParameters);
@@ -34,6 +34,19 @@ namespace DebtsCompass.Application.Services
                 new PagedList<UserDto>(userDtos, friendsFromDb.TotalCount, friendsFromDb.CurrentPage, friendsFromDb.PageSize);
 
             return userDtosPagedList;
+        }
+
+        public async Task<List<UserDto>> GetAllUserFriends(string email)
+        {
+            User userFromDb = await userRepository.GetUserByEmail(email) ?? throw new UserNotFoundException(email);
+            List<User> friendsFromDb = await friendshipRepository.GetAllUserFriendsById(userFromDb.Id);
+
+            var userDtos = friendsFromDb.Select(u =>
+            {
+                return Mapper.UserToUserDto(u, Status.Accepted); // assuming it's indeed a friend that has mandatory the request accepted
+            }).ToList();
+
+            return userDtos;
         }
 
         public async Task<PagedList<UserDto>> GetUserFriendRequestsById(string email, PagedParameters pagedParameters)

@@ -4,7 +4,7 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Expense } from '../entities/expense.model';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class ExpensesService {
   apiUrl = environment.apiUrl;
@@ -18,9 +18,13 @@ export class ExpensesService {
       'Content-Type': 'application/json',
     });
 
-    return this.httpClient.post<any>(createExpenseEndpoint, createExpenseRequest, {
-      headers: headers,
-    });
+    return this.httpClient.post<any>(
+      createExpenseEndpoint,
+      createExpenseRequest,
+      {
+        headers: headers,
+      }
+    );
   }
 
   deleteExpense(id: string) {
@@ -47,7 +51,7 @@ export class ExpensesService {
     });
   }
 
-  getAllExpensesAndIncomes(year: number, month: number) {
+  getAllExpensesAndIncomesByMonth(year: number, month: number) {
     const getAllEndpoint = `${this.apiUrl}/get-expenses-incomes?year=${year}&month=${month}`;
 
     const email = localStorage.getItem('email') || '';
@@ -55,10 +59,22 @@ export class ExpensesService {
       'Content-Type': 'application/json',
     }).set('email', email);
 
+    return this.httpClient.get<any>(getAllEndpoint, {
+      headers: headers,
+      observe: 'response',
+    });
+  }
+
+  getAllExpensesAndIncomes() {
+    const getAllEndpoint = `${this.apiUrl}/get-expenses-incomes-count`;
+
+    const email = localStorage.getItem('email') || '';
+    const headers = new HttpHeaders({
+      'Content-Type': 'application/json',
+    }).set('email', email);
 
     return this.httpClient.get<any>(getAllEndpoint, {
       headers: headers,
-      observe: 'response'
     });
   }
 

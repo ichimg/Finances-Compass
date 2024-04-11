@@ -11,7 +11,21 @@ export class UsersService {
 
   constructor(private http: HttpClient) {}
 
-  getAllFriends(pageNumber: number, pageSize: number) {
+  getAllFriends() {
+    const getAllEndpoint = `${this.apiUrl}/friends?GetAll=${true}`;
+
+    const email = localStorage.getItem('email') || '';
+    const headers = new HttpHeaders({
+      'Content-Type': 'application/json',
+    }).set('email', email);
+
+    return this.http.get<any>(getAllEndpoint, {
+      headers: headers,
+      observe: 'response',
+    });
+  }
+
+  getFriendsPaginated(pageNumber: number, pageSize: number) {
     const getAllEndpoint = `${this.apiUrl}/friends?pageNumber=${pageNumber}&pageSize=${pageSize}`;
 
     const email = localStorage.getItem('email') || '';
@@ -83,9 +97,11 @@ export class UsersService {
     });
     console.log(friendRequestDto);
 
-    return await lastValueFrom(this.http.put<any>(acceptFriendRequestEndpoint, friendRequestDto, {
-      headers: headers,
-    }));
+    return await lastValueFrom(
+      this.http.put<any>(acceptFriendRequestEndpoint, friendRequestDto, {
+        headers: headers,
+      })
+    );
   }
 
   async rejectFriendRequest(friendRequestDto: FriendRequestDto) {
@@ -94,8 +110,10 @@ export class UsersService {
       'Content-Type': 'application/json',
     });
 
-    return await lastValueFrom(this.http.put<any>(rejectFriendRequestEndpoint, friendRequestDto, {
-      headers: headers,
-    }));
+    return await lastValueFrom(
+      this.http.put<any>(rejectFriendRequestEndpoint, friendRequestDto, {
+        headers: headers,
+      })
+    );
   }
 }

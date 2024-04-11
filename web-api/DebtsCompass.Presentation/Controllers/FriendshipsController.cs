@@ -33,28 +33,43 @@ namespace DebtsCompass.Presentation.Controllers
                 throw new ForbiddenRequestException();
             }
 
-            var friends = await friendshipsService.GetUserFriendsById(email, pagedParameters);
-
-            var metadata = new
+            if (pagedParameters.GetAll)
             {
-                friends.TotalCount,
-                friends.PageSize,
-                friends.CurrentPage,
-                friends.TotalPages,
-                friends.HasNext,
-                friends.HasPrevious
-            };
+                var friends = await friendshipsService.GetAllUserFriends(email);
 
-            Response.Headers.Add("X-Pagination", JsonConvert.SerializeObject(metadata));
-
-            Response<List<UserDto>> response = new Response<List<UserDto>>
+                Response<List<UserDto>> response = new Response<List<UserDto>>
+                {
+                    Message = null,
+                    Payload = friends,
+                    StatusCode = HttpStatusCode.OK
+                };
+                return Ok(response);
+            }
+            else
             {
-                Message = null,
-                Payload = friends,
-                StatusCode = HttpStatusCode.OK
-            };
+                var friends = await friendshipsService.GetUserFriendsByEmail(email, pagedParameters);
 
-            return Ok(response);
+                var metadata = new
+                {
+                    friends.TotalCount,
+                    friends.PageSize,
+                    friends.CurrentPage,
+                    friends.TotalPages,
+                    friends.HasNext,
+                    friends.HasPrevious
+                };
+
+                Response.Headers.Add("X-Pagination", JsonConvert.SerializeObject(metadata));
+
+                Response<List<UserDto>> response = new Response<List<UserDto>>
+                {
+                    Message = null,
+                    Payload = friends,
+                    StatusCode = HttpStatusCode.OK
+                };
+
+                return Ok(response);
+            }
         }
 
         [HttpGet]

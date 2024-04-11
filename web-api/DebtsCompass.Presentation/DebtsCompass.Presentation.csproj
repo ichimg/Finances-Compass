@@ -13,7 +13,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\DebtsCompass.Application\DebtsCompass.Application.csproj" />
-    <ProjectReference Include="..\EmailSender\EmailSender.csproj" />
   </ItemGroup>
 
 </Project>

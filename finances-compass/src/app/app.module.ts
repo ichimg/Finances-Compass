@@ -63,6 +63,7 @@ import { NgChartsModule } from 'ng2-charts';
 import { FriendsDialog } from './dialogs/friends-dialog/friends-dialog.dialog';
 import { MatTabsModule } from '@angular/material/tabs';
 import { ScrollingModule } from '@angular/cdk/scrolling';
+import { DashboardComponent } from './components/dashboard/dashboard.component';
 
 const OPTIONS = {
   appereance: 'outline',
@@ -91,7 +92,8 @@ const OPTIONS = {
     ExpensesComponent,
     AddExpenseOrIncomeDialog,
     ViewOrEditExpenseDialog,
-    FriendsDialog
+    FriendsDialog,
+    DashboardComponent
   ],
   imports: [
     BrowserModule,
@@ -133,7 +135,8 @@ const OPTIONS = {
     TextFieldModule,
     NgChartsModule,
     MatTabsModule,
-    ScrollingModule
+    ScrollingModule,
+    MatPaginatorModule
   ],
   providers: [
     { provide: JWT_OPTIONS, useValue: JWT_OPTIONS },

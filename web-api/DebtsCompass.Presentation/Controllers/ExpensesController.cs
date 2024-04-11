@@ -82,7 +82,7 @@ namespace DebtsCompass.Presentation.Controllers
         [HttpGet]
         [Route("get-expenses-incomes")]
         [Authorize]
-        public async Task<ActionResult<List<ExpenseOrIncomeDto>>> GetAllExpensesAndIncomes([FromHeader] string email ,
+        public async Task<ActionResult<List<ExpenseOrIncomeDto>>> GetAllExpensesAndIncomes([FromHeader] string email,
             [FromQuery] YearMonthDto yearMonthDto)
         {
             if (!IsRequestFromValidUser(email))
@@ -101,6 +101,28 @@ namespace DebtsCompass.Presentation.Controllers
             Response.Headers.Add("X-Total", JsonConvert.SerializeObject(metadata));
 
             Response<List<ExpenseOrIncomeDto>> response = new Response<List<ExpenseOrIncomeDto>>
+            {
+                Message = null,
+                Payload = expensesAndIncomes,
+                StatusCode = HttpStatusCode.OK
+            };
+
+            return Ok(response);
+        }
+
+        [HttpGet]
+        [Route("get-expenses-incomes-count")]
+        [Authorize]
+        public async Task<ActionResult<TotalExpensesAndIncomesDto>> GetExpensesAndIncomesTotalCount([FromHeader] string email)
+        {
+            if (!IsRequestFromValidUser(email))
+            {
+                throw new ForbiddenRequestException();
+            }
+
+            TotalExpensesAndIncomesDto expensesAndIncomes = await expensesService.GetExpensesAndIncomesTotalCount(email);
+
+            Response<TotalExpensesAndIncomesDto> response = new Response<TotalExpensesAndIncomesDto>
             {
                 Message = null,
                 Payload = expensesAndIncomes,

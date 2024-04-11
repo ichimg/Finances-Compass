@@ -42,7 +42,7 @@ table .mat-mdc-header-cell {
 }
 
 .edit-icon.disabled {
-  color:rgba(128, 128, 128, 0.705);
+  color: rgba(128, 128, 128, 0.705);
   cursor: default;
 }
 
@@ -56,7 +56,7 @@ table .mat-mdc-header-cell {
 }
 
 .delete-icon.disabled {
-  color:rgba(128, 128, 128, 0.705);
+  color: rgba(128, 128, 128, 0.705);
   cursor: default;
 }
 
@@ -66,7 +66,7 @@ table .mat-mdc-header-cell {
   transition: 0.3s;
 }
 
-.approve-icon:hover{
+.approve-icon:hover {
   color: rgb(129, 158, 129);
 }
 
@@ -126,6 +126,14 @@ img {
 
 .paid-debt {
   background-color: rgba(58, 255, 48, 0.164);
+}
+
+mat-paginator.block {
+  display: block;
+}
+
+mat-paginator.hidden {
+  display: none;
 }
 
 @media screen and (max-width: 930px) {

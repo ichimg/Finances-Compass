@@ -1,57 +1,58 @@
-<div class="container">
-  <mat-card appInfiniteScroll (scrolled)="loadMoreUsers()">
-    <mat-card-header class="spaced">
-      <mat-card-title class="title">Search users</mat-card-title>
-      <mat-icon color="warn" class="close-btn" (click)="closeDialog()"
-        >cancel</mat-icon
+<mat-card>
+  <mat-card-header class="spaced">
+    <mat-card-title class="title">Search users</mat-card-title>
+    <mat-icon color="warn" class="close-btn" (click)="closeDialog()"
+      >cancel</mat-icon
+    >
+  </mat-card-header>
+  <mat-divider></mat-divider>
+  <mat-form-field class="search-box">
+    <mat-label>Enter name or username </mat-label>
+    <input
+      #searchInput
+      matInput
+      (input)="onSearchInputChange($event)"
+      (keyup.enter)="searchUsers(searchInput.value)"
+    />
+    <button mat-icon-button matSuffix (click)="searchUsers(searchInput.value)">
+      <mat-icon color="primary">search</mat-icon>
+    </button>
+  </mat-form-field>
+  <mat-card-content>
+    <mat-nav-list>
+      <cdk-virtual-scroll-viewport
+        [itemSize]="1"
+        class="example-viewport"
+        appInfiniteScroll
+        (scrolled)="loadMoreUsers()"
       >
-    </mat-card-header>
-    <mat-divider></mat-divider>
-    <mat-form-field class="search-box">
-      <mat-label>Enter name or username </mat-label>
-      <input
-        #searchInput
-        matInput
-        (input)="onSearchInputChange($event)"
-        (keyup.enter)="searchUsers(searchInput.value)"
-      />
-      <button
-        mat-icon-button
-        matSuffix
-        (click)="searchUsers(searchInput.value)"
-      >
-        <mat-icon color="primary">search</mat-icon>
-      </button>
-    </mat-form-field>
-    <mat-card-content>
-      <mat-nav-list *ngFor="let user of searchedUsers">
-        <div class="item">
+        <div class="item" *ngFor="let user of searchedUsers">
           <mat-list-item class="item">
             {{ user.userDetails.username }}
           </mat-list-item>
-          <div class="request-actions" *ngIf="user.userDetails.isPendingFriendRequest">
+          <div
+            class="request-actions"
+            *ngIf="user.userDetails.isPendingFriendRequest"
+          >
             <button
-            mat-icon-button
-            matTooltip="Click to accept"
-            matTooltipPosition="left"
-            (click)="acceptFriendRequest(user)">
-            <mat-icon
-            class="accept-icon"
-            >done_outline</mat-icon
-          >
-        </button>
-          <button
-          mat-icon-button
-          matTooltip="Click to reject"
-          matTooltipPosition="right"
-          (click)="rejectFriendRequest(user)">
-          <mat-icon
-            class="reject-icon"
-            >cancel</mat-icon
-          >
-        </button>
+              mat-icon-button
+              matTooltip="Click to accept"
+              matTooltipPosition="left"
+              (click)="acceptFriendRequest(user)"
+            >
+              <mat-icon class="accept-icon">done_outline</mat-icon>
+            </button>
+            <button
+              mat-icon-button
+              matTooltip="Click to reject"
+              matTooltipPosition="right"
+              (click)="rejectFriendRequest(user)"
+            >
+              <mat-icon class="reject-icon">cancel</mat-icon>
+            </button>
           </div>
-          <button *ngIf="!user.userDetails.isPendingFriendRequest"
+          <button
+            *ngIf="!user.userDetails.isPendingFriendRequest"
             [style.color]="user.iconColor"
             mat-icon-button
             (click)="addOrCancelFriendRequest(user)"
@@ -60,19 +61,20 @@
             <mat-icon>{{user.iconName}}</mat-icon>
           </button>
         </div>
-      </mat-nav-list>
-      <div *ngIf="users != null && users.length === 0" class="not-found-container">
-      <p class="not-found">
-        No users found
-      </p>
+      </cdk-virtual-scroll-viewport>
+    </mat-nav-list>
+    <div
+      *ngIf="users != null && users.length === 0"
+      class="not-found-container"
+    >
+      <p class="not-found">No users found</p>
       <img
-      class="shadow-img"
-      src="../../assets/images/sad-face.png"
-      alt=""
-      width="300"
-      height="300"
-    />
+        class="shadow-img"
+        src="../../assets/images/sad-face.png"
+        alt=""
+        width="300"
+        height="300"
+      />
     </div>
-    </mat-card-content>
-  </mat-card>
-</div>
+  </mat-card-content>
+</mat-card>

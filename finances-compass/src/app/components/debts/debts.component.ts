@@ -1,5 +1,5 @@
 import { LiveAnnouncer } from '@angular/cdk/a11y';
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, OnInit, ViewChild } from '@angular/core';
 import { MatSort, Sort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
 import { DebtsService } from '../../services/debts.service';
@@ -11,6 +11,7 @@ import { DeleteConfirmationDialog } from '../../dialogs/delete-confirmation-dial
 import { PaypalService } from '../../services/paypal.service';
 import { AddOrEditDebtDialog } from '../../dialogs/add-or-edit-debt-dialog/add-or-edit-debt.dialog';
 import { PaymentDialog } from '../../dialogs/payment-dialog/payment.dialog';
+import { MatPaginator } from '@angular/material/paginator';
 
 @Component({
   selector: 'app-debts',
@@ -18,7 +19,7 @@ import { PaymentDialog } from '../../dialogs/payment-dialog/payment.dialog';
   styleUrls: ['./debts.component.css'],
   providers: [PaypalService],
 })
-export class DebtsComponent implements OnInit {
+export class DebtsComponent implements OnInit, AfterViewInit {
   displayedReceivingColumns: string[] = [
     'name',
     'amount',
@@ -45,7 +46,7 @@ export class DebtsComponent implements OnInit {
     private liveAnnouncer: LiveAnnouncer,
     private debtsService: DebtsService,
     private dialog: MatDialog,
-    private notificationService: NotificationService,
+    private notificationService: NotificationService
   ) {}
   ngOnInit(): void {
     this.debtsService.getAllReceivingDebts().subscribe((response) => {
@@ -66,12 +67,19 @@ export class DebtsComponent implements OnInit {
     );
   }
 
+  ngAfterViewInit(): void {
+    this.dataReceivingDebtsSource.paginator = this.receivingPaginator;
+    this.dataUserDebtsSource.paginator = this.userPaginator;
+  }
+
   @ViewChild('debtReceivingTbSort') set debtReceivingTbSort(sort: MatSort) {
     this.dataReceivingDebtsSource.sort = sort;
   }
   @ViewChild('debtUserTbSort') set debtUserTbSort(sort: MatSort) {
     this.dataUserDebtsSource.sort = sort;
   }
+  @ViewChild('receivingPaginator') receivingPaginator!: MatPaginator;
+  @ViewChild('userPaginator') userPaginator!: MatPaginator;
 
   announceReceivingSortChange(sortState: Sort) {
     console.log(sortState.direction);
@@ -212,23 +220,22 @@ export class DebtsComponent implements OnInit {
   onPayClick(event: Event, debt: Debt) {
     event.stopPropagation();
 
-    const dialogRef = this.dialog
-    .open(PaymentDialog, {
+    const dialogRef = this.dialog.open(PaymentDialog, {
       width: '600px',
-      data: { debt: debt},
+      data: { debt: debt },
     });
+  }
+
+  getCurrency(): string {
+    let currency = localStorage.getItem('currencyPreference');
+    if (currency === 'EUR') {
+      return '€';
     }
 
-    getCurrency(): string {
-      let currency = localStorage.getItem('currencyPreference');
-      if (currency === 'EUR') {
-        return '€';
-      }
-  
-      if (currency === 'USD') {
-        return '$';
-      }
-  
-      return 'RON';
+    if (currency === 'USD') {
+      return '$';
     }
+
+    return 'RON';
+  }
 }

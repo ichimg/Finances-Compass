@@ -25,8 +25,7 @@ export class PaginationService {
       this.paginationModel = new PaginationModel();
   }
 
-  change(length: number) {
+  increasePageNumber() {
       this.paginationModel.pageNumber++;
-      this.paginationModel.itemsLength = length;
   }
 }

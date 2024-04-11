@@ -29,7 +29,7 @@ export class FriendsDialog {
 
   ngOnInit(): void {
     this.usersService
-      .getAllFriends(
+      .getFriendsPaginated(
         this.paginationService.pageNumber,
         this.paginationService.pageSize
       )
@@ -99,6 +99,48 @@ export class FriendsDialog {
       default:
         this.notificationService.showError('Please try again later');
         break;
+    }
+  }
+
+  loadMoreFriends(): void {
+    if (this.userFriends!.length < this.userFriendsTotalCount) {
+      this.paginationService.increasePageNumber();
+
+      this.usersService
+        .getFriendsPaginated(
+          this.paginationService.pageNumber,
+          this.paginationService.pageSize
+        )
+        .subscribe(
+          (response) => {
+            this.userFriends = this.userFriends!.concat(response.body.payload);
+          },
+          () => {
+            this.notificationService.showError('Something went wrong');
+          }
+        );
+    }
+  }
+
+  loadMoreFriendRequests(): void {
+    if (this.friendRequests!.length < this.friendRequestsTotalCount) {
+      this.paginationService.increasePageNumber();
+
+      this.usersService
+        .getAllFriendRequests(
+          this.paginationService.pageNumber,
+          this.paginationService.pageSize
+        )
+        .subscribe(
+          (response) => {
+            this.friendRequests = this.friendRequests!.concat(
+              response.body.payload
+            );
+          },
+          () => {
+            this.notificationService.showError('Something went wrong');
+          }
+        );
     }
   }
 

@@ -7,7 +7,7 @@ namespace DebtsCompass.Domain.Interfaces
     public interface IUserRepository
     {
         Task<User> GetUserByEmail(string email);
-        Task<User> GetUserByEmailWithExpenses(string email, YearMonthDto yearMonthDto);
+        Task<User> GetUserByEmailWithExpensesByMonth(string email, YearMonthDto yearMonthDto);
         Task<User> GetUserByUsername(string username);
         Task Add(User user);    
         Task Update(User user);

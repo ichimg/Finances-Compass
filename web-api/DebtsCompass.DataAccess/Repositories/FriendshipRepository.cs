@@ -27,6 +27,19 @@ namespace DebtsCompass.DataAccess.Repositories
                 .ToPagedListAsync(pagedParameters.PageNumber, pagedParameters.PageSize);
         }
 
+        public async Task<List<User>> GetAllUserFriendsById(string userId)
+        {
+            return await dbContext.Friendships
+              .Include(f => f.RequesterUser)
+              .ThenInclude(u => u.UserInfo)
+              .Include(f => f.SelectedUser)
+              .ThenInclude(u => u.UserInfo)
+              .Where(f => (f.RequesterUserId == userId || f.SelectedUserId == userId) && (f.Status == Status.Accepted))
+              .Select(f => f.RequesterUserId == userId ? f.SelectedUser : f.RequesterUser)
+              .AsNoTracking()
+              .ToListAsync();
+        }
+
         public async Task<PagedList<User>> GetUserFriendRequestsById(string userId, PagedParameters pagedParameters)
         {
             return await dbContext.Friendships
