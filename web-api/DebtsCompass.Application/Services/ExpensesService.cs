@@ -149,5 +149,30 @@ namespace DebtsCompass.Application.Services
                 TotalIncomes = totalIncomes
             };
         }
+
+        public async Task<IEnumerable<ExpenseBarChartDto>> GetAnnualExpensesByCategory(string email)
+        {
+            User user = await userRepository.GetUserByEmail(email);
+            var expensesFromDb = user.Expenses.ToList();
+
+            if (user.CurrencyPreference == CurrencyPreference.EUR)
+            {
+                expensesFromDb.ForEach(e => e.Amount *= (decimal)e.EurExchangeRate);
+            }
+            else if (user.CurrencyPreference == CurrencyPreference.USD)
+            {
+                expensesFromDb.ForEach(e => e.Amount *= (decimal)e.UsdExchangeRate);
+            }
+
+            var groupedExpenses = expensesFromDb.Where(e => e.Date.Year == DateTime.UtcNow.Year)
+                                                .GroupBy(
+                                                e => new { e.Date.Month, e.Category.Name },
+                                                e => e,
+                                                (key, group) => 
+                                                new ExpenseBarChartDto(key.Month, key.Name, group.Sum(e => e.Amount)))
+                                                .OrderBy(e => e.Month);
+
+            return groupedExpenses;
+        }
     }
 }

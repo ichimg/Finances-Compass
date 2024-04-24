@@ -18,6 +18,7 @@ namespace DebtsCompass.DataAccess.Repositories
         {
             User userFromDb = await dbContext.Users
                 .Include(u => u.Expenses)
+                .ThenInclude(e => e.Category)
                 .Include(u => u.Incomes)
                 .Include(u => u.UserInfo)
                 .ThenInclude(u => u.Address)

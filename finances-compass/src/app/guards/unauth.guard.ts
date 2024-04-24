@@ -9,7 +9,7 @@ export const unauthGuard: CanActivateFn = (route, state) => {
   const notificationService = inject(NotificationService)
 
   if (authService.isAuthenticated()) {
-    router.navigate(['debts']);
+    router.navigate(['dashboard']);
     return false;
   }
 

@@ -132,6 +132,28 @@ namespace DebtsCompass.Presentation.Controllers
             return Ok(response);
         }
 
+        [HttpGet]
+        [Route("get-annual-expenses-by-category")]
+        [Authorize]
+        public async Task<ActionResult<TotalExpensesAndIncomesDto>> GetAnnualExpensesByCategory([FromHeader] string email)
+        {
+            if (!IsRequestFromValidUser(email))
+            {
+                throw new ForbiddenRequestException();
+            }
+
+            IEnumerable<ExpenseBarChartDto> expenseData = await expensesService.GetAnnualExpensesByCategory(email);
+
+            Response<IEnumerable<ExpenseBarChartDto>> response = new Response<IEnumerable<ExpenseBarChartDto>>
+            {
+                Message = null,
+                Payload = expenseData,
+                StatusCode = HttpStatusCode.OK
+            };
+
+            return Ok(response);
+        }
+
         private bool IsRequestFromValidUser(string email)
         {
             var userIdentity = User.Identity as ClaimsIdentity;

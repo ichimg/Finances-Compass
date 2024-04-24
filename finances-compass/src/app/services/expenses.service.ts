@@ -90,4 +90,17 @@ export class ExpensesService {
       headers: headers,
     });
   }
+
+  getAnnualExpenses() {
+    const getExpensesEndpoint = `${this.apiUrl}/get-annual-expenses-by-category`;
+
+    const email = localStorage.getItem('email') || '';
+    const headers = new HttpHeaders({
+      'Content-Type': 'application/json',
+    }).set('email', email);
+
+    return this.httpClient.get<any>(getExpensesEndpoint, {
+      headers: headers,
+    });
+  }
 }

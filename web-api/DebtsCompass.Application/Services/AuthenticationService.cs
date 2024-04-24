@@ -1,5 +1,4 @@
-﻿using BCrypt.Net;
-using DebtsCompass.Application.Exceptions;
+﻿using DebtsCompass.Application.Exceptions;
 using DebtsCompass.Application.Validators;
 using DebtsCompass.Domain;
 using DebtsCompass.Domain.Entities.DtoResponses;
@@ -7,7 +6,6 @@ using DebtsCompass.Domain.Entities.Models;
 using DebtsCompass.Domain.Entities.Requests;
 using DebtsCompass.Domain.Interfaces;
 using Microsoft.AspNetCore.Identity;
-using System.Net;
 
 namespace DebtsCompass.Application.Services
 {
@@ -79,6 +77,7 @@ namespace DebtsCompass.Application.Services
             return new LoginResponse
             {
                 Email = loginRequest.Email,
+                FirstName = user.UserInfo.FirstName,
                 AccessToken = jwtService.GenerateToken(loginRequest.Email),
                 RefreshToken = refreshToken,
                 CurrencyPreference = user.CurrencyPreference.ToString()

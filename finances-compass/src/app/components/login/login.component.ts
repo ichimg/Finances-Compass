@@ -59,9 +59,10 @@ export class LoginComponent implements OnInit {
                 response.payload.refreshToken
               );
               localStorage.setItem('currencyPreference', response.payload.currencyPreference);
+              localStorage.setItem('userFirstName', response.payload.firstName);
 
               this.notificationService.showSuccess("You're logged in");
-              this.router.navigate(['debts']);
+              this.router.navigate(['dashboard']);
               break;
 
             case 404:

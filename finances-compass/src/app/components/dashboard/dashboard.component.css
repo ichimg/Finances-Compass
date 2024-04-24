@@ -11,11 +11,27 @@
   flex-direction: row;
 }
 
+.annual-expenses-chart {
+  padding: 7px;
+  margin-top: 5px;
+  grid-column: 1 / span 2;
+  justify-self: center;
+  align-self: center;
+  width: 99.47%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+canvas.annual {
+  max-width: 1462px;
+  width: 1462px;
+}
+
 .container {
   display: grid;
   padding: 10px;
-  grid-template-columns: repeat(2, 1fr);
-  grid-template-rows: repeat(2, 1fr);
+  grid-template-columns: repeat(2, 1fr); /* First row with two columns */
 }
 
 .chart-container {
@@ -64,7 +80,7 @@ span.overall-balance-inc {
 }
 
 span.overall-balance-deb {
-  color: #DC143C;
+  color: #dc143c;
 }
 
 span.overall-balance-loa {

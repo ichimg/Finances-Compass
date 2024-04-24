@@ -11,5 +11,6 @@ namespace DebtsCompass.Domain.Interfaces
         Task EditExpense(EditExpenseRequest editExpenseRequest, string email);
         Task<TotalList<ExpenseOrIncomeDto>> GetAllByEmail(string email, YearMonthDto yearMonthDto);
         Task<TotalExpensesAndIncomesDto> GetExpensesAndIncomesTotalCount(string email);
+        Task<IEnumerable<ExpenseBarChartDto>> GetAnnualExpensesByCategory(string email);
     }
 }

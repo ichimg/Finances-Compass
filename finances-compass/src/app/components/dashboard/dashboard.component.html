@@ -48,30 +48,19 @@
       </div>
     </div>
   </mat-card>
-  <mat-card class="chart-container">
-    <div class="overall-balance-chart">
-      <canvas
+  <mat-card class="annual-expenses-chart">
+    <mat-card-title class="title">Annual Expenses</mat-card-title>
+    <div class="annual-expenses-chart">
+      <canvas class="annual"
         baseChart
-        [type]="'pie'"
-        [options]="overallBalanceOptions"
-        [data]="overallBalanceData"
+        [type]="'bar'"
+        [options]="annualExpensesOptions"
+        [data]="annualExpensesData"
         [width]="500"
         [height]="300"
       >
       </canvas>
     </div>
   </mat-card>
-  <mat-card class="chart-container">
-    <div class="overall-balance-chart">
-      <canvas
-        baseChart
-        [type]="'pie'"
-        [options]="overallBalanceOptions"
-        [data]="overallBalanceData"
-        [width]="500"
-        [height]="300"
-      >
-      </canvas>
-    </div>
-  </mat-card>
+ 
 </div>
