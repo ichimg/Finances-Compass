@@ -1,0 +1,32 @@
+.title {
+  margin-bottom: 10px;
+  font-family: "Trebuchet MS", "Lucida Sans Unicode", "Lucida Grande",
+    "Lucida Sans", Arial, sans-serif;
+}
+
+.mat-card {
+  max-width: 600px;
+  padding: 20px;
+  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+}
+
+mat-card-content {
+  padding: 15px;
+}
+
+.spaced {
+  display: flex;
+  justify-content: space-between;
+}
+
+.close-icon:hover {
+  color: crimson;
+  cursor: pointer;
+  background-color: lightgray;
+}
+
+.end {
+  display: flex;
+  justify-content: end;
+}

@@ -1,5 +1,6 @@
 ﻿using DebtsCompass.Domain.Entities.Models;
 using DebtsCompass.Domain.Entities.Requests;
+using DebtsCompass.Domain.Enums;
 using DebtsCompass.Domain.Interfaces;
 using DebtsCompass.Domain.Pagination;
 using Microsoft.EntityFrameworkCore;
@@ -91,6 +92,20 @@ namespace DebtsCompass.DataAccess.Repositories
             .ThenBy(u => u.UserInfo.Address.County == currentUser.UserInfo.Address.County ? 0 : 1) 
             .ThenBy(u => u.UserInfo.Address.Country == currentUser.UserInfo.Address.Country ? 0 : 1) 
             .ToPagedListAsync(pagedParameters.PageNumber, pagedParameters.PageSize);
+        }
+
+        public async Task ChangeDashboardYear(User user, int year)
+        {
+            user.DashboardSelectedYear = year;
+
+            await dbContext.SaveChangesAsync();
+        }
+
+        public async Task ChangeCurrencyPreference(User user, CurrencyPreference currency)
+        {
+            user.CurrencyPreference = currency;
+
+            await dbContext.SaveChangesAsync();
         }
     }
 }

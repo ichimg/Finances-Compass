@@ -1,9 +1,27 @@
-<h1 class="page-title">Welcome back, {{ username }}! 👋</h1>
+<div class="title">
+  <h1 class="page-title">Welcome back, {{ username }}! 👋</h1>
+  <mat-form-field class="select-year">
+    <mat-label>Change year</mat-label>
+    <mat-select
+      panelClass="select-year-panel"
+      [(value)]="selectedYear"
+      (selectionChange)="onYearChange($event.value)"
+    >
+      <mat-option *ngFor="let year of getYearOptions()" [value]="year">{{
+        year
+      }}</mat-option>
+    </mat-select>
+  </mat-form-field>
+</div>
 <div class="container">
   <mat-card class="chart-container">
     <mat-card-title class="title">Overall balance</mat-card-title>
     <div class="overall-balance-chart">
       <canvas
+        *ngIf="
+          totalExpensesAndIncomes.totalExpenses !== 0 ||
+          totalExpensesAndIncomes.totalIncomes !== 0
+        "
         baseChart
         [type]="'pie'"
         [options]="overallBalanceOptions"
@@ -12,7 +30,13 @@
         [height]="200"
       >
       </canvas>
-      <div class="chart-stats">
+      <div
+        class="chart-stats"
+        *ngIf="
+          totalExpensesAndIncomes.totalExpenses !== 0 ||
+          totalExpensesAndIncomes.totalIncomes !== 0
+        "
+      >
         <p>Total Incomes:</p>
         <span class="overall-balance-inc">{{
           overallBalanceStats.totalIncomes
@@ -22,12 +46,26 @@
           overallBalanceStats.totalExpenses
         }}</span>
       </div>
+      <p
+        class="no-chart-data"
+        *ngIf="
+          totalExpensesAndIncomes.totalExpenses === 0 &&
+          totalExpensesAndIncomes.totalIncomes === 0
+        "
+      >
+        There is no data for the selected period. As soon as you start adding
+        expenses or incomes, this chart will be available.
+      </p>
     </div>
   </mat-card>
   <mat-card class="chart-container">
     <mat-card-title class="title">Loans & Debts</mat-card-title>
     <div class="overall-balance-chart">
       <canvas
+        *ngIf="
+          totalLoansAndDebts.totalLoans !== 0 ||
+          totalLoansAndDebts.totalDebts !== 0
+        "
         baseChart
         [type]="'pie'"
         [options]="loansDebtsOptions"
@@ -36,7 +74,13 @@
         [height]="300"
       >
       </canvas>
-      <div class="chart-stats">
+      <div
+        class="chart-stats"
+        *ngIf="
+          totalLoansAndDebts.totalLoans !== 0 ||
+          totalLoansAndDebts.totalDebts !== 0
+        "
+      >
         <p>Total Loans:</p>
         <span class="overall-balance-loa">{{
           loansDebtsStats.totalLoans
@@ -46,12 +90,23 @@
           loansDebtsStats.totalDebts
         }}</span>
       </div>
+      <p
+        class="no-chart-data"
+        *ngIf="
+          totalLoansAndDebts.totalLoans === 0 &&
+          totalLoansAndDebts.totalDebts === 0
+        "
+      >
+        There is no data for the selected period. As soon as you start adding
+        debts, this chart will be available.
+      </p>
     </div>
   </mat-card>
   <mat-card class="annual-expenses-chart">
     <mat-card-title class="title">Annual Expenses</mat-card-title>
     <div class="annual-expenses-chart">
-      <canvas class="annual"
+      <canvas *ngIf="annualExpensesData != null"
+        class="annual"
         baseChart
         [type]="'bar'"
         [options]="annualExpensesOptions"
@@ -61,6 +116,9 @@
       >
       </canvas>
     </div>
+    <p class="no-chart-data" *ngIf="annualExpensesData == null">
+      There is no data for the selected period. As soon as you start adding
+      expenses, this chart will be available.
+    </p>
   </mat-card>
- 
 </div>

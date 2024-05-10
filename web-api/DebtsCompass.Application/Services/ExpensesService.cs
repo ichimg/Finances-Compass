@@ -126,8 +126,8 @@ namespace DebtsCompass.Application.Services
         public async Task<TotalExpensesAndIncomesDto> GetExpensesAndIncomesTotalCount(string email)
         {
             User user = await userRepository.GetUserByEmail(email);
-            var expensesFromDb = user.Expenses.ToList();
-            var incomesFromDb = user.Incomes.ToList();
+            var expensesFromDb = user.Expenses.Where(e => e.Date.Year == user.DashboardSelectedYear).ToList();
+            var incomesFromDb = user.Incomes.Where(i => i.Date.Year == user.DashboardSelectedYear).ToList();
 
             if (user.CurrencyPreference == CurrencyPreference.EUR)
             {
@@ -153,7 +153,7 @@ namespace DebtsCompass.Application.Services
         public async Task<IEnumerable<ExpenseBarChartDto>> GetAnnualExpensesByCategory(string email)
         {
             User user = await userRepository.GetUserByEmail(email);
-            var expensesFromDb = user.Expenses.ToList();
+            var expensesFromDb = user.Expenses.Where(e => e.Date.Year == user.DashboardSelectedYear).ToList();
 
             if (user.CurrencyPreference == CurrencyPreference.EUR)
             {
@@ -164,8 +164,7 @@ namespace DebtsCompass.Application.Services
                 expensesFromDb.ForEach(e => e.Amount *= (decimal)e.UsdExchangeRate);
             }
 
-            var groupedExpenses = expensesFromDb.Where(e => e.Date.Year == DateTime.UtcNow.Year)
-                                                .GroupBy(
+            var groupedExpenses = expensesFromDb.GroupBy(
                                                 e => new { e.Date.Month, e.Category.Name },
                                                 e => e,
                                                 (key, group) => 

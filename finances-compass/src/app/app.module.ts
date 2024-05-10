@@ -64,6 +64,7 @@ import { FriendsDialog } from './dialogs/friends-dialog/friends-dialog.dialog';
 import { MatTabsModule } from '@angular/material/tabs';
 import { ScrollingModule } from '@angular/cdk/scrolling';
 import { DashboardComponent } from './components/dashboard/dashboard.component';
+import { SettingsDialog } from './dialogs/settings-dialog/settings-dialog';
 
 const OPTIONS = {
   appereance: 'outline',
@@ -93,7 +94,8 @@ const OPTIONS = {
     AddExpenseOrIncomeDialog,
     ViewOrEditExpenseDialog,
     FriendsDialog,
-    DashboardComponent
+    DashboardComponent,
+    SettingsDialog
   ],
   imports: [
     BrowserModule,

@@ -11,5 +11,7 @@
         public NonUser NonUser { get; set; }
         public Guid DebtId { get; set; }
         public Debt Debt { get; set; }
+
+        public string? DeadlineReminderJobId { get; set; }
     }
 }

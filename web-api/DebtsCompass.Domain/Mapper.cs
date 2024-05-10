@@ -1,5 +1,4 @@
-﻿using DebtsCompass.Domain.Entities;
-using DebtsCompass.Domain.Entities.DtoResponses;
+﻿using DebtsCompass.Domain.Entities.DtoResponses;
 using DebtsCompass.Domain.Entities.Dtos;
 using DebtsCompass.Domain.Entities.EmailDtos;
 using DebtsCompass.Domain.Entities.Models;
@@ -78,7 +77,9 @@ namespace DebtsCompass.Domain
                 PasswordHash = BCrypt.Net.BCrypt.HashPassword(registerRequest.Password),
                 PhoneNumber = registerRequest.PhoneNumber,
                 UserName = registerRequest.Username,
-                CurrencyPreference = Enum.Parse<CurrencyPreference>(registerRequest.CurrencyPreference)
+                CurrencyPreference = Enum.Parse<CurrencyPreference>(registerRequest.CurrencyPreference),
+                RegisteredDate = DateTime.UtcNow.Date,
+                DashboardSelectedYear = DateTime.UtcNow.Date.Year,
             };
         }
 
@@ -233,7 +234,7 @@ namespace DebtsCompass.Domain
             };
         }
 
-        public static DebtEmailInfoDto UserToCreatedDebtEmailInfoDto(User user)
+        public static DebtEmailInfoDto UserToDebtEmailInfoDto(User user)
         {
             return new DebtEmailInfoDto
             {
@@ -242,16 +243,16 @@ namespace DebtsCompass.Domain
             };
         }
 
-        public static DebtEmailInfoDto DebtAssignmentToCreatedDebtEmailInfoDto(DebtAssignment debtAssignment)
+        public static DebtEmailInfoDto DebtAssignmentToDebtEmailInfoDto(DebtAssignment debtAssignment)
         {
             return new DebtEmailInfoDto
             {
                 CreatorFirstName = debtAssignment.CreatorUser.UserInfo.FirstName,
                 CreatorLastName = debtAssignment.CreatorUser.UserInfo.LastName,
                 Amount = debtAssignment.SelectedUser.CurrencyPreference == CurrencyPreference.EUR ? 
-                (debtAssignment.Debt.Amount *= (decimal)debtAssignment.Debt.EurExchangeRate).ToString("#.##") :
+                (debtAssignment.Debt.Amount * (decimal)debtAssignment.Debt.EurExchangeRate).ToString("#.##") :
                 debtAssignment.SelectedUser.CurrencyPreference == CurrencyPreference.USD ? 
-                (debtAssignment.Debt.Amount *= (decimal)debtAssignment.Debt.UsdExchangeRate).ToString("#.##") :
+                (debtAssignment.Debt.Amount * (decimal)debtAssignment.Debt.UsdExchangeRate).ToString("#.##") :
                 debtAssignment.Debt.Amount.ToString("#.##"),
                 Reason = debtAssignment.Debt.BorrowReason,
                 Currency = debtAssignment.SelectedUser.CurrencyPreference.ToString(),
@@ -358,6 +359,37 @@ namespace DebtsCompass.Domain
                 Category = income.Category.Name,
                 Note = income.Note,
                 IsExpense = false
+            };
+        }
+
+        public static LoanEmailInfoDto DebtAssignmentToLoanEmailInfoDto(DebtAssignment debtAssignment)
+        {
+            return new LoanEmailInfoDto
+            {
+                SelectedUserFirstName = debtAssignment.SelectedUser != null ?
+                debtAssignment.SelectedUser.UserInfo.FirstName :
+                debtAssignment.NonUser.PersonFirstName,
+                SelectedUserLastName = debtAssignment.SelectedUser != null ?
+                debtAssignment.SelectedUser.UserInfo.LastName :
+                debtAssignment.NonUser.PersonLastName,
+                Reason = debtAssignment.Debt.BorrowReason,
+                Currency = debtAssignment.CreatorUser.CurrencyPreference.ToString(),
+                DateOfBorrowing = debtAssignment.Debt.DateOfBorrowing.ToString("dd MMM yyyy"),
+                Deadline = debtAssignment.Debt.DeadlineDate.ToString("dd MMM yyyy"),
+                Amount = debtAssignment.CreatorUser.CurrencyPreference == CurrencyPreference.EUR ?
+                (debtAssignment.Debt.Amount * (decimal)debtAssignment.Debt.EurExchangeRate).ToString("#.##") :
+                debtAssignment.CreatorUser.CurrencyPreference == CurrencyPreference.USD ?
+                (debtAssignment.Debt.Amount * (decimal)debtAssignment.Debt.UsdExchangeRate).ToString("#.##") :
+                debtAssignment.Debt.Amount.ToString("#.##"),
+            };
+        }
+
+        public static YearsDto UserToYearsDto(User user)
+        {
+            return new YearsDto
+            {
+                RegisteredYear = user.RegisteredDate.Year,
+                DashboardSelectedYear = user.DashboardSelectedYear
             };
         }
     }

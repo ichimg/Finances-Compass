@@ -58,5 +58,85 @@ namespace DebtsCompass.Presentation.Controllers
                 StatusCode = HttpStatusCode.OK
             });
         }
+
+
+        [HttpGet("get-dashboard-year")]
+        [Authorize]
+        public async Task<ActionResult<Response<YearsDto>>> GetDashboardYear([FromQuery] string email)
+        {
+            if (!IsRequestFromValidUser(email))
+            {
+                throw new ForbiddenRequestException();
+            }
+
+            YearsDto yearsDto = await usersService.GetDashboardYear(email);
+
+            return Ok(new Response<YearsDto>
+            {
+                Message = null,
+                Payload = yearsDto,
+                StatusCode = HttpStatusCode.OK
+            });
+        }
+
+        [HttpPut("change-dashboard-year")]
+        [Authorize]
+        public async Task<ActionResult<Response<object>>> ChangeDashboardYear([FromQuery] string email, [FromQuery] int year)
+        {
+            if (!IsRequestFromValidUser(email))
+            {
+                throw new ForbiddenRequestException();
+            }
+
+            await usersService.ChangeDashboardYear(email, year);
+
+            return Ok(new Response<object>
+            {
+                Message = null,
+                Payload = null,
+                StatusCode = HttpStatusCode.OK
+            });
+        }
+
+        [HttpGet("get-currency-preference")]
+        [Authorize]
+        public async Task<ActionResult<Response<string>>> GetCurrencyPreference([FromQuery] string email)
+        {
+            string currency = await usersService.GetUserCurrencyPreference(email);
+
+            return Ok(new Response<string>
+            {
+                Message = null,
+                Payload = currency,
+                StatusCode = HttpStatusCode.OK
+            });
+        }
+
+        [HttpPut("change-currency-preference")]
+        [Authorize]
+        public async Task<ActionResult<Response<object>>> ChangeCurrencyPreference([FromQuery] string email, [FromQuery] string currency)
+        {
+            if (!IsRequestFromValidUser(email))
+            {
+                throw new ForbiddenRequestException();
+            }
+
+            await usersService.ChangeUserCurrencyPreference(email, currency);
+
+            return Ok(new Response<object>
+            {
+                Message = null,
+                Payload = null,
+                StatusCode = HttpStatusCode.OK
+            });
+        }
+
+        private bool IsRequestFromValidUser(string email)
+        {
+            var userIdentity = User.Identity as ClaimsIdentity;
+            var userEmailClaim = userIdentity.FindFirst(ClaimTypes.Email)?.Value;
+
+            return string.Equals(userEmailClaim, email, StringComparison.OrdinalIgnoreCase);
+        }
     }
 }

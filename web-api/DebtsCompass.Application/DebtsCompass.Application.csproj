@@ -17,7 +17,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\DebtsCompass.Domain\DebtsCompass.Domain.csproj" />
-    <ProjectReference Include="..\EmailSender\EmailSender.csproj" />
   </ItemGroup>
 
 </Project>

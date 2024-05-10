@@ -112,5 +112,12 @@ namespace DebtsCompass.DataAccess.Repositories
             debtFromDb.Debt.IsPaid = true;
             await dbContext.SaveChangesAsync();
         }
+
+        public async Task UpdateDeadlineReminderJobId(DebtAssignment debtFromDb, string jobId)
+        {
+            debtFromDb.DeadlineReminderJobId = jobId;
+
+            await dbContext.SaveChangesAsync();
+        }
     }
 }

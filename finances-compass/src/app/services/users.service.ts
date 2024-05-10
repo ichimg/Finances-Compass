@@ -116,4 +116,62 @@ export class UsersService {
       })
     );
   }
+
+  getRegisteredYear(email: string) {
+    const endpoint = `${this.apiUrl}/get-dashboard-year?email=${email}`;
+
+    const headers = new HttpHeaders({
+      'Content-Type': 'application/json',
+    });
+
+    return this.http.get<any>(endpoint, {
+      headers: headers,
+    });
+  }
+
+  async changeDashboardYear(email: string, year: number) {
+    const endpoint = `${this.apiUrl}/change-dashboard-year?email=${email}&year=${year}`;
+    const headers = new HttpHeaders({
+      'Content-Type': 'application/json',
+    });
+
+    return await lastValueFrom(
+      this.http.put<any>(
+        endpoint,
+        {},
+        {
+          headers: headers,
+        }
+      )
+    );
+  }
+
+  getCurrencyPreference(email: string) {
+    const endpoint = `${this.apiUrl}/get-currency-preference?email=${email}`;
+
+    const headers = new HttpHeaders({
+      'Content-Type': 'application/json',
+    });
+
+    return this.http.get<any>(endpoint, {
+      headers: headers,
+    });
+  }
+
+  async changeCurrencyPreference(email: string, currency: string) {
+    const endpoint = `${this.apiUrl}/change-currency-preference?email=${email}&currency=${currency}`;
+    const headers = new HttpHeaders({
+      'Content-Type': 'application/json',
+    });
+
+    return await lastValueFrom(
+      this.http.put<any>(
+        endpoint,
+        {},
+        {
+          headers: headers,
+        }
+      )
+    );
+  }
 }

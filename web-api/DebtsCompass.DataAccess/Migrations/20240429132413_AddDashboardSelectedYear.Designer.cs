@@ -4,6 +4,7 @@ using DebtsCompass.DataAccess;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DebtsCompass.DataAccess.Migrations
 {
     [DbContext(typeof(DebtsCompassDbContext))]
-    partial class DebtsCompassDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240429132413_AddDashboardSelectedYear")]
+    partial class AddDashboardSelectedYear
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -59,6 +62,7 @@ namespace DebtsCompass.DataAccess.Migrations
                         .HasColumnType("decimal(18,4)");
 
                     b.Property<string>("BorrowReason")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime>("DateOfBorrowing")
@@ -178,32 +182,32 @@ namespace DebtsCompass.DataAccess.Migrations
                     b.HasData(
                         new
                         {
-                            Id = new Guid("cb5c5c3b-22c7-4b1c-ab8b-d46aa2c68d64"),
+                            Id = new Guid("7d434b3b-b9c0-4200-b3ea-724b3dc4e9ea"),
                             Name = "Food"
                         },
                         new
                         {
-                            Id = new Guid("18dd9be0-00c7-40e0-b7b6-503ebb5cafd4"),
+                            Id = new Guid("180c4ca3-637b-47f0-88a6-41dc3c92a1c6"),
                             Name = "Clothes"
                         },
                         new
                         {
-                            Id = new Guid("22a198a5-c3c7-44ef-acd1-911e85aea497"),
+                            Id = new Guid("c7ff699f-2a46-4e2e-95d7-cb8260351a22"),
                             Name = "Invoices"
                         },
                         new
                         {
-                            Id = new Guid("d613c20a-e76f-4023-8233-5d31276260ac"),
+                            Id = new Guid("8dd53081-4b5e-4d97-a4c4-7997a7467371"),
                             Name = "Rent"
                         },
                         new
                         {
-                            Id = new Guid("ec0bd89c-7fe8-47ae-9e2b-ef67b7e7d4c5"),
+                            Id = new Guid("e4e276d5-572f-4774-a6b8-f63f39e94d5a"),
                             Name = "Car"
                         },
                         new
                         {
-                            Id = new Guid("aa0a7aaf-d852-4b8e-b237-780d73721d87"),
+                            Id = new Guid("08d9b173-04fe-408c-9360-dae04772dfc2"),
                             Name = "Debts"
                         });
                 });
@@ -285,17 +289,17 @@ namespace DebtsCompass.DataAccess.Migrations
                     b.HasData(
                         new
                         {
-                            Id = new Guid("38ddb789-c494-49b1-8d1a-114f3e9df272"),
+                            Id = new Guid("40cf082a-5059-4e94-aecd-8494405f1f38"),
                             Name = "Salary"
                         },
                         new
                         {
-                            Id = new Guid("1cc5f1c5-078d-4a4c-a8e8-baf8f4a2a5b2"),
+                            Id = new Guid("7d43402e-5d12-47b7-b9e1-23830cf90136"),
                             Name = "Savings"
                         },
                         new
                         {
-                            Id = new Guid("5f665680-3b5a-4e09-a490-018efe5eaba6"),
+                            Id = new Guid("6525a40b-0980-4944-ad35-a96f3e5b3301"),
                             Name = "Debts"
                         });
                 });

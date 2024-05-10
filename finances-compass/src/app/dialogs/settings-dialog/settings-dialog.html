@@ -1,0 +1,27 @@
+<div>
+  <mat-card>
+    <mat-card-header class="spaced">
+      <mat-card-title class="title">Settings</mat-card-title>
+      <mat-icon color="warn" class="close-icon" (click)="closeDialog()"
+        >clear</mat-icon
+      >
+    </mat-card-header>
+    <mat-divider></mat-divider>
+    <mat-card-content>
+      <mat-form-field>
+        <mat-label>Change currency</mat-label>
+        <mat-select
+          [(value)]="selectedCurrency"
+          (selectionChange)="onCurrencyChange($event.value)"
+        >
+          <mat-option *ngFor="let currency of currencies" [value]="currency"
+            >{{ currency }}</mat-option
+          >
+        </mat-select>
+      </mat-form-field>
+      <div class="end">
+        <button mat-raised-button color="warn" (click)="onSaveClick()">Save</button>
+      </div>
+    </mat-card-content>
+  </mat-card>
+</div>

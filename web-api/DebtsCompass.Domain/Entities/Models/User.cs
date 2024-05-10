@@ -16,6 +16,7 @@ namespace DebtsCompass.Domain.Entities.Models
         public ICollection<Income> Incomes { get; set; }
         public ICollection<ExpenseCategory> ExpenseCategories { get; set; }
         public ICollection<IncomeCategory> IncomeCategories { get; set; }
-
+        public DateTime RegisteredDate { get; set; }
+        public int DashboardSelectedYear { get; set; }
     }
 }

@@ -6,9 +6,7 @@ using DebtsCompass.Domain.Entities.Models;
 using DebtsCompass.Application.Exceptions;
 using DebtsCompass.Domain.Entities.Dtos;
 using DebtsCompass.Domain.Entities.EmailDtos;
-using EmailSender;
 using DebtsCompass.Domain.Enums;
-using Hangfire;
 
 namespace DebtsCompass.Application.Services
 {
@@ -24,8 +22,7 @@ namespace DebtsCompass.Application.Services
         private readonly IIncomeCategoryRepository incomeCategoryRepository;
         private readonly IExpensesService expensesService;
         private readonly IIncomesService incomesService;
-
-        private readonly IBackgroundJobClient backgroundJobClient;
+        private readonly IHangfireService hangfireService;
 
         public DebtsService(IDebtAssignmentRepository debtAssignmentRepository,
             IUserRepository userRepository,
@@ -37,7 +34,7 @@ namespace DebtsCompass.Application.Services
             IIncomeCategoryRepository incomeCategoryRepository,
             IExpensesService expensesService,
             IIncomesService incomesService,
-            IBackgroundJobClient backgroundJobClient)
+            IHangfireService hangfireService)
         {
             this.debtAssignmentRepository = debtAssignmentRepository;
             this.userRepository = userRepository;
@@ -49,7 +46,7 @@ namespace DebtsCompass.Application.Services
             this.incomeCategoryRepository = incomeCategoryRepository;
             this.expensesService = expensesService;
             this.incomesService = incomesService;
-            this.backgroundJobClient = backgroundJobClient;
+            this.hangfireService = hangfireService;
         }
 
         public async Task<List<DebtDto>> GetAllReceivingDebts(string email)
@@ -121,10 +118,11 @@ namespace DebtsCompass.Application.Services
                 await debtAssignmentRepository.CreateDebt(debtAssignment);
 
                 ReceiverInfoDto receiverInfoDto = Mapper.UserToReceiverInfoDto(debtAssignment.SelectedUser);
-                DebtEmailInfoDto createdDebtEmailInfoDto = Mapper.DebtAssignmentToCreatedDebtEmailInfoDto(debtAssignment);
+                DebtEmailInfoDto createdDebtEmailInfoDto = Mapper.DebtAssignmentToDebtEmailInfoDto(debtAssignment);
                 await emailService.SendDebtCreatedNotification(receiverInfoDto, createdDebtEmailInfoDto);
-                backgroundJobClient.Schedule(() => Console.WriteLine($"[HANGFIRE] Debt created at {debtAssignment.Debt.DeadlineDate}"), 
-                    TimeSpan.FromMinutes(1));
+
+                string jobId = await hangfireService.ScheduleDeadlineEmails(debtAssignment, receiverInfoDto);
+                await debtAssignmentRepository.UpdateDeadlineReminderJobId(debtAssignment, jobId);
             }
             else
             {
@@ -142,21 +140,19 @@ namespace DebtsCompass.Application.Services
 
 
                 ReceiverInfoDto receiverInfoDto = Mapper.NonUserToReceiverInfoDto(debtAssignment.NonUser);
-                DebtEmailInfoDto createdDebtEmailInfoDto = Mapper.UserToCreatedDebtEmailInfoDto(creatorUser);
+                DebtEmailInfoDto createdDebtEmailInfoDto = Mapper.UserToDebtEmailInfoDto(creatorUser);
                 await emailService.SendNoAccountDebtCreatedNotification(receiverInfoDto, createdDebtEmailInfoDto);
+
+                string jobId = await hangfireService.ScheduleDeadlineEmails(debtAssignment, receiverInfoDto);
+                await debtAssignmentRepository.UpdateDeadlineReminderJobId(debtAssignment, jobId);
             }
+
             return debtAssignment.Id;
         }
 
         public async Task DeleteDebt(string id, string email)
         {
-            var debtFromDb = await debtAssignmentRepository.GetDebtById(id);
-
-            if (debtFromDb is null)
-            {
-                throw new EntityNotFoundException();
-            }
-
+            var debtFromDb = await debtAssignmentRepository.GetDebtById(id) ?? throw new EntityNotFoundException();
             if (!debtFromDb.CreatorUser.Email.Equals(email))
             {
                 throw new ForbiddenRequestException();
@@ -165,15 +161,17 @@ namespace DebtsCompass.Application.Services
             if (debtFromDb.SelectedUser is not null)
             {
                 ReceiverInfoDto receiverInfoDto = Mapper.UserToReceiverInfoDto(debtFromDb.SelectedUser);
-                DebtEmailInfoDto deletedDebtEmailInfoDto = Mapper.DebtAssignmentToCreatedDebtEmailInfoDto(debtFromDb);
+                DebtEmailInfoDto deletedDebtEmailInfoDto = Mapper.DebtAssignmentToDebtEmailInfoDto(debtFromDb);
 
+                await hangfireService.DeleteScheduledJob(debtFromDb.DeadlineReminderJobId!);
                 await debtRepository.DeleteDebt(debtFromDb.Debt);
+
                 await emailService.SendDebtDeletedNotification(receiverInfoDto, deletedDebtEmailInfoDto);
             }
             else if (debtFromDb.NonUser is not null)
             {
                 ReceiverInfoDto receiverInfoDto = Mapper.NonUserToReceiverInfoDto(debtFromDb.NonUser);
-                DebtEmailInfoDto deletedDebtEmailInfoDto = Mapper.DebtAssignmentToCreatedDebtEmailInfoDto(debtFromDb);
+                DebtEmailInfoDto deletedDebtEmailInfoDto = Mapper.DebtAssignmentToDebtEmailInfoDto(debtFromDb);
 
                 await debtRepository.DeleteDebt(debtFromDb.Debt);
                 await emailService.SendDebtDeletedNotification(receiverInfoDto, deletedDebtEmailInfoDto);
@@ -227,7 +225,10 @@ namespace DebtsCompass.Application.Services
         public async Task RejectDebt(string debtId, string email)
         {
             DebtAssignment debtAssignmentFromDb = await debtAssignmentRepository.GetDebtById(debtId) ?? throw new EntityNotFoundException();
+
+            await hangfireService.DeleteScheduledJob(debtAssignmentFromDb.DeadlineReminderJobId!);
             await debtAssignmentRepository.RejectDebt(debtAssignmentFromDb);
+
             // TODO: send e-mail notification
         }
 
@@ -241,6 +242,8 @@ namespace DebtsCompass.Application.Services
             await CreateIncomeRelatedToDebt(debtAssignmentFromDb, DateTime.UtcNow, debtAssignmentFromDb.CreatorUser,
                 $"Debt collected from {debtAssignmentFromDb.SelectedUser.UserInfo.FirstName} {debtAssignmentFromDb.SelectedUser.UserInfo.LastName}.");
 
+            await hangfireService.DeleteScheduledJob(debtAssignmentFromDb.DeadlineReminderJobId!);
+
             // TODO: send e-mail notification
         }
 
@@ -249,6 +252,10 @@ namespace DebtsCompass.Application.Services
             User user = await userRepository.GetUserByEmail(email);
             var loansFromDb = await debtAssignmentRepository.GetAllReceivingDebtsByEmail(email);
             var debtsFromDb = await debtAssignmentRepository.GetAllUserDebtsByEmail(email);
+
+            loansFromDb = loansFromDb.Where(l => l.Debt.DateOfBorrowing.Year == user.DashboardSelectedYear).ToList();
+            debtsFromDb= debtsFromDb.Where(d => d.Debt.DateOfBorrowing.Year == user.DashboardSelectedYear).ToList();
+
 
             if (user.CurrencyPreference == CurrencyPreference.EUR)
             {

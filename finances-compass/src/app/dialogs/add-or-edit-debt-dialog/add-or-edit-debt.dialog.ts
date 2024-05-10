@@ -68,9 +68,6 @@ export class AddOrEditDebtDialog implements OnInit {
 
     this.usersService.getAllFriends().subscribe((response) => {
       this.userFriends = response.body.payload;
-      this.userFriendsTotalCount = JSON.parse(
-        response.headers.get('X-Pagination')!
-      ).TotalCount;
 
       if (this.data.selectedDebt !== undefined) {
         this.fillEditModalForm();
@@ -96,10 +93,7 @@ export class AddOrEditDebtDialog implements OnInit {
       Validators.required,
       Validators.maxLength(50),
     ]),
-    reason: new FormControl('', [
-      Validators.required,
-      Validators.maxLength(50),
-    ]),
+    reason: new FormControl('', [Validators.maxLength(50)]),
     borrowingDate: new FormControl('', Validators.required),
     deadlineDate: new FormControl('', Validators.required),
     email: this.emailFormControl,

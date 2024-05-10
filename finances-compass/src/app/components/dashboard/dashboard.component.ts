@@ -6,6 +6,8 @@ import { NotificationService } from 'src/app/services/notification.service';
 import { OverallBalanceStats } from '../../entities/overall-balance-stats.model';
 import { DebtsService } from '../../services/debts.service';
 import { LoansDebtsStats } from '../../entities/loans-debts-stats.model';
+import { UsersService } from '../../services/users.service';
+import { AuthenticationService } from '../../services/authentication.service';
 
 @Component({
   selector: 'app-dashboard',
@@ -14,6 +16,9 @@ import { LoansDebtsStats } from '../../entities/loans-debts-stats.model';
 })
 export class DashboardComponent implements OnInit {
   username!: string | null;
+  registeredYear!: number;
+  selectedYear!: number;
+  currentYear: number = new Date().getFullYear();
 
   // Overall balance
   public overallBalanceChart: any;
@@ -57,12 +62,15 @@ export class DashboardComponent implements OnInit {
   constructor(
     private expensesService: ExpensesService,
     private debtsService: DebtsService,
-    private notificationService: NotificationService
+    private notificationService: NotificationService,
+    private usersService: UsersService,
+    private authService: AuthenticationService
   ) {}
 
   async ngOnInit(): Promise<void> {
     await this.populateOverallBalanceChart();
     await this.populateLoansDebtsChart();
+    await this.getRegisteredYear();
     const tooltipPlugin = Chart.registry.getPlugin('tooltip') as any;
 
     tooltipPlugin.positioners.verticallyCenter = (
@@ -83,6 +91,50 @@ export class DashboardComponent implements OnInit {
 
     await this.populateAnnualExpensesChart();
     this.username = localStorage.getItem('userFirstName');
+  }
+
+  async getRegisteredYear(): Promise<void> {
+    let email = this.authService.getEmailFromToken();
+    try {
+      const response = await lastValueFrom(
+        this.usersService.getRegisteredYear(email)
+      );
+
+      if (response.statusCode !== 200) {
+        this.notificationService.showError('Something went wrong!');
+      }
+
+      this.registeredYear = response.payload.registeredYear;
+      this.selectedYear = response.payload.dashboardSelectedYear;
+    } catch (error) {
+      this.notificationService.showError('Something went wrong!');
+    }
+  }
+
+  getYearOptions(): number[] {
+    const years: number[] = [];
+    for (let year = this.registeredYear; year <= this.currentYear; year++) {
+      years.push(year);
+    }
+    return years;
+  }
+
+  async onYearChange(newValue: number) {
+    let email = this.authService.getEmailFromToken();
+    try {
+      const response = await this.usersService.changeDashboardYear(
+        email,
+        newValue
+      );
+
+      if (response.statusCode === 200) {
+        window.location.reload();
+      } else {
+        this.notificationService.showError('Something went wrong!');
+      }
+    } catch (error) {
+      this.notificationService.showError('Something went wrong!');
+    }
   }
 
   async populateOverallBalanceChart(): Promise<void> {
@@ -185,12 +237,10 @@ export class DashboardComponent implements OnInit {
 
       totalDebts: `${
         this.getCurrency() === 'RON'
-          ? '-' +
-            parseFloat(this.totalLoansAndDebts.totalDebts).toFixed(2) +
+          ? parseFloat(this.totalLoansAndDebts.totalDebts).toFixed(2) +
             ' ' +
             this.getCurrency()
           : this.getCurrency() +
-            '-' +
             parseFloat(this.totalLoansAndDebts.totalDebts).toFixed(2)
       }`,
     };
@@ -249,6 +299,10 @@ export class DashboardComponent implements OnInit {
   }
 
   createAnnualExpensesChart(data: any) {
+    if (data.length === 0) {
+      return;
+    }
+
     let dataForFood = new Array(12).fill(0);
     let dataForClothes = new Array(12).fill(0);
     let dataForInvoices = new Array(12).fill(0);
@@ -318,7 +372,7 @@ export class DashboardComponent implements OnInit {
         {
           maxBarThickness: 40,
           label: 'Car',
-          data: dataForRent,
+          data: dataForCar,
           backgroundColor: '#FFF5C1',
         },
         {

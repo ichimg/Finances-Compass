@@ -8,7 +8,7 @@ namespace DebtsCompass.Domain.Entities.Models
         public Guid Id { get; set; }
         [Column(TypeName = "decimal(18,4)")]
         public decimal Amount { get; set; }
-        public string BorrowReason { get; set; }
+        public string? BorrowReason { get; set; }
         public DateTime DateOfBorrowing { get; set; }
         public DateTime DeadlineDate { get; set; }
         public Status Status { get; set; }

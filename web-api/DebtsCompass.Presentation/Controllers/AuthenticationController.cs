@@ -8,7 +8,6 @@ using DebtsCompass.Domain.Entities.Models;
 using DebtsCompass.Domain.Entities.Requests;
 using Microsoft.AspNetCore.WebUtilities;
 using DebtsCompass.Domain.Entities.Dtos;
-using EmailSender;
 
 namespace DebtsCompass.Presentation.Controllers
 {
@@ -97,7 +96,5 @@ namespace DebtsCompass.Presentation.Controllers
                 StatusCode = HttpStatusCode.OK
             });
         }
-
-
     }
 }

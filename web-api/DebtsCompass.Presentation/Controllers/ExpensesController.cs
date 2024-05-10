@@ -31,7 +31,7 @@ namespace DebtsCompass.Presentation.Controllers
         {
             Guid createdExpenseId = await expensesService.CreateExpense(createExpenseRequest, email);
 
-            return Ok(new Response<object>
+            return Ok(new Response<Guid>
             {
                 Message = null,
                 Payload = createdExpenseId,
@@ -135,7 +135,7 @@ namespace DebtsCompass.Presentation.Controllers
         [HttpGet]
         [Route("get-annual-expenses-by-category")]
         [Authorize]
-        public async Task<ActionResult<TotalExpensesAndIncomesDto>> GetAnnualExpensesByCategory([FromHeader] string email)
+        public async Task<ActionResult<Response<IEnumerable<ExpenseBarChartDto>>>> GetAnnualExpensesByCategory([FromHeader] string email)
         {
             if (!IsRequestFromValidUser(email))
             {

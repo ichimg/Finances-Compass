@@ -14,5 +14,6 @@ namespace DebtsCompass.Domain.Interfaces
         Task ApproveDebt(DebtAssignment debtFromDb);
         Task RejectDebt(DebtAssignment debtAssignmentFromDb);
         Task PayDebt(DebtAssignment debtFromDb);
+        Task UpdateDeadlineReminderJobId(DebtAssignment debtFromDb, string jobId);
     }
 }

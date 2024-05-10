@@ -4,6 +4,7 @@ using DebtsCompass.DataAccess;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DebtsCompass.DataAccess.Migrations
 {
     [DbContext(typeof(DebtsCompassDbContext))]
-    partial class DebtsCompassDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240427123745_AddJobIdForDebts")]
+    partial class AddJobIdForDebts
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -59,6 +62,7 @@ namespace DebtsCompass.DataAccess.Migrations
                         .HasColumnType("decimal(18,4)");
 
                     b.Property<string>("BorrowReason")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime>("DateOfBorrowing")
@@ -94,8 +98,8 @@ namespace DebtsCompass.DataAccess.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
-                    b.Property<string>("DeadlineReminderJobId")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<Guid>("DeadlineReminderJobId")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<Guid>("DebtId")
                         .HasColumnType("uniqueidentifier");
@@ -178,32 +182,32 @@ namespace DebtsCompass.DataAccess.Migrations
                     b.HasData(
                         new
                         {
-                            Id = new Guid("cb5c5c3b-22c7-4b1c-ab8b-d46aa2c68d64"),
+                            Id = new Guid("2403bfc3-469a-4dea-b69b-0e9e2bb0ca9a"),
                             Name = "Food"
                         },
                         new
                         {
-                            Id = new Guid("18dd9be0-00c7-40e0-b7b6-503ebb5cafd4"),
+                            Id = new Guid("4834b6f8-3203-4b03-8a20-29e2f267a1da"),
                             Name = "Clothes"
                         },
                         new
                         {
-                            Id = new Guid("22a198a5-c3c7-44ef-acd1-911e85aea497"),
+                            Id = new Guid("4c87efd7-49b5-4ea5-a2a5-3768af27329d"),
                             Name = "Invoices"
                         },
                         new
                         {
-                            Id = new Guid("d613c20a-e76f-4023-8233-5d31276260ac"),
+                            Id = new Guid("26e7db13-cbf2-44e5-8161-692b9a894b06"),
                             Name = "Rent"
                         },
                         new
                         {
-                            Id = new Guid("ec0bd89c-7fe8-47ae-9e2b-ef67b7e7d4c5"),
+                            Id = new Guid("f4fc1596-5c43-48a7-8b65-b3269e37a14d"),
                             Name = "Car"
                         },
                         new
                         {
-                            Id = new Guid("aa0a7aaf-d852-4b8e-b237-780d73721d87"),
+                            Id = new Guid("e9b5cce1-2cc5-4973-8f31-55d9f8cb8006"),
                             Name = "Debts"
                         });
                 });
@@ -285,17 +289,17 @@ namespace DebtsCompass.DataAccess.Migrations
                     b.HasData(
                         new
                         {
-                            Id = new Guid("38ddb789-c494-49b1-8d1a-114f3e9df272"),
+                            Id = new Guid("9b94dceb-fc89-4c32-a092-9d5332611c73"),
                             Name = "Salary"
                         },
                         new
                         {
-                            Id = new Guid("1cc5f1c5-078d-4a4c-a8e8-baf8f4a2a5b2"),
+                            Id = new Guid("0660d084-19e4-400e-91d9-14a88dac6033"),
                             Name = "Savings"
                         },
                         new
                         {
-                            Id = new Guid("5f665680-3b5a-4e09-a490-018efe5eaba6"),
+                            Id = new Guid("dd7468cf-d16f-4449-a234-9ef799bf5a5f"),
                             Name = "Debts"
                         });
                 });
@@ -335,9 +339,6 @@ namespace DebtsCompass.DataAccess.Migrations
                     b.Property<int>("CurrencyPreference")
                         .HasColumnType("int");
 
-                    b.Property<int>("DashboardSelectedYear")
-                        .HasColumnType("int");
-
                     b.Property<string>("Email")
                         .HasMaxLength(256)
                         .HasColumnType("nvarchar(256)");
@@ -363,9 +364,6 @@ namespace DebtsCompass.DataAccess.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime?>("RefreshTokenExpireTime")
-                        .HasColumnType("datetime2");
-
-                    b.Property<DateTime>("RegisteredDate")
                         .HasColumnType("datetime2");
 
                     b.Property<string>("SecurityStamp")

@@ -9,6 +9,7 @@ import { SearchUsersDialog } from '../../dialogs/search-users/search-users.dialo
 import { SidebarService } from '../../services/sidebar.service';
 import { Router } from '@angular/router';
 import { FriendsDialog } from 'src/app/dialogs/friends-dialog/friends-dialog.dialog';
+import { SettingsDialog } from '../../dialogs/settings-dialog/settings-dialog';
 
 @Component({
   selector: 'app-layout',
@@ -51,7 +52,7 @@ export class LayoutComponent implements OnInit {
     });
 
     this.router.events.subscribe(() => {
-      if (this.router.url === '/expenses') {
+      if (this.router.url === '/expenses' || this.router.url === '/dashboard') {
         this.sidenavMode = 'over';
       } else {
         this.sidenavMode = 'side';
@@ -77,5 +78,9 @@ export class LayoutComponent implements OnInit {
 
   openFriendsDialog(): void {
     this.dialog.open(FriendsDialog);
+  }
+
+  openSettingsDialog(): void {
+    this.dialog.open(SettingsDialog, { width: '400px' });
   }
 }

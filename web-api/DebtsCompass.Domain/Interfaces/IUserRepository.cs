@@ -1,5 +1,6 @@
 ﻿using DebtsCompass.Domain.Entities.Models;
 using DebtsCompass.Domain.Entities.Requests;
+using DebtsCompass.Domain.Enums;
 using DebtsCompass.Domain.Pagination;
 
 namespace DebtsCompass.Domain.Interfaces
@@ -12,5 +13,7 @@ namespace DebtsCompass.Domain.Interfaces
         Task Add(User user);    
         Task Update(User user);
         Task<PagedList<User>> GetUsersBySearchQuery(string query, User currentUser, PagedParameters pagedParameters);
+        Task ChangeDashboardYear(User user, int year);
+        Task ChangeCurrencyPreference(User user, CurrencyPreference currency);
     }
 }

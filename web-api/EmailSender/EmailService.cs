@@ -1,11 +1,9 @@
 ﻿using DebtsCompass.Domain.Entities.Dtos;
 using DebtsCompass.Domain.Entities.EmailDtos;
-using MailKit;
+using DebtsCompass.Domain.Interfaces;
 using MailKit.Net.Smtp;
 using MimeKit;
 using MimeKit.Text;
-using Org.BouncyCastle.Asn1.Pkcs;
-using System.Runtime;
 
 namespace EmailSender
 {
@@ -50,23 +48,40 @@ namespace EmailSender
             await SendEmail(receiverInfoDto, html, "E-mail confirmation");
         }
 
-        public async Task SendNoAccountDebtCreatedNotification(ReceiverInfoDto receiverInfoDto, DebtEmailInfoDto createdDebtEmailInfoDto)
+        public async Task SendNoAccountDebtCreatedNotification(ReceiverInfoDto receiverInfoDto, DebtEmailInfoDto debtEmailInfoDto)
         {
-            string html = emailTemplatesService.GetNoAccountDebtCreatedHtml(createdDebtEmailInfoDto);
+            string html = emailTemplatesService.GetNoAccountDebtCreatedHtml(debtEmailInfoDto);
             await SendEmail(receiverInfoDto, html, "Join Finances Compass to see what you owe to your friends");
         }
 
-        public async Task SendDebtCreatedNotification(ReceiverInfoDto receiverInfoDto, DebtEmailInfoDto createdDebtEmailInfoDto)
+        public async Task SendDebtCreatedNotification(ReceiverInfoDto receiverInfoDto, DebtEmailInfoDto debtEmailInfoDto)
         {
-            string html = emailTemplatesService.GetDebtCreatedHtml(createdDebtEmailInfoDto);
+            string html = emailTemplatesService.GetDebtCreatedHtml(debtEmailInfoDto);
             await SendEmail(receiverInfoDto, html, "Check new debt added");
         }
 
-        public async Task SendDebtDeletedNotification(ReceiverInfoDto receiverInfoDto, DebtEmailInfoDto createdDebtEmailInfoDto)
+        public async Task SendDebtDeletedNotification(ReceiverInfoDto receiverInfoDto, DebtEmailInfoDto debtEmailInfoDto)
         {
-            string html = emailTemplatesService.GetDebtDeletedHtml(createdDebtEmailInfoDto);
+            string html = emailTemplatesService.GetDebtDeletedHtml(debtEmailInfoDto);
             await SendEmail(receiverInfoDto, html, "A debt just got deleted");
         }
 
+        public async Task SendDeadlineEmails(ReceiverInfoDto receiverInfoDto, DebtEmailInfoDto debtEmailInfoDto, ReceiverInfoDto creatorUserReceiverInfoDto, LoanEmailInfoDto loanEmailInfoDto)
+        {
+            await SendDebtDeadlineReminderNotification(receiverInfoDto, debtEmailInfoDto);
+            await SendLoanDeadlineReminderNotification(creatorUserReceiverInfoDto, loanEmailInfoDto);
+        }
+
+        private async Task SendDebtDeadlineReminderNotification(ReceiverInfoDto receiverInfoDto, DebtEmailInfoDto debtEmailInfoDto)
+        {
+            string html = emailTemplatesService.GetDebtDeadlineReminderHtml(debtEmailInfoDto);
+            await SendEmail(receiverInfoDto, html, "A debt is due soon");
+        }
+
+        private async Task SendLoanDeadlineReminderNotification(ReceiverInfoDto receiverInfoDto, LoanEmailInfoDto loanEmailInfoDto)
+        {
+            string html = emailTemplatesService.GetLoanDeadlineReminderHtml(loanEmailInfoDto, receiverInfoDto);
+            await SendEmail(receiverInfoDto, html, "A loan is due soon");
+        }
     }
 }
