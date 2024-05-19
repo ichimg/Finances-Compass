@@ -185,6 +185,7 @@ namespace DebtsCompass.Application.Services
 
             CurrencyDto currentCurrencies = await currencyRatesJob.GetLatestCurrencyRates();
 
+            // convert to base currency RON
             if (user.CurrencyPreference == CurrencyPreference.EUR)
             {
                 editDebtRequest.Amount /= currentCurrencies.EurExchangeRate;

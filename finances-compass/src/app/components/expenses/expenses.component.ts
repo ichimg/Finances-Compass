@@ -26,7 +26,7 @@ export class ExpensesComponent implements OnInit {
   calendarOptions: CalendarOptions = {
     initialView: 'dayGridMonth',
     plugins: [dayGridPlugin, interactionPlugin],
-    height: 550,
+    height: 429,
     aspectRatio: 1.5,
     firstDay: 1,
     headerToolbar: {
@@ -44,6 +44,7 @@ export class ExpensesComponent implements OnInit {
         midDate.getMonth() + 1
       );
       let calendar = this.calendarComponent.getApi();
+      calendar.removeAllEvents();
       calendar.removeAllEventSources();
       calendar.addEventSource(this.expensesAndIncomes);
       this.chart.chart?.update();

@@ -65,6 +65,8 @@ import { MatTabsModule } from '@angular/material/tabs';
 import { ScrollingModule } from '@angular/cdk/scrolling';
 import { DashboardComponent } from './components/dashboard/dashboard.component';
 import { SettingsDialog } from './dialogs/settings-dialog/settings-dialog';
+import { SimilarUsersDialog } from './dialogs/similar-users-dialog/similar-users-dialog';
+import { DataConsentDialog } from './dialogs/data-consent-dialog/data-consent-dialog';
 
 const OPTIONS = {
   appereance: 'outline',
@@ -95,7 +97,9 @@ const OPTIONS = {
     ViewOrEditExpenseDialog,
     FriendsDialog,
     DashboardComponent,
-    SettingsDialog
+    SettingsDialog,
+    SimilarUsersDialog,
+    DataConsentDialog
   ],
   imports: [
     BrowserModule,

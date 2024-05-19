@@ -225,4 +225,5 @@ export var countries: Countries [] = [
     { code: "TL", code3: "TLS", name: "Timor-Leste", number: "626" },
     { code: "TG", code3: "TGO", name: "Togo", number: "768" },
     { code: "TK", code3: "TKL", name: "Tokelau", number: "772" },
+    { code: "US", code3: "USA", name: "United States", number: "773" },
 ]

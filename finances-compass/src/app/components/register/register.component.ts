@@ -11,6 +11,8 @@ import { NotificationService } from '../../services/notification.service';
 import { Router } from '@angular/router';
 import { passwordValidator } from '../../validators/password-validator';
 import { passwordMatchingValidator as passwordMatchingValidator } from '../../validators/confirm-password-validator';
+import { DataConsentDialog } from '../../dialogs/data-consent-dialog/data-consent-dialog';
+import { MatDialog } from '@angular/material/dialog';
 
 @Component({
   selector: 'app-register',
@@ -41,7 +43,8 @@ export class RegisterComponent implements OnInit {
   constructor(
     private authService: AuthenticationService,
     private notificationService: NotificationService,
-    private router: Router
+    private router: Router,
+    private dialog: MatDialog,
   ) {}
 
   ngOnInit() {
@@ -119,30 +122,14 @@ export class RegisterComponent implements OnInit {
       password: this.registerForm.value.password,
       confirmPassword: this.registerForm.value.confirmPassword,
       currencyPreference: this.registerForm.value.currencyPreference,
+      isDataConsent: false,
       clientURI: 'http://localhost:4200/emailconfirmation',
     });
 
-    this.authService.register(registerRequest).subscribe((response) => {
-      switch (response.statusCode) {
-        case 200:
-          this.notificationService.showSuccess('You are now registered!');
-          this.router.navigateByUrl('login', {
-            state: { isRedirectFromRegister: true },
-          });
-          break;
-
-        case 400:
-          this.notificationService.showError('Register failed');
-          break;
-
-        case 409:
-          this.notificationService.showError(response.message);
-          break;
-
-        default:
-          this.notificationService.showError('Something went wrong');
-          break;
-      }
+    const dialogRef = this.dialog.open(DataConsentDialog, {
+      data: {
+        registerRequest: registerRequest,
+      },
     });
   }
 }

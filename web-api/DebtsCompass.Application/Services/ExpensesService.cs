@@ -87,7 +87,7 @@ namespace DebtsCompass.Application.Services
             ExpenseCategory category = await categoryRepository.GetByName(editExpenseRequest.Category);
             Expense updatedExpense = Mapper.EditExpenseRequestToExpense(editExpenseRequest, category);
 
-            await expenseRepository.UpdateDebt(expenseFromDb, updatedExpense);
+            await expenseRepository.UpdateExpense(expenseFromDb, updatedExpense);
         }
 
         public async Task<TotalList<ExpenseOrIncomeDto>> GetAllByEmail(string email, YearMonthDto yearMonthDto)
@@ -137,7 +137,7 @@ namespace DebtsCompass.Application.Services
             else if (user.CurrencyPreference == CurrencyPreference.USD)
             {
                 expensesFromDb.ForEach(e => e.Amount *= (decimal)e.UsdExchangeRate);
-                incomesFromDb.ForEach(i => i.Amount *= (decimal)i.EurExchangeRate);
+                incomesFromDb.ForEach(i => i.Amount *= (decimal)i.UsdExchangeRate);
             }
 
             decimal totalExpenses = expensesFromDb.Sum(e => e.Amount);

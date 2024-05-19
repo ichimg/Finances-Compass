@@ -95,7 +95,6 @@ export class UsersService {
     const headers = new HttpHeaders({
       'Content-Type': 'application/json',
     });
-    console.log(friendRequestDto);
 
     return await lastValueFrom(
       this.http.put<any>(acceptFriendRequestEndpoint, friendRequestDto, {
@@ -173,5 +172,17 @@ export class UsersService {
         }
       )
     );
+  }
+
+  async getSimilarUsers(email: string | null, numRecommendations: number) {
+    const endpoint = `${this.apiUrl}/get-similar-users?email=${email}&numRecommendations=${numRecommendations}`;
+
+    const headers = new HttpHeaders({
+      'Content-Type': 'application/json',
+    });
+
+    return await lastValueFrom(this.http.get<any>(endpoint, {
+      headers: headers,
+    }));
   }
 }

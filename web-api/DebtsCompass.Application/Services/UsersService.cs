@@ -29,12 +29,12 @@ namespace DebtsCompass.Application.Services
             foreach (var user in usersFromDb)
             {
                 bool isPendingFriendRequest = false;
-                Friendship friendshipFromDb = await friendshipRepository.GetUsersFriendship(currentUser, user);
+                Friendship friendshipFromDb = await friendshipRepository.GetUsersFriendship(currentUser.Id, user.Id);
 
                 Status friendStatus;
                 if (friendshipFromDb is null)
                 {
-                    friendshipFromDb = await friendshipRepository.GetUsersFriendship(user, currentUser);
+                    friendshipFromDb = await friendshipRepository.GetUsersFriendship(user.Id, currentUser.Id);
 
                     if(friendshipFromDb is null)
                     {

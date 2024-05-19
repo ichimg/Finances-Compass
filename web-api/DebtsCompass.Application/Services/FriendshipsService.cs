@@ -80,7 +80,7 @@ namespace DebtsCompass.Application.Services
             User requesterUser = await userRepository.GetUserByEmail(deleteFriendRequest.RequesterUserEmail) ?? throw new UserNotFoundException(deleteFriendRequest.RequesterUserEmail);
             User receiverUser = await userRepository.GetUserByEmail(deleteFriendRequest.SelectedUserEmail) ?? throw new UserNotFoundException(deleteFriendRequest.SelectedUserEmail);
 
-            Friendship friendshipFromDb = await friendshipRepository.GetUsersFriendship(requesterUser, receiverUser) ?? throw new EntityNotFoundException();
+            Friendship friendshipFromDb = await friendshipRepository.GetUsersFriendship(requesterUser.Id, receiverUser.Id) ?? throw new EntityNotFoundException();
 
             await friendshipRepository.Delete(friendshipFromDb);
         }
@@ -90,7 +90,7 @@ namespace DebtsCompass.Application.Services
             User requesterUser = await userRepository.GetUserByEmail(friendRequestDto.RequesterUserEmail) ?? throw new UserNotFoundException(friendRequestDto.RequesterUserEmail);
             User receiverUser = await userRepository.GetUserByEmail(friendRequestDto.SelectedUserEmail) ?? throw new UserNotFoundException(friendRequestDto.SelectedUserEmail);
 
-            Friendship friendshipFromDb = await friendshipRepository.GetUsersFriendship(receiverUser, requesterUser) ?? throw new EntityNotFoundException();
+            Friendship friendshipFromDb = await friendshipRepository.GetUsersFriendship(receiverUser.Id, requesterUser.Id) ?? throw new EntityNotFoundException();
 
             await friendshipRepository.AcceptFriendRequest(friendshipFromDb);
         }
@@ -100,7 +100,7 @@ namespace DebtsCompass.Application.Services
             User requesterUser = await userRepository.GetUserByEmail(friendRequestDto.RequesterUserEmail) ?? throw new UserNotFoundException(friendRequestDto.RequesterUserEmail);
             User receiverUser = await userRepository.GetUserByEmail(friendRequestDto.SelectedUserEmail) ?? throw new UserNotFoundException(friendRequestDto.SelectedUserEmail);
 
-            Friendship friendshipFromDb = await friendshipRepository.GetUsersFriendship(receiverUser, requesterUser) ?? throw new EntityNotFoundException();
+            Friendship friendshipFromDb = await friendshipRepository.GetUsersFriendship(receiverUser.Id, requesterUser.Id) ?? throw new EntityNotFoundException();
 
             await friendshipRepository.RejectFriendRequest(friendshipFromDb);
         }

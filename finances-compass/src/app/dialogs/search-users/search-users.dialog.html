@@ -27,6 +27,14 @@
         (scrolled)="loadMoreUsers()"
       >
         <div class="item" *ngFor="let user of searchedUsers">
+          <img
+                [src]="'https://ui-avatars.com/api/?name=' 
+                  + user.userDetails.firstName[0] + '+' + user.userDetails.lastName[0] 
+                  + '&background=3b444b&color=DC143C&rounded=true&bold=true'"
+                alt=""
+                width="40"
+                height="50"
+              />
           <mat-list-item class="item">
             {{ user.userDetails.username }}
           </mat-list-item>

@@ -94,6 +94,8 @@ builder.Services.AddScoped<IExpensesService, ExpensesService>();
 builder.Services.AddScoped<ICategoriesService, CategoriesService>();
 builder.Services.AddScoped<IIncomesService, IncomesService>();
 builder.Services.AddScoped<IHangfireService, HangfireService>();
+builder.Services.AddScoped<IUserSimilarityService, UserSimilarityService>();
+builder.Services.AddScoped<IUserRecommandationService, UserRecommandationService>();
 builder.Services.AddScoped<EmailValidator>();
 builder.Services.AddScoped<PasswordValidator>();
 

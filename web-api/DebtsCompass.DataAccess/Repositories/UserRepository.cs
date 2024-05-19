@@ -18,6 +18,8 @@ namespace DebtsCompass.DataAccess.Repositories
         public async Task<User> GetUserByEmail(string email)
         {
             User userFromDb = await dbContext.Users
+                .Include(u => u.ReceivingFriendships)
+                .Include(u => u.RequestedFriendships)
                 .Include(u => u.Expenses)
                 .ThenInclude(e => e.Category)
                 .Include(u => u.Incomes)
@@ -26,6 +28,22 @@ namespace DebtsCompass.DataAccess.Repositories
                 .Where(u => u.Email.Equals(email)).FirstOrDefaultAsync();
 
             return userFromDb;
+        }
+
+        public async Task<List<User>> GetAllAllowedDataConsent(string targetUserEmail)
+        {
+            return await dbContext.Users
+                .Include(u => u.ReceivingFriendships)
+                .ThenInclude(rf => rf.RequesterUser)
+                .Include(u => u.RequestedFriendships)
+                .ThenInclude(rf => rf.SelectedUser)
+                .Include(u => u.Expenses)
+                .ThenInclude(e => e.Category)
+                .Include(u => u.UserInfo)
+                .ThenInclude(u => u.Address)
+                .Where(u => u.IsDataConsent && u.Email != targetUserEmail 
+                && !u.ReceivingFriendships.Any(rf => rf.RequesterUser.Email == targetUserEmail) && !u.RequestedFriendships.Any(rf => rf.SelectedUser.Email == targetUserEmail))
+                .ToListAsync();
         }
 
         public async Task<User> GetUserByEmailWithExpensesByMonth(string email, YearMonthDto yearMonthDto)
@@ -75,19 +93,18 @@ namespace DebtsCompass.DataAccess.Repositories
 
         public async Task<PagedList<User>> GetUsersBySearchQuery(string query, User currentUser, PagedParameters pagedParameters)
         {
-            
             return await dbContext.Users
             .Include(u => u.UserInfo)
             .ThenInclude(u => u.Address)
-            .Where(u => u.UserName.ToUpper() != currentUser.UserName.ToUpper()
+            .Where(u => (u.UserName.ToUpper() != currentUser.UserName.ToUpper()
                         && u.EmailConfirmed == true
-                        && u.UserName.ToUpper().Contains(query.ToUpper())
-                        || u.UserName.ToUpper() != currentUser.UserName.ToUpper()
+                        && u.UserName.ToUpper().Contains(query.ToUpper()))
+                        || (u.UserName.ToUpper() != currentUser.UserName.ToUpper()
                         && u.EmailConfirmed == true
-                        && u.UserInfo.FirstName.ToUpper().Contains(query.ToUpper())
-                        || u.UserName.ToUpper() != currentUser.UserName.ToUpper()
+                        && u.UserInfo.FirstName.ToUpper().Contains(query.ToUpper()))
+                        || (u.UserName.ToUpper() != currentUser.UserName.ToUpper()
                         && u.EmailConfirmed == true
-                        && u.UserInfo.LastName.ToUpper().Contains(query.ToUpper()))
+                        && u.UserInfo.LastName.ToUpper().Contains(query.ToUpper())))
             .OrderBy(u => u.UserInfo.Address.City == currentUser.UserInfo.Address.City ? 0 : 1) 
             .ThenBy(u => u.UserInfo.Address.County == currentUser.UserInfo.Address.County ? 0 : 1) 
             .ThenBy(u => u.UserInfo.Address.Country == currentUser.UserInfo.Address.Country ? 0 : 1) 

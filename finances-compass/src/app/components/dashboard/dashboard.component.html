@@ -19,8 +19,8 @@
     <div class="overall-balance-chart">
       <canvas
         *ngIf="
-          totalExpensesAndIncomes.totalExpenses !== 0 ||
-          totalExpensesAndIncomes.totalIncomes !== 0
+          totalExpensesAndIncomes?.totalExpenses !== 0 ||
+          totalExpensesAndIncomes?.totalIncomes !== 0
         "
         baseChart
         [type]="'pie'"
@@ -33,8 +33,8 @@
       <div
         class="chart-stats"
         *ngIf="
-          totalExpensesAndIncomes.totalExpenses !== 0 ||
-          totalExpensesAndIncomes.totalIncomes !== 0
+          totalExpensesAndIncomes?.totalExpenses !== 0 ||
+          totalExpensesAndIncomes?.totalIncomes !== 0
         "
       >
         <p>Total Incomes:</p>
@@ -49,8 +49,8 @@
       <p
         class="no-chart-data"
         *ngIf="
-          totalExpensesAndIncomes.totalExpenses === 0 &&
-          totalExpensesAndIncomes.totalIncomes === 0
+          totalExpensesAndIncomes?.totalExpenses === 0 &&
+          totalExpensesAndIncomes?.totalIncomes === 0
         "
       >
         There is no data for the selected period. As soon as you start adding
@@ -63,8 +63,8 @@
     <div class="overall-balance-chart">
       <canvas
         *ngIf="
-          totalLoansAndDebts.totalLoans !== 0 ||
-          totalLoansAndDebts.totalDebts !== 0
+          totalLoansAndDebts?.totalLoans !== 0 ||
+          totalLoansAndDebts?.totalDebts !== 0
         "
         baseChart
         [type]="'pie'"
@@ -77,8 +77,8 @@
       <div
         class="chart-stats"
         *ngIf="
-          totalLoansAndDebts.totalLoans !== 0 ||
-          totalLoansAndDebts.totalDebts !== 0
+          totalLoansAndDebts?.totalLoans !== 0 ||
+          totalLoansAndDebts?.totalDebts !== 0
         "
       >
         <p>Total Loans:</p>
@@ -93,8 +93,8 @@
       <p
         class="no-chart-data"
         *ngIf="
-          totalLoansAndDebts.totalLoans === 0 &&
-          totalLoansAndDebts.totalDebts === 0
+          totalLoansAndDebts?.totalLoans === 0 &&
+          totalLoansAndDebts?.totalDebts === 0
         "
       >
         There is no data for the selected period. As soon as you start adding

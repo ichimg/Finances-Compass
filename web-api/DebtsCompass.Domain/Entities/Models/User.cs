@@ -18,5 +18,8 @@ namespace DebtsCompass.Domain.Entities.Models
         public ICollection<IncomeCategory> IncomeCategories { get; set; }
         public DateTime RegisteredDate { get; set; }
         public int DashboardSelectedYear { get; set; }
+        public bool IsDataConsent { get; set; }
+        public ICollection<Friendship> RequestedFriendships { get; set; }
+        public ICollection<Friendship> ReceivingFriendships { get; set; }
     }
 }

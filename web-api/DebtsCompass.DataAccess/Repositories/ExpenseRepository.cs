@@ -37,7 +37,7 @@ namespace DebtsCompass.DataAccess.Repositories
             await dbContext.SaveChangesAsync();
         }
 
-        public async Task UpdateDebt(Expense expenseFromDb, Expense updatedExpense)
+        public async Task UpdateExpense(Expense expenseFromDb, Expense updatedExpense)
         {
             expenseFromDb.Amount = updatedExpense.Amount;
             expenseFromDb.Category = updatedExpense.Category;

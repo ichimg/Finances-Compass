@@ -142,7 +142,7 @@
                     : ''
                 "
               >
-              {{ element.reason ? element.reason : 'Not provided' }}
+                {{ element.reason ? element.reason : "Not provided" }}
               </td>
             </ng-container>
             <ng-container matColumnDef="status">
@@ -205,17 +205,23 @@
                   <mat-icon
                     matTooltip="Click to delete"
                     [matTooltipDisabled]="
-                      element.status !== 'Pending' || element.isPaid === false
+                      element.status !== 'Pending' ||
+                      element.status !== 'Rejected' ||
+                      element.isPaid === false
                     "
                     matTooltipPosition="right"
                     [ngClass]="
-                      element.status === 'Pending' || element.isPaid === true
+                      element.status === 'Pending' ||
+                      element.status === 'Rejected' ||
+                      element.isPaid === true
                         ? 'delete-icon'
                         : 'delete-icon disabled'
                     "
                     (click)="
-                      element.status === 'Pending' ||
-                        (element.isPaid === true && deleteDebt($event, element))
+                      (element.status === 'Pending' ||
+                        element.status === 'Rejected' ||
+                        element.isPaid === true) &&
+                        deleteDebt($event, element)
                     "
                     >delete_forever</mat-icon
                   >
@@ -354,7 +360,7 @@
                 *matCellDef="let element"
                 [ngClass]="element.isPaid && 'paid-debt'"
               >
-              {{ element.reason ? element.reason : 'Not provided' }}
+                {{ element.reason ? element.reason : "Not provided" }}
               </td>
             </ng-container>
             <ng-container matColumnDef="status">

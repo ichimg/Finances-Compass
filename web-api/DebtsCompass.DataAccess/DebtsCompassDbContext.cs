@@ -72,13 +72,13 @@ namespace DebtsCompass.DataAccess
 
             modelBuilder.Entity<Friendship>()
                 .HasOne(f => f.RequesterUser)
-                .WithMany()
+                .WithMany(u => u.RequestedFriendships)
                 .HasForeignKey(f => f.RequesterUserId)
                 .OnDelete(DeleteBehavior.Restrict);
 
             modelBuilder.Entity<Friendship>()
                 .HasOne(f => f.SelectedUser)
-                .WithMany()
+                .WithMany(u => u.ReceivingFriendships)
                 .HasForeignKey(f => f.SelectedUserId)
                 .OnDelete(DeleteBehavior.Restrict);
 

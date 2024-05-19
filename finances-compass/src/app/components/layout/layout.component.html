@@ -55,7 +55,10 @@
                   ><mat-icon>people</mat-icon>Friends</span
                 ></a
               >
-              <a mat-list-item class="sidebar-item"
+              <a
+                mat-list-item
+                class="sidebar-item"
+                (click)="openSimilarUsersDialog()"
                 ><span class="sidebar-item"
                   ><mat-icon>person_outline</mat-icon>See similar users</span
                 ></a

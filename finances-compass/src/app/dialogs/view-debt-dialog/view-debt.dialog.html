@@ -47,11 +47,13 @@
         </div>
         <div class="detail-row">
           <span class="label">Reason:</span>
-          <span class="value">{{data.debt.reason}}</span>
+          <span class="value">{{data.debt.reason ? data.debt.reason : 'Not provided'}}</span>
         </div>
         <div class="detail-row">
           <span class="label">Status:</span>
-          <span class="value">{{data.debt.status}}</span>
+          <span class="value">{{data.debt.isPaid
+            ? (!data.isUserDebt ? "&#x2705; Collected" : "&#x2705; Paid")
+            : (data.debt.status | statusTransform)}}</span>
         </div>
         <div class="detail-row">
           <span class="label">Paid:</span>

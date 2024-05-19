@@ -80,6 +80,7 @@ namespace DebtsCompass.Domain
                 CurrencyPreference = Enum.Parse<CurrencyPreference>(registerRequest.CurrencyPreference),
                 RegisteredDate = DateTime.UtcNow.Date,
                 DashboardSelectedYear = DateTime.UtcNow.Date.Year,
+                IsDataConsent = registerRequest.IsDataConsent
             };
         }
 
@@ -249,9 +250,9 @@ namespace DebtsCompass.Domain
             {
                 CreatorFirstName = debtAssignment.CreatorUser.UserInfo.FirstName,
                 CreatorLastName = debtAssignment.CreatorUser.UserInfo.LastName,
-                Amount = debtAssignment.SelectedUser.CurrencyPreference == CurrencyPreference.EUR ? 
+                Amount = debtAssignment.SelectedUser.CurrencyPreference == CurrencyPreference.EUR ?
                 (debtAssignment.Debt.Amount * (decimal)debtAssignment.Debt.EurExchangeRate).ToString("#.##") :
-                debtAssignment.SelectedUser.CurrencyPreference == CurrencyPreference.USD ? 
+                debtAssignment.SelectedUser.CurrencyPreference == CurrencyPreference.USD ?
                 (debtAssignment.Debt.Amount * (decimal)debtAssignment.Debt.UsdExchangeRate).ToString("#.##") :
                 debtAssignment.Debt.Amount.ToString("#.##"),
                 Reason = debtAssignment.Debt.BorrowReason,
@@ -390,6 +391,32 @@ namespace DebtsCompass.Domain
             {
                 RegisteredYear = user.RegisteredDate.Year,
                 DashboardSelectedYear = user.DashboardSelectedYear
+            };
+        }
+
+        public static RecommendedUserDto UserToRecommendedUserDto(User user, double[] userVector)
+        {
+            return new RecommendedUserDto 
+            { 
+                Id = user.Id,
+                FirstName = user.UserInfo.FirstName,
+                LastName = user.UserInfo.LastName,
+                Username = user.UserName,
+                Email = user.Email,
+                UserVector = userVector 
+            };
+        }
+
+        public static UserDto RecommendedUserDtoToUserDto(RecommendedUserDto recommendedUserDto, Status friendStatus, bool isPendingFriendRequest = false)
+        {
+            return new UserDto
+            {
+                FirstName = recommendedUserDto.FirstName,
+                LastName = recommendedUserDto.LastName,
+                Username = recommendedUserDto.Username,
+                Email = recommendedUserDto.Email,
+                FriendStatus = friendStatus.ToString(),
+                IsPendingFriendRequest = isPendingFriendRequest
             };
         }
     }

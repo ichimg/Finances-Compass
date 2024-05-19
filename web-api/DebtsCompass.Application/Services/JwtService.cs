@@ -85,7 +85,7 @@ namespace DebtsCompass.Application.Services
                 Issuer = "Backend",
                 Audience = "Frontend",
                 Subject = new ClaimsIdentity(claims),
-                Expires = DateTime.Now.AddMinutes(Convert.ToDouble(configurationSection["ExpiresIn"])),
+                Expires = DateTime.UtcNow.AddMinutes(Convert.ToDouble(configurationSection["ExpiresIn"])),
                 SigningCredentials = signingCredentials
             };
         }

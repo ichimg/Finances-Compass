@@ -16,9 +16,11 @@ namespace DebtsCompass.Presentation.Controllers
     public class UsersController : ControllerBase
     {
         private readonly IUsersService usersService;
-        public UsersController(IUsersService usersService)
+        private readonly IUserRecommandationService userRecommandationService;
+        public UsersController(IUsersService usersService, IUserRecommandationService userRecommandationService)
         {
             this.usersService = usersService;
+            this.userRecommandationService = userRecommandationService;
         }
 
         [HttpGet]
@@ -127,6 +129,25 @@ namespace DebtsCompass.Presentation.Controllers
             {
                 Message = null,
                 Payload = null,
+                StatusCode = HttpStatusCode.OK
+            });
+        }
+
+        [HttpGet("get-similar-users")]
+        [Authorize]
+        public async Task<ActionResult<Response<List<UserDto>>>> GetSimilarUsers([FromQuery] string email, [FromQuery] int numRecommendations)
+        {
+            if (!IsRequestFromValidUser(email))
+            {
+                throw new ForbiddenRequestException();
+            }
+
+            var recommendedUsers = await userRecommandationService.RecommendSimilarUsers(email, numRecommendations);
+
+            return Ok(new Response<List<UserDto>>
+            {
+                Message = null,
+                Payload = recommendedUsers,
                 StatusCode = HttpStatusCode.OK
             });
         }

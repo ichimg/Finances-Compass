@@ -3,13 +3,11 @@ mat-sidenav-container {
 }
 
 .left-sidebar {
-  padding:15px; 
   width: 200px;
   left: 0;
 }
 
 .right-sidebar {
-  padding:15px;
   width: 300px;
   right:0;
 }

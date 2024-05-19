@@ -12,5 +12,6 @@ export interface RegisterRequest {
     password: string;
     confirmPassword: string;
     currencyPreference: string;
+    isDataConsent: boolean;
     clientURI: string;
 }

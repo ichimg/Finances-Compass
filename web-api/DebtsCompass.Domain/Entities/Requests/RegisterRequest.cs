@@ -40,6 +40,8 @@ namespace DebtsCompass.Domain.Entities.Requests
         [MaxLength(3)]
         [Required]
         public string CurrencyPreference { get; set; }
+        [Required]
+        public bool IsDataConsent { get; set; }
         public string ClientURI { get; set; }
     }
 }

@@ -10,6 +10,7 @@ import { SidebarService } from '../../services/sidebar.service';
 import { Router } from '@angular/router';
 import { FriendsDialog } from 'src/app/dialogs/friends-dialog/friends-dialog.dialog';
 import { SettingsDialog } from '../../dialogs/settings-dialog/settings-dialog';
+import { SimilarUsersDialog } from '../../dialogs/similar-users-dialog/similar-users-dialog';
 
 @Component({
   selector: 'app-layout',
@@ -79,8 +80,13 @@ export class LayoutComponent implements OnInit {
   openFriendsDialog(): void {
     this.dialog.open(FriendsDialog);
   }
-
+  
+  openSimilarUsersDialog(): void {
+    this.dialog.open(SimilarUsersDialog);
+  }
+  
   openSettingsDialog(): void {
     this.dialog.open(SettingsDialog, { width: '400px' });
   }
+
 }

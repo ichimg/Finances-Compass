@@ -24,7 +24,7 @@ namespace EmailSender
             string html = ReadHtmlTemplate(@"DebtCreatedEmailTemplate.html");
             html = html.Replace("{creatorName}", $"{debtEmailInfoDto.CreatorFirstName} {debtEmailInfoDto.CreatorLastName}");
             html = html.Replace("{amount}", $"{debtEmailInfoDto.Amount}");
-            html = html.Replace("{reason}", $"{debtEmailInfoDto.Reason}");
+            html = html.Replace("{reason}", debtEmailInfoDto.Reason == string.Empty ? "Not provided" : $"{debtEmailInfoDto.Reason}");
             html = html.Replace("{currency}", $"{debtEmailInfoDto.Currency}");
             html = html.Replace("{dateOfBorrowing}", $"{debtEmailInfoDto.DateOfBorrowing}");
             html = html.Replace("{deadline}", $"{debtEmailInfoDto.Deadline}");
@@ -37,7 +37,7 @@ namespace EmailSender
             string html = ReadHtmlTemplate(@"DebtDeletedEmailTemplate.html");
             html = html.Replace("{creatorName}", $"{debtEmailInfoDto.CreatorFirstName} {debtEmailInfoDto.CreatorLastName}");
             html = html.Replace("{amount}", $"{debtEmailInfoDto.Amount}");
-            html = html.Replace("{reason}", $"{debtEmailInfoDto.Reason}");
+            html = html.Replace("{reason}", debtEmailInfoDto.Reason == string.Empty ? "Not provided" : $"{debtEmailInfoDto.Reason}");
             html = html.Replace("{currency}", $"{debtEmailInfoDto.Currency}");
             html = html.Replace("{dateOfBorrowing}", $"{debtEmailInfoDto.DateOfBorrowing}");
             html = html.Replace("{deadline}", $"{debtEmailInfoDto.Deadline}");
@@ -50,7 +50,7 @@ namespace EmailSender
             string html = ReadHtmlTemplate(@"DebtDeadlineReminderEmailTemplate.html");
             html = html.Replace("{creatorName}", $"{debtEmailInfoDto.CreatorFirstName} {debtEmailInfoDto.CreatorLastName}");
             html = html.Replace("{amount}", $"{debtEmailInfoDto.Amount}");
-            html = html.Replace("{reason}", $"{debtEmailInfoDto.Reason}");
+            html = html.Replace("{reason}", debtEmailInfoDto.Reason == string.Empty ? "Not provided" : $"{debtEmailInfoDto.Reason}");
             html = html.Replace("{currency}", $"{debtEmailInfoDto.Currency}");
             html = html.Replace("{dateOfBorrowing}", $"{debtEmailInfoDto.DateOfBorrowing}");
             html = html.Replace("{deadline}", $"{debtEmailInfoDto.Deadline}");
@@ -63,7 +63,7 @@ namespace EmailSender
             string html = ReadHtmlTemplate(@"LoanDeadlineReminderEmailTemplate.html");
             html = html.Replace("{debtorName}", $"{loanEmailInfoDto.SelectedUserFirstName} {loanEmailInfoDto.SelectedUserLastName}");
             html = html.Replace("{amount}", $"{loanEmailInfoDto.Amount}");
-            html = html.Replace("{reason}", $"{loanEmailInfoDto.Reason}");
+            html = html.Replace("{reason}", loanEmailInfoDto.Reason == string.Empty ? "Not provided" : $"{loanEmailInfoDto.Reason}");
             html = html.Replace("{currency}", $"{loanEmailInfoDto.Currency}");
             html = html.Replace("{dateOfBorrowing}", $"{loanEmailInfoDto.DateOfBorrowing}");
             html = html.Replace("{deadline}", $"{loanEmailInfoDto.Deadline}");

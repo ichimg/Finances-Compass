@@ -87,7 +87,7 @@ table .mat-mdc-header-cell {
 
 .container {
   max-width: 1230px;
-  margin: 50px auto;
+  margin: 0px auto;
   display: flex;
   flex-direction: column;
   gap: 30px;

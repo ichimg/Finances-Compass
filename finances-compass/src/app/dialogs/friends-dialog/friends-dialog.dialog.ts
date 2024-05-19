@@ -16,8 +16,8 @@ import { AuthenticationService } from 'src/app/services/authentication.service';
 export class FriendsDialog {
   userFriends!: UserModel[];
   friendRequests!: UserModel[];
-  userFriendsTotalCount!: number;
-  friendRequestsTotalCount!: number;
+  userFriendsTotalCount: number = 0;
+  friendRequestsTotalCount: number = 0;
 
   constructor(
     public dialogRef: MatDialogRef<FriendsDialog>,
@@ -69,6 +69,8 @@ export class FriendsDialog {
         this.notificationService.showSuccess('Friend request accepted');
         friendRequest.isPendingFriendRequest = false;
         this.userFriends.push(friendRequest);
+        this.userFriendsTotalCount++;
+        this.friendRequestsTotalCount--;
         const index = this.friendRequests.indexOf(friendRequest);
         this.friendRequests.splice(index, 1);
         break;
@@ -94,6 +96,9 @@ export class FriendsDialog {
       case 200:
         this.notificationService.showSuccess('Friend request rejected');
         friendRequest.isPendingFriendRequest = false;
+        this.friendRequestsTotalCount--;
+        const index = this.friendRequests.indexOf(friendRequest);
+        this.friendRequests.splice(index, 1);
         break;
 
       default:
