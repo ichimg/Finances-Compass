@@ -9,5 +9,6 @@ namespace DebtsCompass.Domain.Entities.DtoResponses
         public string AccessToken { get; set; }
         public string RefreshToken { get; set; }
         public string CurrencyPreference { get; set; }
+        public bool IsDataConsent { get; set; }
     }
 }

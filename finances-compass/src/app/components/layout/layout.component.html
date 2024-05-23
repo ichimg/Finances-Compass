@@ -55,7 +55,7 @@
                   ><mat-icon>people</mat-icon>Friends</span
                 ></a
               >
-              <a
+              <a *ngIf="isDataConsent"
                 mat-list-item
                 class="sidebar-item"
                 (click)="openSimilarUsersDialog()"

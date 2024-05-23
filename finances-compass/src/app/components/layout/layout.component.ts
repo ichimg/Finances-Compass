@@ -23,6 +23,7 @@ export class LayoutComponent implements OnInit {
   @ViewChild('rightSidebar') public rightSidebar!: MatSidenav;
 
   userFriends!: UserModel[];
+  isDataConsent!: boolean;
 
   sidenavMode: 'side' | 'over' = 'side';
 
@@ -41,6 +42,7 @@ export class LayoutComponent implements OnInit {
           this.sidenavMode = 'side';
         }
       });
+
   }
 
   ngOnInit(): void {
@@ -53,12 +55,14 @@ export class LayoutComponent implements OnInit {
     });
 
     this.router.events.subscribe(() => {
-      if (this.router.url === '/expenses' || this.router.url === '/dashboard') {
+      if (this.router.url === '/expenses') {
         this.sidenavMode = 'over';
       } else {
         this.sidenavMode = 'side';
       }
     });
+
+    this.isDataConsent = localStorage.getItem('isDataConsent') === 'true';
   }
 
   goToExpenses(): void {

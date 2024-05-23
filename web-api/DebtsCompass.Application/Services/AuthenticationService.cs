@@ -80,7 +80,8 @@ namespace DebtsCompass.Application.Services
                 FirstName = user.UserInfo.FirstName,
                 AccessToken = jwtService.GenerateToken(loginRequest.Email),
                 RefreshToken = refreshToken,
-                CurrencyPreference = user.CurrencyPreference.ToString()
+                CurrencyPreference = user.CurrencyPreference.ToString(),
+                IsDataConsent = user.IsDataConsent
             };
         }
 

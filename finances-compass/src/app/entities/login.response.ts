@@ -6,6 +6,7 @@ export interface LoginResponse {
     accessToken: string;
     refreshToken: string;
     currencyPreference: string;
+    isDataConsent: boolean;
   };
   statusCode: number;
 }

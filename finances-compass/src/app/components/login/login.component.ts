@@ -60,6 +60,7 @@ export class LoginComponent implements OnInit {
               );
               localStorage.setItem('currencyPreference', response.payload.currencyPreference);
               localStorage.setItem('userFirstName', response.payload.firstName);
+              localStorage.setItem('isDataConsent', response.payload.isDataConsent.toString());
 
               this.notificationService.showSuccess("You're logged in");
               this.router.navigate(['dashboard']);

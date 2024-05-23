@@ -394,7 +394,7 @@ namespace DebtsCompass.Domain
             };
         }
 
-        public static RecommendedUserDto UserToRecommendedUserDto(User user, double[] userVector)
+        public static RecommendedUserDto UserToRecommendedUserDto(User user, double[] userVector, double cosineSimilarity)
         {
             return new RecommendedUserDto 
             { 
@@ -403,7 +403,8 @@ namespace DebtsCompass.Domain
                 LastName = user.UserInfo.LastName,
                 Username = user.UserName,
                 Email = user.Email,
-                UserVector = userVector 
+                UserVector = userVector,
+                CosineSimilarity = cosineSimilarity
             };
         }
 

@@ -8,5 +8,6 @@
         public string Username { get; set; }
         public string Email { get; set; }
         public double[] UserVector { get; set; }
+        public double CosineSimilarity { get; set; }
     }
 }

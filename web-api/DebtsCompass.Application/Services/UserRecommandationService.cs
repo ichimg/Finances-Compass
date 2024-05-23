@@ -34,35 +34,16 @@ namespace DebtsCompass.Application.Services
             var targetUserVector = similarityService.GetUserVector(targetUser, allCategories);
             var recommendedUsers = new List<RecommendedUserDto>();
 
-            int guidSum = targetUser.Id.Where(char.IsDigit).Sum(c => c - '0');
-            var random = new Random(DateTime.Now.Day + guidSum);
-            allUsers = allUsers.OrderBy(u => random.Next()).ToList();
 
             foreach (var user in allUsers)
             {
                 var userVector = similarityService.GetUserVector(user, allCategories);
-                recommendedUsers.Add(Mapper.UserToRecommendedUserDto(user, userVector));
-
-                if (recommendedUsers.Count >= numRecommendations)
-                {
-                    break;
-                }
+                double cosineSimilarity = similarityService.GetCosineSimilarity(targetUserVector, userVector);
+                recommendedUsers.Add(Mapper.UserToRecommendedUserDto(user, userVector, cosineSimilarity));
             }
 
-            recommendedUsers.Sort((u1, u2) =>
-            {
-                var similarity1 = -similarityService.GetCosineSimilarity(targetUserVector, u1.UserVector);
-                var similarity2 = -similarityService.GetCosineSimilarity(targetUserVector, u2.UserVector);
-
-                return similarity1.CompareTo(similarity2);
-            });
-
-            var userDtos = new List<UserDto>();
-            foreach (var recommendedUser in recommendedUsers)
-            {
-                UserDto userDto = Mapper.RecommendedUserDtoToUserDto(recommendedUser, Status.None, false);
-                userDtos.Add(userDto);
-            }
+            recommendedUsers = recommendedUsers.OrderByDescending(u => u.CosineSimilarity).ToList();
+            var userDtos = recommendedUsers.Take(numRecommendations).Select(ru => Mapper.RecommendedUserDtoToUserDto(ru, Status.None, false)).ToList();
 
             return userDtos;
         }
