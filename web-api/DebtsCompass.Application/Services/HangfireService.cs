@@ -32,14 +32,14 @@ namespace DebtsCompass.Application.Services
             return jobId;
         }
 
-        public async Task DeleteScheduledJob(string jobId)
+        public async Task<bool> DeleteScheduledJob(string jobId)
         {
             if (jobId is null)
             {
-                return;
+                return false;
             }
 
-            backgroundJobClient.Delete(jobId);
+            return backgroundJobClient.Delete(jobId);
         }
     }
 }

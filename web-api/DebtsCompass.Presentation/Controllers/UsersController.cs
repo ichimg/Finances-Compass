@@ -26,7 +26,7 @@ namespace DebtsCompass.Presentation.Controllers
         [HttpGet]
         [Route("search-users")]
         [Authorize]
-        public async Task<ActionResult<PagedList<UserDto>>> SearchUsers(
+        public async Task<ActionResult<PagedResponse<UserDto>>> SearchUsers(
             [FromHeader] string email,
             [FromQuery] string searchQuery,
             [FromQuery] PagedParameters pagedParameters)
@@ -41,19 +41,7 @@ namespace DebtsCompass.Presentation.Controllers
 
             var users = await usersService.SearchUsers(searchQuery, email, pagedParameters); 
 
-            var metadata = new
-            {
-                users.TotalCount,
-                users.PageSize,
-                users.CurrentPage,
-                users.TotalPages,
-                users.HasNext,
-                users.HasPrevious
-            };
-
-            Response.Headers.Add("X-Pagination", JsonConvert.SerializeObject(metadata));
-
-            return Ok(new Response<List<UserDto>>
+            return Ok(new Response<PagedResponse<UserDto>>
             {
                 Message = null,
                 Payload = users,

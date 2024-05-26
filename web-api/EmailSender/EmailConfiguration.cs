@@ -12,13 +12,11 @@ namespace EmailSender
 
         public static string GetEmailTemplatesFolderPath()
         {
-            Assembly assembly = Assembly.GetExecutingAssembly();
-            string assemblyLocation = assembly.Location;
+            string currentDirectory = Environment.CurrentDirectory;
+            DirectoryInfo currentDirectoryInfo = new DirectoryInfo(currentDirectory);
+            DirectoryInfo parentDirectoryInfo = currentDirectoryInfo.Parent;
 
-            string solutionPath = FindSolutionPath(assemblyLocation);
-
-            return $@"{solutionPath}\EmailSender\EmailTemplates";
-
+            return $@"{parentDirectoryInfo}\EmailSender\EmailTemplates";
         }
 
         private static string FindSolutionPath(string assemblyLocation)

@@ -26,7 +26,7 @@ namespace DebtsCompass.Presentation.Controllers
         [HttpGet]
         [Route("friends")]
         [Authorize]
-        public async Task<ActionResult<PagedList<UserDto>>> GetFriends([FromHeader] string email, [FromQuery] PagedParameters pagedParameters)
+        public async Task<ActionResult<PagedResponse<UserDto>>> GetFriends([FromHeader] string email, [FromQuery] PagedParameters pagedParameters)
         {
             if (!IsRequestFromValidUser(email))
             {
@@ -49,19 +49,7 @@ namespace DebtsCompass.Presentation.Controllers
             {
                 var friends = await friendshipsService.GetUserFriendsByEmail(email, pagedParameters);
 
-                var metadata = new
-                {
-                    friends.TotalCount,
-                    friends.PageSize,
-                    friends.CurrentPage,
-                    friends.TotalPages,
-                    friends.HasNext,
-                    friends.HasPrevious
-                };
-
-                Response.Headers.Add("X-Pagination", JsonConvert.SerializeObject(metadata));
-
-                Response<List<UserDto>> response = new Response<List<UserDto>>
+                Response<PagedResponse<UserDto>> response = new Response<PagedResponse<UserDto>>
                 {
                     Message = null,
                     Payload = friends,
@@ -75,7 +63,7 @@ namespace DebtsCompass.Presentation.Controllers
         [HttpGet]
         [Route("friend-requests")]
         [Authorize]
-        public async Task<ActionResult<PagedList<UserDto>>> GetFriendRequests([FromHeader] string email, [FromQuery] PagedParameters pagedParameters)
+        public async Task<ActionResult<PagedResponse<UserDto>>> GetFriendRequests([FromHeader] string email, [FromQuery] PagedParameters pagedParameters)
         {
             if (!IsRequestFromValidUser(email))
             {
@@ -84,19 +72,7 @@ namespace DebtsCompass.Presentation.Controllers
 
             var friends = await friendshipsService.GetUserFriendRequestsById(email, pagedParameters);
 
-            var metadata = new
-            {
-                friends.TotalCount,
-                friends.PageSize,
-                friends.CurrentPage,
-                friends.TotalPages,
-                friends.HasNext,
-                friends.HasPrevious
-            };
-
-            Response.Headers.Add("X-Pagination", JsonConvert.SerializeObject(metadata));
-
-            Response<List<UserDto>> response = new Response<List<UserDto>>
+            Response<PagedResponse<UserDto>> response = new Response<PagedResponse<UserDto>>
             {
                 Message = null,
                 Payload = friends,

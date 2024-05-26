@@ -14,7 +14,7 @@ namespace DebtsCompass.DataAccess.Repositories
             this.dbContext = dbContext;
         }
 
-        public async Task<PagedList<User>> GetUserFriendsById(string userId, PagedParameters pagedParameters)
+        public async Task<PagedResponse<User>> GetUserFriendsById(string userId, PagedParameters pagedParameters)
         {
             return await dbContext.Friendships
                 .Include(f => f.RequesterUser)
@@ -40,7 +40,7 @@ namespace DebtsCompass.DataAccess.Repositories
               .ToListAsync();
         }
 
-        public async Task<PagedList<User>> GetUserFriendRequestsById(string userId, PagedParameters pagedParameters)
+        public async Task<PagedResponse<User>> GetUserFriendRequestsById(string userId, PagedParameters pagedParameters)
         {
             return await dbContext.Friendships
                 .Include(f => f.RequesterUser)

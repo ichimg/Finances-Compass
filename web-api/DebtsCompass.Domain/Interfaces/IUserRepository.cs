@@ -13,7 +13,7 @@ namespace DebtsCompass.Domain.Interfaces
         Task<User> GetUserByUsername(string username);
         Task Add(User user);    
         Task Update(User user);
-        Task<PagedList<User>> GetUsersBySearchQuery(string query, User currentUser, PagedParameters pagedParameters);
+        Task<PagedResponse<User>> GetUsersBySearchQuery(string query, User currentUser, PagedParameters pagedParameters);
         Task ChangeDashboardYear(User user, int year);
         Task ChangeCurrencyPreference(User user, CurrencyPreference currency);
     }

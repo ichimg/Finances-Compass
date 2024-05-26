@@ -1,0 +1,10 @@
+{
+  "dependencies": {
+    "mssql1": {
+      "secretStore": "AzureAppSettings",
+      "resourceId": "/subscriptions/[parameters('subscriptionId')]/resourceGroups/[parameters('resourceGroupName')]/providers/Microsoft.Sql/servers/finances-compass/databases/FinancesCompassDb",
+      "type": "mssql.azure",
+      "connectionId": "ConnectionStrings:DebtsCompassConnectionString"
+    }
+  }
+}

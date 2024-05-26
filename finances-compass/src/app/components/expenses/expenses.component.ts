@@ -123,8 +123,8 @@ export class ExpensesComponent implements OnInit {
         this.expensesService.getAllExpensesAndIncomesByMonth(year, month)
       );
 
-      if (response.body.statusCode === 200) {
-        this.expensesAndIncomes = response.body.payload.map((item: any) => {
+      if (response.statusCode === 200) {
+        this.expensesAndIncomes = response.payload.items.map((item: any) => {
           if (item.isExpense) {
             return {
               title: `Expense -${
@@ -162,12 +162,8 @@ export class ExpensesComponent implements OnInit {
           }
         });
       }
-      let totalExpenses = JSON.parse(
-        response.headers.get('X-Total')!
-      ).TotalAmountExpenses;
-      let totalIncomes = JSON.parse(
-        response.headers.get('X-Total')!
-      ).TotalAmountIncomes;
+      let totalExpenses = response.payload.totalAmountExpenses;
+      let totalIncomes = response.payload.totalAmountIncomes;
       this.balance = parseFloat((totalIncomes - totalExpenses).toFixed(2));
       this.data.datasets[0].data[0] = totalExpenses;
       this.data.datasets[1].data[0] = totalIncomes;

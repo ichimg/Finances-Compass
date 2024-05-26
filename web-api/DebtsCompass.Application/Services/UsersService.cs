@@ -18,7 +18,7 @@ namespace DebtsCompass.Application.Services
             this.friendshipRepository = friendshipRepository;
         }
 
-        public async Task<PagedList<UserDto>> SearchUsers(string query, string email, PagedParameters pagedParameters)
+        public async Task<PagedResponse<UserDto>> SearchUsers(string query, string email, PagedParameters pagedParameters)
         {
             User currentUser = await userRepository.GetUserByEmail(email);
 
@@ -26,7 +26,7 @@ namespace DebtsCompass.Application.Services
 
 
             var userDtos = new List<UserDto>();
-            foreach (var user in usersFromDb)
+            foreach (var user in usersFromDb.Items)
             {
                 bool isPendingFriendRequest = false;
                 Friendship friendshipFromDb = await friendshipRepository.GetUsersFriendship(currentUser.Id, user.Id);
@@ -55,7 +55,7 @@ namespace DebtsCompass.Application.Services
                 userDtos.Add(userDto);
             }
 
-            return new PagedList<UserDto>(userDtos, usersFromDb.TotalCount, usersFromDb.CurrentPage, usersFromDb.PageSize);
+            return new PagedResponse<UserDto>(userDtos, usersFromDb.TotalCount, usersFromDb.CurrentPage, usersFromDb.PageSize);
         }
 
         public async Task<YearsDto> GetDashboardYear(string email)

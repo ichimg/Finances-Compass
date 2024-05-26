@@ -142,9 +142,6 @@ namespace DebtsCompass.Application.Services
                 ReceiverInfoDto receiverInfoDto = Mapper.NonUserToReceiverInfoDto(debtAssignment.NonUser);
                 DebtEmailInfoDto createdDebtEmailInfoDto = Mapper.UserToDebtEmailInfoDto(creatorUser);
                 await emailService.SendNoAccountDebtCreatedNotification(receiverInfoDto, createdDebtEmailInfoDto);
-
-                string jobId = await hangfireService.ScheduleDeadlineEmails(debtAssignment, receiverInfoDto);
-                await debtAssignmentRepository.UpdateDeadlineReminderJobId(debtAssignment, jobId);
             }
 
             return debtAssignment.Id;
@@ -171,7 +168,7 @@ namespace DebtsCompass.Application.Services
             else if (debtFromDb.NonUser is not null)
             {
                 ReceiverInfoDto receiverInfoDto = Mapper.NonUserToReceiverInfoDto(debtFromDb.NonUser);
-                DebtEmailInfoDto deletedDebtEmailInfoDto = Mapper.DebtAssignmentToDebtEmailInfoDto(debtFromDb);
+                DebtEmailInfoDto deletedDebtEmailInfoDto = Mapper.NoAccountDebtAssignmentToDebtEmailInfoDto(debtFromDb);
 
                 await debtRepository.DeleteDebt(debtFromDb.Debt);
                 await emailService.SendDebtDeletedNotification(receiverInfoDto, deletedDebtEmailInfoDto);
@@ -196,11 +193,17 @@ namespace DebtsCompass.Application.Services
             }
 
             bool isUserAccount = editDebtRequest.IsUserAccount;
+            bool isDeadlineChanged = false;
             DebtAssignment updatedDebt;
             if (isUserAccount)
             {
                 User selectedUser = await userRepository.GetUserByEmail(editDebtRequest.Email);
                 updatedDebt = Mapper.EditDebtRequestToDebtAssignment(editDebtRequest, selectedUser);
+
+                if (debtAssignmentFromDb.Debt.DeadlineDate != updatedDebt.Debt.DeadlineDate)
+                {
+                    isDeadlineChanged = true;
+                }
             }
             else
             {
@@ -209,6 +212,15 @@ namespace DebtsCompass.Application.Services
             }
 
             await debtAssignmentRepository.UpdateDebt(debtAssignmentFromDb, updatedDebt);
+
+            if (isDeadlineChanged) 
+            {
+                await hangfireService.DeleteScheduledJob(debtAssignmentFromDb.DeadlineReminderJobId!);
+
+                ReceiverInfoDto receiverInfoDto = Mapper.UserToReceiverInfoDto(debtAssignmentFromDb.SelectedUser);
+                string jobId = await hangfireService.ScheduleDeadlineEmails(debtAssignmentFromDb, receiverInfoDto);
+                await debtAssignmentRepository.UpdateDeadlineReminderJobId(debtAssignmentFromDb, jobId);
+            }
         }
 
         public async Task ApproveDebt(string debtId, string email)
@@ -255,7 +267,7 @@ namespace DebtsCompass.Application.Services
             var debtsFromDb = await debtAssignmentRepository.GetAllUserDebtsByEmail(email);
 
             loansFromDb = loansFromDb.Where(l => l.Debt.DateOfBorrowing.Year == user.DashboardSelectedYear).ToList();
-            debtsFromDb= debtsFromDb.Where(d => d.Debt.DateOfBorrowing.Year == user.DashboardSelectedYear).ToList();
+            debtsFromDb = debtsFromDb.Where(d => d.Debt.DateOfBorrowing.Year == user.DashboardSelectedYear).ToList();
 
 
             if (user.CurrencyPreference == CurrencyPreference.EUR)

@@ -262,6 +262,20 @@ namespace DebtsCompass.Domain
             };
         }
 
+        public static DebtEmailInfoDto NoAccountDebtAssignmentToDebtEmailInfoDto(DebtAssignment debtAssignment)
+        {
+            return new DebtEmailInfoDto
+            {
+                CreatorFirstName = debtAssignment.CreatorUser.UserInfo.FirstName,
+                CreatorLastName = debtAssignment.CreatorUser.UserInfo.LastName,
+                Amount = debtAssignment.Debt.Amount.ToString("#.##"),
+                Reason = debtAssignment.Debt.BorrowReason,
+                Currency = CurrencyPreference.RON.ToString(),
+                DateOfBorrowing = debtAssignment.Debt.DateOfBorrowing.ToString("dd MMM yyyy"),
+                Deadline = debtAssignment.Debt.DeadlineDate.ToString("dd MMM yyyy")
+            };
+        }
+
         public static Friendship FriendRequestToFriendship(FriendRequest friendRequest, User userOne, User userTwo)
         {
             return new Friendship

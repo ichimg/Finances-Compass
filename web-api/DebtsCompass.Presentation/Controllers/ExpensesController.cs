@@ -10,6 +10,7 @@ using DebtsCompass.Application.Services;
 using DebtsCompass.Domain.Entities.DtoResponses;
 using DebtsCompass.Domain.Entities.Models;
 using Newtonsoft.Json;
+using DebtsCompass.Domain.TotalList;
 
 namespace DebtsCompass.Presentation.Controllers
 {
@@ -82,7 +83,7 @@ namespace DebtsCompass.Presentation.Controllers
         [HttpGet]
         [Route("get-expenses-incomes")]
         [Authorize]
-        public async Task<ActionResult<List<ExpenseOrIncomeDto>>> GetAllExpensesAndIncomes([FromHeader] string email,
+        public async Task<ActionResult<TotalList<ExpenseOrIncomeDto>>> GetAllExpensesAndIncomes([FromHeader] string email,
             [FromQuery] YearMonthDto yearMonthDto)
         {
             if (!IsRequestFromValidUser(email))
@@ -92,15 +93,7 @@ namespace DebtsCompass.Presentation.Controllers
 
             var expensesAndIncomes = await expensesService.GetAllByEmail(email, yearMonthDto);
 
-            var metadata = new
-            {
-                expensesAndIncomes.TotalAmountExpenses,
-                expensesAndIncomes.TotalAmountIncomes,
-            };
-
-            Response.Headers.Add("X-Total", JsonConvert.SerializeObject(metadata));
-
-            Response<List<ExpenseOrIncomeDto>> response = new Response<List<ExpenseOrIncomeDto>>
+            Response<TotalList<ExpenseOrIncomeDto>> response = new Response<TotalList<ExpenseOrIncomeDto>>
             {
                 Message = null,
                 Payload = expensesAndIncomes,

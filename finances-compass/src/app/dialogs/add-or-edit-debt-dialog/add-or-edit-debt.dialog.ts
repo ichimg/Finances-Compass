@@ -67,7 +67,7 @@ export class AddOrEditDebtDialog implements OnInit {
     this.debts = this.data.debts;
 
     this.usersService.getAllFriends().subscribe((response) => {
-      this.userFriends = response.body.payload;
+      this.userFriends = response.payload;
 
       if (this.data.selectedDebt !== undefined) {
         this.fillEditModalForm();

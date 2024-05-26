@@ -1,7 +1,8 @@
 ﻿namespace DebtsCompass.Domain.TotalList
 {
-    public class TotalList<T> : List<T>
+    public class TotalList<T>
     {
+        public List<T> Items { get; private set; }
         public decimal TotalAmountExpenses { get; private set; }
         public decimal TotalAmountIncomes { get; private set; }
 
@@ -9,8 +10,7 @@
         {
             TotalAmountExpenses = totalExpenses;
             TotalAmountIncomes = totalIncomes;
-
-            AddRange(items);
+            Items = items;
         }
     }
 }

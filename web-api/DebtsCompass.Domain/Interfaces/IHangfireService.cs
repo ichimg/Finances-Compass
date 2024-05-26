@@ -6,6 +6,6 @@ namespace DebtsCompass.Domain.Interfaces
     public interface IHangfireService
     {
         Task<string> ScheduleDeadlineEmails(DebtAssignment debtAssignment, ReceiverInfoDto receiverInfoDto);
-        Task DeleteScheduledJob(string jobId);
+        Task<bool> DeleteScheduledJob(string jobId);
     }
 }

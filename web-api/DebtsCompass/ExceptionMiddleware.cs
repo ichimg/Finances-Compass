@@ -91,7 +91,7 @@ namespace DebtsCompass
                 default:
                     statusCode = HttpStatusCode.InternalServerError;
                     message = "Internal Server Error";
-                    logger.LogError("An exception occurred while processing the request.");
+                    logger.LogError(ex.Message);
                     break;
             }
 

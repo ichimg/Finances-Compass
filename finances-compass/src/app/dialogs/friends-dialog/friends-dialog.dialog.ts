@@ -34,10 +34,8 @@ export class FriendsDialog {
         this.paginationService.pageSize
       )
       .subscribe((response) => {
-        this.userFriends = response.body.payload;
-        this.userFriendsTotalCount = JSON.parse(
-          response.headers.get('X-Pagination')!
-        ).TotalCount;
+        this.userFriends = response.payload.items;
+        this.userFriendsTotalCount = response.payload.totalCount;
       });
 
     this.usersService
@@ -46,10 +44,8 @@ export class FriendsDialog {
         this.paginationService.pageSize
       )
       .subscribe((response) => {
-        this.friendRequests = response.body.payload;
-        this.friendRequestsTotalCount = JSON.parse(
-          response.headers.get('X-Pagination')!
-        ).TotalCount;
+        this.friendRequests = response.payload.items;
+        this.friendRequestsTotalCount = response.payload.totalCount;
       });
   }
 
@@ -118,7 +114,7 @@ export class FriendsDialog {
         )
         .subscribe(
           (response) => {
-            this.userFriends = this.userFriends!.concat(response.body.payload);
+            this.userFriends = this.userFriends!.concat(response.payload.items);
           },
           () => {
             this.notificationService.showError('Something went wrong');
@@ -139,7 +135,7 @@ export class FriendsDialog {
         .subscribe(
           (response) => {
             this.friendRequests = this.friendRequests!.concat(
-              response.body.payload
+              response.payload.items
             );
           },
           () => {

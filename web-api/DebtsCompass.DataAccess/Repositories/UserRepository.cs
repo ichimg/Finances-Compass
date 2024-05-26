@@ -41,7 +41,7 @@ namespace DebtsCompass.DataAccess.Repositories
                 .ThenInclude(e => e.Category)
                 .Include(u => u.UserInfo)
                 .ThenInclude(u => u.Address)
-                .Where(u => u.IsDataConsent && u.Email != targetUserEmail 
+                .Where(u => u.IsDataConsent && u.Email != targetUserEmail && u.EmailConfirmed 
                 && !u.ReceivingFriendships.Any(rf => rf.RequesterUser.Email == targetUserEmail) && !u.RequestedFriendships.Any(rf => rf.SelectedUser.Email == targetUserEmail))
                 .ToListAsync();
         }
@@ -91,7 +91,7 @@ namespace DebtsCompass.DataAccess.Repositories
             await dbContext.SaveChangesAsync();
         }
 
-        public async Task<PagedList<User>> GetUsersBySearchQuery(string query, User currentUser, PagedParameters pagedParameters)
+        public async Task<PagedResponse<User>> GetUsersBySearchQuery(string query, User currentUser, PagedParameters pagedParameters)
         {
             return await dbContext.Users
             .Include(u => u.UserInfo)

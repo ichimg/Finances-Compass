@@ -5,7 +5,7 @@ namespace DebtsCompass.Domain.Interfaces
 {
     public interface IUsersService
     {
-        Task<PagedList<UserDto>> SearchUsers(string query, string email, PagedParameters pagedParameters);
+        Task<PagedResponse<UserDto>> SearchUsers(string query, string email, PagedParameters pagedParameters);
         Task<YearsDto> GetDashboardYear(string email);
         Task ChangeDashboardYear(string email, int year);
         Task<string> GetUserCurrencyPreference(string email);

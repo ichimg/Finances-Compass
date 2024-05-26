@@ -21,7 +21,6 @@ export class UsersService {
 
     return this.http.get<any>(getAllEndpoint, {
       headers: headers,
-      observe: 'response',
     });
   }
 
@@ -35,7 +34,6 @@ export class UsersService {
 
     return this.http.get<any>(getAllEndpoint, {
       headers: headers,
-      observe: 'response',
     });
   }
 
@@ -49,7 +47,6 @@ export class UsersService {
 
     return this.http.get<any>(getAllEndpoint, {
       headers: headers,
-      observe: 'response',
     });
   }
 
@@ -63,7 +60,6 @@ export class UsersService {
 
     return this.http.get<any>(searchUsersEndpoint, {
       headers: headers,
-      observe: 'response',
     });
   }
 

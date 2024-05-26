@@ -20,18 +20,18 @@ namespace DebtsCompass.Application.Services
             this.userRepository = userRepository;
         }
 
-        public async Task<PagedList<UserDto>> GetUserFriendsByEmail(string email, PagedParameters pagedParameters)
+        public async Task<PagedResponse<UserDto>> GetUserFriendsByEmail(string email, PagedParameters pagedParameters)
         {
             User userFromDb = await userRepository.GetUserByEmail(email) ?? throw new UserNotFoundException(email);
-            PagedList<User> friendsFromDb = await friendshipRepository.GetUserFriendsById(userFromDb.Id, pagedParameters);
+            PagedResponse<User> friendsFromDb = await friendshipRepository.GetUserFriendsById(userFromDb.Id, pagedParameters);
 
-            var userDtos = friendsFromDb.Select(u =>
+            var userDtos = friendsFromDb.Items.Select(u =>
             {
                 return Mapper.UserToUserDto(u, Status.Accepted); // assuming it's indeed a friend that has mandatory the request accepted
             }).ToList();
 
             var userDtosPagedList =
-                new PagedList<UserDto>(userDtos, friendsFromDb.TotalCount, friendsFromDb.CurrentPage, friendsFromDb.PageSize);
+                new PagedResponse<UserDto>(userDtos, friendsFromDb.TotalCount, friendsFromDb.CurrentPage, friendsFromDb.PageSize);
 
             return userDtosPagedList;
         }
@@ -49,18 +49,18 @@ namespace DebtsCompass.Application.Services
             return userDtos;
         }
 
-        public async Task<PagedList<UserDto>> GetUserFriendRequestsById(string email, PagedParameters pagedParameters)
+        public async Task<PagedResponse<UserDto>> GetUserFriendRequestsById(string email, PagedParameters pagedParameters)
         {
             User userFromDb = await userRepository.GetUserByEmail(email) ?? throw new UserNotFoundException(email);
-            PagedList<User> friendsFromDb = await friendshipRepository.GetUserFriendRequestsById(userFromDb.Id, pagedParameters);
+            PagedResponse<User> friendsFromDb = await friendshipRepository.GetUserFriendRequestsById(userFromDb.Id, pagedParameters);
 
-            var userDtos = friendsFromDb.Select(u =>
+            var userDtos = friendsFromDb.Items.Select(u =>
             {
                 return Mapper.UserToUserDto(u, Status.Pending, true); // assuming it's indeed a friend request that has mandatory the request pending
             }).ToList();
 
             var userDtosPagedList =
-                new PagedList<UserDto>(userDtos, friendsFromDb.TotalCount, friendsFromDb.CurrentPage, friendsFromDb.PageSize);
+                new PagedResponse<UserDto>(userDtos, friendsFromDb.TotalCount, friendsFromDb.CurrentPage, friendsFromDb.PageSize);
 
             return userDtosPagedList;
         }

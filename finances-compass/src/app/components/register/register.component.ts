@@ -13,6 +13,7 @@ import { passwordValidator } from '../../validators/password-validator';
 import { passwordMatchingValidator as passwordMatchingValidator } from '../../validators/confirm-password-validator';
 import { DataConsentDialog } from '../../dialogs/data-consent-dialog/data-consent-dialog';
 import { MatDialog } from '@angular/material/dialog';
+import { environment } from '../../../environments/environment';
 
 @Component({
   selector: 'app-register',
@@ -123,7 +124,7 @@ export class RegisterComponent implements OnInit {
       confirmPassword: this.registerForm.value.confirmPassword,
       currencyPreference: this.registerForm.value.currencyPreference,
       isDataConsent: false,
-      clientURI: 'http://localhost:4200/emailconfirmation',
+      clientURI: `${environment.clientURI}/emailconfirmation`,
     });
 
     const dialogRef = this.dialog.open(DataConsentDialog, {

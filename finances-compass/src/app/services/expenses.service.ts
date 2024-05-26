@@ -60,8 +60,7 @@ export class ExpensesService {
     }).set('email', email);
 
     return this.httpClient.get<any>(getAllEndpoint, {
-      headers: headers,
-      observe: 'response',
+      headers: headers
     });
   }
 

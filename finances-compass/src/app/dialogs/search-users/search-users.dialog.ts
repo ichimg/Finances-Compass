@@ -40,7 +40,7 @@ export class SearchUsersDialog implements OnInit {
       )
       .subscribe(
         (response) => {
-          this.users = response.body.payload;
+          this.users = response.payload.items;
 
           this.searchedUsers = this.users!.map((user) => {
             const tuple = this.mapFriendStatusIcon(user.friendStatus);
@@ -52,9 +52,7 @@ export class SearchUsersDialog implements OnInit {
             };
           });
 
-          this.usersTotalCount = JSON.parse(
-            response.headers.get('X-Pagination')!
-          ).TotalCount;
+          this.usersTotalCount = response.payload.totalCount;
         },
         () => {
           this.notificationService.showError('Something went wrong');
@@ -74,7 +72,7 @@ export class SearchUsersDialog implements OnInit {
         )
         .subscribe(
           (response) => {
-            this.users = this.users!.concat(response.body.payload);
+            this.users = this.users!.concat(response.payload.items);
 
             this.searchedUsers = this.users!.map((user) => {
               const tuple = this.mapFriendStatusIcon(user.friendStatus);

@@ -86,7 +86,7 @@
         mat-raised-button
         color="primary"
         class="paid-btn"
-        *ngIf="!data.isUserDebt && !data.debt.isPaid && data.debt.status === 'Accepted' || data.debt.status ==='Rejected'"
+        *ngIf="!data.isUserDebt && !data.debt.isPaid && data.debt.status === 'Accepted'"
         (click)="markDebtPaid()"
       >
         Mark as paid
