@@ -54,6 +54,10 @@ mat-form-field {
   mat-hint {
     visibility: hidden;
   }
+
+  .column {
+    align-items: center;
+  }
 }
 
 @media screen and (max-width: 480px) {

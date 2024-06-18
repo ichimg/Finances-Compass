@@ -17,6 +17,7 @@ namespace DebtsCompass.DataAccess.Repositories
         {
             return await dbContext.DebtAssignments
                 .Include(da => da.Debt)
+                .ThenInclude(d => d.CurrencyRate)
                 .Include(da => da.CreatorUser)
                 .Include(da => da.NonUser)
                 .Include(da => da.SelectedUser)
@@ -31,6 +32,7 @@ namespace DebtsCompass.DataAccess.Repositories
         {
             return await dbContext.DebtAssignments
                 .Include(da => da.Debt)
+                .ThenInclude(d => d.CurrencyRate)
                 .Include(da => da.CreatorUser)
                 .ThenInclude(u => u.UserInfo)
                 .Include(da => da.SelectedUser)
@@ -44,6 +46,7 @@ namespace DebtsCompass.DataAccess.Repositories
         {
             return await dbContext.DebtAssignments
                 .Include(da => da.Debt)
+                .ThenInclude(d => d.CurrencyRate)
                 .Include(da => da.CreatorUser)
                 .ThenInclude(u => u.UserInfo)
                 .Include(da => da.NonUser)
@@ -78,6 +81,7 @@ namespace DebtsCompass.DataAccess.Repositories
                                                                       .ThenInclude(u => u.UserInfo)
                                                                       .Include(d => d.NonUser)
                                                                       .Include(d => d.Debt)
+                                                                      .ThenInclude(d => d.CurrencyRate)
                                                                       .FirstOrDefaultAsync();
 
             return debtAssignmentFromDb;
@@ -91,6 +95,7 @@ namespace DebtsCompass.DataAccess.Repositories
             debtFromDb.Debt.DeadlineDate = updatedDebt.Debt.DeadlineDate;
             debtFromDb.SelectedUser = updatedDebt.SelectedUser;
             debtFromDb.NonUser = updatedDebt.NonUser;
+            debtFromDb.Debt.CurrencyRate = updatedDebt.Debt.CurrencyRate;
 
             await dbContext.SaveChangesAsync();
         }

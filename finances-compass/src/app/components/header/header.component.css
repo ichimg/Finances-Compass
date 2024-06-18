@@ -40,6 +40,12 @@ img {
   padding-right: 5px;
 }
 
+@media screen and (max-width: 768px) {
+  .btn {
+    height: 100%;
+  }
+}
+
 @media screen and (max-width: 520px) {
   header {
     width: 100%;

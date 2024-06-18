@@ -5,6 +5,13 @@ namespace EmailSender
 {
     public class EmailTemplatesService
     {
+        private readonly EmailConfiguration emailConfiguration;
+
+        public EmailTemplatesService(EmailConfiguration emailConfiguration)
+        {
+            this.emailConfiguration = emailConfiguration;
+        }
+
         public string GetEmailConfirmationHtml(string callback)
         {
             string html = ReadHtmlTemplate(@"EmailConfirmationEmailTemplate.html");
@@ -16,6 +23,7 @@ namespace EmailSender
         {
             string html = ReadHtmlTemplate(@"NoAccountDebtCreatedEmailTemplate.html");
             html = html.Replace("{creatorName}", $"{debtEmailInfoDto.CreatorFirstName} {debtEmailInfoDto.CreatorLastName}");
+            html = html.Replace("{link}", emailConfiguration.ClientUri);
             return html;
         }
 
@@ -28,6 +36,7 @@ namespace EmailSender
             html = html.Replace("{currency}", $"{debtEmailInfoDto.Currency}");
             html = html.Replace("{dateOfBorrowing}", $"{debtEmailInfoDto.DateOfBorrowing}");
             html = html.Replace("{deadline}", $"{debtEmailInfoDto.Deadline}");
+            html = html.Replace("{link}", emailConfiguration.ClientUri);
 
             return html;
         }
@@ -41,6 +50,7 @@ namespace EmailSender
             html = html.Replace("{currency}", $"{debtEmailInfoDto.Currency}");
             html = html.Replace("{dateOfBorrowing}", $"{debtEmailInfoDto.DateOfBorrowing}");
             html = html.Replace("{deadline}", $"{debtEmailInfoDto.Deadline}");
+            html = html.Replace("{link}", emailConfiguration.ClientUri);
 
             return html;
         }
@@ -54,6 +64,7 @@ namespace EmailSender
             html = html.Replace("{currency}", $"{debtEmailInfoDto.Currency}");
             html = html.Replace("{dateOfBorrowing}", $"{debtEmailInfoDto.DateOfBorrowing}");
             html = html.Replace("{deadline}", $"{debtEmailInfoDto.Deadline}");
+            html = html.Replace("{link}", emailConfiguration.ClientUri);
 
             return html;
         }
@@ -67,6 +78,7 @@ namespace EmailSender
             html = html.Replace("{currency}", $"{loanEmailInfoDto.Currency}");
             html = html.Replace("{dateOfBorrowing}", $"{loanEmailInfoDto.DateOfBorrowing}");
             html = html.Replace("{deadline}", $"{loanEmailInfoDto.Deadline}");
+            html = html.Replace("{link}", emailConfiguration.ClientUri);
 
             return html;
         }

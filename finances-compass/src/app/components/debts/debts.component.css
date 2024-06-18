@@ -163,10 +163,6 @@ mat-paginator.hidden {
     margin: 0;
   }
 
-  button {
-    height: 5px;
-    width: 5px;
-  }
 
   .btn-items {
     flex-direction: column;
@@ -197,9 +193,13 @@ mat-paginator.hidden {
   }
 }
 
-@media screen and (max-width: 400px) {
+@media screen and (max-width: 768px) {
   .border {
     padding: 5px 5px;
     margin: 0;
+  }
+
+  .container {
+    padding: 1px;
   }
 }

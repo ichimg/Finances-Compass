@@ -4,6 +4,6 @@ namespace DebtsCompass.Domain.Interfaces
 {
     public interface ICurrencyRatesJob
     {
-        Task<CurrencyDto> GetLatestCurrencyRates();
+        Task GetLatestCurrencyRates();
     }
 }

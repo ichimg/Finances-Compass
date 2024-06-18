@@ -222,14 +222,27 @@ export class AddOrEditDebtDialog implements OnInit {
         (u) => u.email === this.selectedUser
       )!;
 
+      const borrowingDate = new Date(
+        this.debtForm.value.borrowingDate!.toString()
+      );
+      const borrowingUtcDate = new Date(
+        borrowingDate.getTime() - borrowingDate.getTimezoneOffset() * 60000
+      );
+      const deadlineDate = new Date(
+        this.debtForm.value.deadlineDate!.toString()
+      );
+      const deadlineUtcDate = new Date(
+        deadlineDate.getTime() - deadlineDate.getTimezoneOffset() * 60000
+      );
+
       const editUserDebtRequest: Debt = Object.assign({
         guid: this.data.selectedDebt.guid,
         firstName: selectedUserFriend.firstName,
         lastName: selectedUserFriend.lastName,
         email: selectedUserFriend.email,
         amount: this.debtForm.value.amount,
-        borrowingDate: this.debtForm.value.borrowingDate,
-        deadline: this.debtForm.value.deadlineDate,
+        borrowingDate: borrowingUtcDate.toISOString().split('T', 1)[0],
+        deadline: deadlineUtcDate.toISOString().split('T', 1)[0],
         reason: this.debtForm.value.reason,
         isUserAccount: true,
       });
@@ -258,14 +271,27 @@ export class AddOrEditDebtDialog implements OnInit {
         });
     } else if (this.isVisible == 1) {
       // Non user
+
+      const borrowingDate = new Date(
+        this.debtForm.value.borrowingDate!.toString()
+      );
+      const borrowingUtcDate = new Date(
+        borrowingDate.getTime() - borrowingDate.getTimezoneOffset() * 60000
+      );
+      const deadlineDate = new Date(
+        this.debtForm.value.deadlineDate!.toString()
+      );
+      const deadlineUtcDate = new Date(
+        deadlineDate.getTime() - deadlineDate.getTimezoneOffset() * 60000
+      );
       const editNonUserDebtRequest: Debt = Object.assign({
         guid: this.data.selectedDebt.guid,
         firstName: this.debtForm.value.firstName,
         lastName: this.debtForm.value.lastName,
         email: this.debtForm.value.email,
         amount: this.debtForm.value.amount,
-        borrowingDate: this.debtForm.value.borrowingDate,
-        deadline: this.debtForm.value.deadlineDate,
+        borrowingDate: borrowingUtcDate.toISOString().split('T', 1)[0],
+        deadline: deadlineUtcDate.toISOString().split('T', 1)[0],
         reason: this.debtForm.value.reason,
         isUserAccount: false,
       });
@@ -302,13 +328,26 @@ export class AddOrEditDebtDialog implements OnInit {
         (u) => u.email === this.selectedUser
       )!;
 
+      const borrowingDate = new Date(
+        this.debtForm.value.borrowingDate!.toString()
+      );
+      const borrowingUtcDate = new Date(
+        borrowingDate.getTime() - borrowingDate.getTimezoneOffset() * 60000
+      );
+      const deadlineDate = new Date(
+        this.debtForm.value.deadlineDate!.toString()
+      );
+      const deadlineUtcDate = new Date(
+        deadlineDate.getTime() - deadlineDate.getTimezoneOffset() * 60000
+      );
+
       const createUserDebtRequest: Debt = Object.assign({
         firstName: selectedUserFriend.firstName,
         lastName: selectedUserFriend.lastName,
         email: selectedUserFriend.email,
         amount: this.debtForm.value.amount,
-        borrowingDate: this.debtForm.value.borrowingDate,
-        deadline: this.debtForm.value.deadlineDate,
+        borrowingDate: borrowingUtcDate.toISOString().split('T', 1)[0],
+        deadline: deadlineUtcDate.toISOString().split('T', 1)[0],
         reason: this.debtForm.value.reason,
         status: 'Pending',
         isPaid: false,
@@ -332,13 +371,27 @@ export class AddOrEditDebtDialog implements OnInit {
         });
     } else if (this.isVisible == 1) {
       // Non user
+
+      const borrowingDate = new Date(
+        this.debtForm.value.borrowingDate!.toString()
+      );
+      const borrowingUtcDate = new Date(
+        borrowingDate.getTime() - borrowingDate.getTimezoneOffset() * 60000
+      );
+      const deadlineDate = new Date(
+        this.debtForm.value.deadlineDate!.toString()
+      );
+      const deadlineUtcDate = new Date(
+        deadlineDate.getTime() - deadlineDate.getTimezoneOffset() * 60000
+      );
+
       const createNonUserDebtRequest: Debt = Object.assign({
         firstName: this.debtForm.value.firstName,
         lastName: this.debtForm.value.lastName,
         email: this.debtForm.value.email,
         amount: this.debtForm.value.amount,
-        borrowingDate: this.debtForm.value.borrowingDate,
-        deadline: this.debtForm.value.deadlineDate,
+        borrowingDate: borrowingUtcDate.toISOString().split('T', 1)[0],
+        deadline: deadlineUtcDate.toISOString().split('T', 1)[0],
         reason: this.debtForm.value.reason,
         status: 'Pending',
         isPaid: false,

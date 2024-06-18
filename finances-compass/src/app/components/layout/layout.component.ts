@@ -42,7 +42,6 @@ export class LayoutComponent implements OnInit {
           this.sidenavMode = 'side';
         }
       });
-
   }
 
   ngOnInit(): void {
@@ -55,7 +54,10 @@ export class LayoutComponent implements OnInit {
     });
 
     this.router.events.subscribe(() => {
-      if (this.router.url === '/expenses') {
+      if (
+        this.router.url === '/expenses' ||
+        (this.router.url === '/dashboard' && window.innerWidth <= 768)
+      ) {
         this.sidenavMode = 'over';
       } else {
         this.sidenavMode = 'side';
@@ -78,19 +80,18 @@ export class LayoutComponent implements OnInit {
   }
 
   openSearchUsersDialog(): void {
-    this.dialog.open(SearchUsersDialog);
+    this.dialog.open(SearchUsersDialog, { width: '450px' });
   }
 
   openFriendsDialog(): void {
-    this.dialog.open(FriendsDialog);
+    this.dialog.open(FriendsDialog, { width: '400px' });
   }
-  
+
   openSimilarUsersDialog(): void {
-    this.dialog.open(SimilarUsersDialog);
+    this.dialog.open(SimilarUsersDialog, { width: '400px' });
   }
-  
+
   openSettingsDialog(): void {
     this.dialog.open(SettingsDialog, { width: '400px' });
   }
-
 }

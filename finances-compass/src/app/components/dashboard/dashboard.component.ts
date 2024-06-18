@@ -412,7 +412,7 @@ export class DashboardComponent implements OnInit {
               enabled: false,
             },
             padding: 17,
-            stepSize: 25,
+            stepSize: 100,
             callback: (value: any) => {
               return ` ${
                 this.getCurrency() === 'RON'

@@ -1,4 +1,5 @@
-﻿using DebtsCompass.Domain.Entities.Models;
+﻿using DebtsCompass.Domain.Entities.DtoResponses;
+using DebtsCompass.Domain.Entities.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
@@ -17,6 +18,7 @@ namespace DebtsCompass.DataAccess
         public DbSet<ExpenseCategory> ExpenseCategories { get; set; }
         public DbSet<Income> Incomes { get; set; }
         public DbSet<IncomeCategory> IncomeCategories { get; set; }
+        public DbSet<CurrencyRate> CurrencyRates { get; set; }
         public DebtsCompassDbContext(DbContextOptions options)
        : base(options)
         { }

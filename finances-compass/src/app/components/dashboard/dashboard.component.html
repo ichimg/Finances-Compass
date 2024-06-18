@@ -37,14 +37,18 @@
           totalExpensesAndIncomes?.totalIncomes !== 0
         "
       >
-        <p>Total Incomes:</p>
-        <span class="overall-balance-inc">{{
-          overallBalanceStats.totalIncomes
-        }}</span>
-        <p>Total Expenses:</p>
-        <span class="overall-balance-exp">{{
-          overallBalanceStats.totalExpenses
-        }}</span>
+        <p>
+          Total Incomes:
+          <span class="overall-balance-inc">{{
+            overallBalanceStats.totalIncomes
+          }}</span>
+        </p>
+        <p>
+          Total Expenses:
+          <span class="overall-balance-exp">{{
+            overallBalanceStats.totalExpenses
+          }}</span>
+        </p>
       </div>
       <p
         class="no-chart-data"
@@ -81,14 +85,18 @@
           totalLoansAndDebts?.totalDebts !== 0
         "
       >
-        <p>Total Loans:</p>
-        <span class="overall-balance-loa">{{
-          loansDebtsStats.totalLoans
-        }}</span>
-        <p>Total Debts:</p>
-        <span class="overall-balance-deb">{{
-          loansDebtsStats.totalDebts
-        }}</span>
+        <p>
+          Total Loans:
+          <span class="overall-balance-loa">{{
+            loansDebtsStats.totalLoans
+          }}</span>
+        </p>
+        <p>
+          Total Debts:
+          <span class="overall-balance-deb">{{
+            loansDebtsStats.totalDebts
+          }}</span>
+        </p>
       </div>
       <p
         class="no-chart-data"
@@ -105,7 +113,8 @@
   <mat-card class="annual-expenses-chart">
     <mat-card-title class="title">Annual Expenses</mat-card-title>
     <div class="annual-expenses-chart">
-      <canvas *ngIf="annualExpensesData != null"
+      <canvas
+        *ngIf="annualExpensesData != null"
         class="annual"
         baseChart
         [type]="'bar'"

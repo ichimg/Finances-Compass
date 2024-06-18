@@ -12,15 +12,15 @@ namespace DebtsCompass.Application.Services
     {
         private readonly IIncomeRepository incomeRepository;
         private readonly IUserRepository userRepository;
-        private readonly ICurrencyRatesJob currencyRatesJob;
+        private readonly ICurrencyRateRepository currencyRateRepository;
         private readonly IIncomeCategoryRepository categoryRepository;
 
         public IncomesService(IIncomeRepository incomeRepository, IUserRepository userRepository,
-            ICurrencyRatesJob currencyRatesJob, IIncomeCategoryRepository categoryRepository)
+            ICurrencyRateRepository currencyRateRepository, IIncomeCategoryRepository categoryRepository)
         {
             this.incomeRepository = incomeRepository;
             this.userRepository = userRepository;
-            this.currencyRatesJob = currencyRatesJob;
+            this.currencyRateRepository = currencyRateRepository;
             this.categoryRepository = categoryRepository;
         }
 
@@ -28,23 +28,23 @@ namespace DebtsCompass.Application.Services
         {
             User user = await userRepository.GetUserByEmail(creatorEmail) ?? throw new UserNotFoundException(creatorEmail);
 
-            CurrencyDto currentCurrencies = await currencyRatesJob.GetLatestCurrencyRates();
+            CurrencyRate currentCurrencyRate = await currencyRateRepository.GetLatestInsertedCurrencyRates();
 
             if (!isRonCurrency)
             {
                 if (user.CurrencyPreference == CurrencyPreference.EUR)
                 {
-                    createIncomeRequest.Amount /= currentCurrencies.EurExchangeRate;
+                    createIncomeRequest.Amount /= currentCurrencyRate.EurExchangeRate;
                 }
                 else if (user.CurrencyPreference == CurrencyPreference.USD)
                 {
-                    createIncomeRequest.Amount /= currentCurrencies.UsdExchangeRate;
+                    createIncomeRequest.Amount /= currentCurrencyRate.UsdExchangeRate;
                 }
             }
 
             IncomeCategory category = await categoryRepository.GetByName(createIncomeRequest.Category);
 
-            Income income = Mapper.CreateIncomeRequestToIncome(createIncomeRequest, user, currentCurrencies, category);
+            Income income = Mapper.CreateIncomeRequestToIncome(createIncomeRequest, user, currentCurrencyRate, category);
 
             await incomeRepository.CreateIncome(income);
 
@@ -73,21 +73,21 @@ namespace DebtsCompass.Application.Services
             User user = await userRepository.GetUserByEmail(email) ?? throw new UserNotFoundException(email);
             Income incomeFromDb = await incomeRepository.GetIncomeById(editIncomeRequest.Guid) ?? throw new EntityNotFoundException();
 
-            CurrencyDto currentCurrencies = await currencyRatesJob.GetLatestCurrencyRates();
+            CurrencyRate currentCurrencyRate = await currencyRateRepository.GetLatestInsertedCurrencyRates();
 
             if (user.CurrencyPreference == CurrencyPreference.EUR)
             {
-                editIncomeRequest.Amount /= currentCurrencies.EurExchangeRate;
+                editIncomeRequest.Amount /= currentCurrencyRate.EurExchangeRate;
             }
             else if (user.CurrencyPreference == CurrencyPreference.USD)
             {
-                editIncomeRequest.Amount /= currentCurrencies.UsdExchangeRate;
+                editIncomeRequest.Amount /= currentCurrencyRate.UsdExchangeRate;
             }
 
             IncomeCategory category = await categoryRepository.GetByName(editIncomeRequest.Category);
-            Income updatedIncome = Mapper.EditIncomeRequestToIncome(editIncomeRequest, category);
+            Income updatedIncome = Mapper.EditIncomeRequestToIncome(editIncomeRequest, category, currentCurrencyRate);
 
-            await incomeRepository.UpdateDebt(incomeFromDb, updatedIncome);
+            await incomeRepository.UpdateIncome(incomeFromDb, updatedIncome);
         }
     }
 }

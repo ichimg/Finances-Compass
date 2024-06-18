@@ -9,16 +9,15 @@ mat-sidenav-container {
 
 .right-sidebar {
   width: 300px;
-  right:0;
+  right: 0;
 }
 
 .right-sidebar,
-.left-sidebar
-{
-  position:fixed;
-  z-index:2;
-  top:0;
-  margin-top:70px;
+.left-sidebar {
+  position: fixed;
+  z-index: 2;
+  top: 0;
+  margin-top: 70px;
 }
 
 .sidebar-item {
@@ -29,22 +28,24 @@ mat-sidenav-container {
 }
 
 @media screen and (max-width: 1030px) {
-
-  .right-sidebar{
-    width:150px;
+  .right-sidebar {
+    width: 150px;
     padding: 0px;
   }
 
-  .left-sidebar{
-    width:100px;
+  .left-sidebar {
+    width: 115px;
     padding: 0px;
   }
 
-  .sidebar-item
-  {
-    gap:0;
-    font-size:10px;
+  .sidebar-item {
+    gap: 0px;
+    font-size: 12px;
   }
 }
 
-
+@media screen and (max-width: 768px) {
+  .icon {
+    transform: scale(0.7);
+  }
+}

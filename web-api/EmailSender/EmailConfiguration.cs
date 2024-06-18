@@ -9,6 +9,7 @@ namespace EmailSender
         public int Port { get; set; }
         public string UserName { get; set; }
         public string Password { get; set; }
+        public string ClientUri { get; set; }
 
         public static string GetEmailTemplatesFolderPath()
         {
@@ -18,25 +19,5 @@ namespace EmailSender
 
             return $@"{parentDirectoryInfo}\EmailSender\EmailTemplates";
         }
-
-        private static string FindSolutionPath(string assemblyLocation)
-        {
-            string directory = Path.GetDirectoryName(assemblyLocation);
-
-            while (!string.IsNullOrEmpty(directory))
-            {
-                string[] solutionFiles = Directory.GetFiles(directory, "*.sln");
-
-                if (solutionFiles.Any())
-                {
-                    return directory;
-                }
-
-                directory = Path.GetDirectoryName(directory);
-            }
-
-            return null;
-        }
-
     }
 }

@@ -37,11 +37,12 @@ namespace DebtsCompass.DataAccess.Repositories
             await dbContext.SaveChangesAsync();
         }
 
-        public async Task UpdateDebt(Income incomeFromDb, Income updatedIncome)
+        public async Task UpdateIncome(Income incomeFromDb, Income updatedIncome)
         {
             incomeFromDb.Amount = updatedIncome.Amount;
             incomeFromDb.Category = updatedIncome.Category;
             incomeFromDb.Note = updatedIncome.Note;
+            incomeFromDb.CurrencyRate = updatedIncome.CurrencyRate;
 
             await dbContext.SaveChangesAsync();
         }

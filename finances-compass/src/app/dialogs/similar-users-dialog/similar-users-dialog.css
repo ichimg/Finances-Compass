@@ -1,7 +1,6 @@
 mat-card {
     padding: 7px;
-    height: 600px;
-    width: 400px;
+    height: 560px;
     justify-content: space-between;
     flex-direction: column;
     display: flex;

@@ -1,5 +1,5 @@
 .calendar-container {
-  margin: 10px 80px 10px;
+  margin: 5px 80px 5px;
 }
 .calendar {
   padding: 10px;
@@ -23,7 +23,7 @@
 }
 
 .hidden {
-display: none;
+  display: none;
 }
 
 .title {
@@ -42,3 +42,24 @@ display: none;
   color: green;
 }
 
+@media (max-width: 768px) {
+  .calendar-container {
+    width: 100%;
+    margin: 0;
+    overflow-y: auto;
+  }
+
+  .btn {
+    width: 120px;
+    font-size: 12px;
+  }
+
+  mat-card-content {
+    padding: 2px;
+  }
+
+  .calendar {
+    padding-left: 0px;
+    padding-right: 0px;
+  }
+}

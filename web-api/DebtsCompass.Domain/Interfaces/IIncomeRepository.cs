@@ -7,6 +7,6 @@ namespace DebtsCompass.Domain.Interfaces
         Task CreateIncome(Income income);
         Task DeleteIncome(Income income);
         Task<Income> GetIncomeById(string id);
-        Task UpdateDebt(Income incomeFromDb, Income updatedIncome);
+        Task UpdateIncome(Income incomeFromDb, Income updatedIncome);
     }
 }

@@ -6,10 +6,4 @@ import { Title } from '@angular/platform-browser';
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.css'],
 })
-export class AppComponent implements OnInit {
-  constructor(private title: Title) {}
-
-  ngOnInit(): void {
-    this.title.setTitle('Finances Compass');
-  }
-}
+export class AppComponent {}

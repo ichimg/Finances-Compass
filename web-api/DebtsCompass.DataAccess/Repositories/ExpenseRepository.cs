@@ -42,6 +42,7 @@ namespace DebtsCompass.DataAccess.Repositories
             expenseFromDb.Amount = updatedExpense.Amount;
             expenseFromDb.Category = updatedExpense.Category;
             expenseFromDb.Note = updatedExpense.Note;
+            expenseFromDb.CurrencyRate = updatedExpense.CurrencyRate;
 
             await dbContext.SaveChangesAsync();
         }

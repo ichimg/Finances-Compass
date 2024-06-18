@@ -1,4 +1,5 @@
-﻿using DebtsCompass.Domain.Enums;
+﻿using DebtsCompass.Domain.Entities.DtoResponses;
+using DebtsCompass.Domain.Enums;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace DebtsCompass.Domain.Entities.Models
@@ -13,10 +14,8 @@ namespace DebtsCompass.Domain.Entities.Models
         public DateTime DeadlineDate { get; set; }
         public Status Status { get; set; }
         public bool IsPaid { get; set; }
-        [Column(TypeName = "decimal(18,4)")]
-        public decimal? EurExchangeRate { get; set; }
-        [Column(TypeName = "decimal(18,4)")]
-        public decimal? UsdExchangeRate { get; set; }
+        public int? CurrencyRateId { get; set; }
+        public CurrencyRate CurrencyRate { get; set; }
         public ICollection<DebtAssignment> DebtAssignments { get; set; }
     }
 }

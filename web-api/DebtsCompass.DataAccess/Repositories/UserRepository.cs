@@ -21,8 +21,13 @@ namespace DebtsCompass.DataAccess.Repositories
                 .Include(u => u.ReceivingFriendships)
                 .Include(u => u.RequestedFriendships)
                 .Include(u => u.Expenses)
+                .ThenInclude(e => e.CurrencyRate)
+                .Include(u => u.Expenses)
                 .ThenInclude(e => e.Category)
                 .Include(u => u.Incomes)
+                .ThenInclude(e => e.Category)
+                .Include(u => u.Incomes)
+                .ThenInclude(e => e.CurrencyRate)
                 .Include(u => u.UserInfo)
                 .ThenInclude(u => u.Address)
                 .Where(u => u.Email.Equals(email)).FirstOrDefaultAsync();
@@ -41,7 +46,7 @@ namespace DebtsCompass.DataAccess.Repositories
                 .ThenInclude(e => e.Category)
                 .Include(u => u.UserInfo)
                 .ThenInclude(u => u.Address)
-                .Where(u => u.IsDataConsent && u.Email != targetUserEmail && u.EmailConfirmed 
+                .Where(u => u.IsDataConsent && u.Email != targetUserEmail && u.EmailConfirmed
                 && !u.ReceivingFriendships.Any(rf => rf.RequesterUser.Email == targetUserEmail) && !u.RequestedFriendships.Any(rf => rf.SelectedUser.Email == targetUserEmail))
                 .ToListAsync();
         }
@@ -51,10 +56,14 @@ namespace DebtsCompass.DataAccess.Repositories
             var startOfMonth = new DateTime(Int32.Parse(yearMonthDto.Year), Int32.Parse(yearMonthDto.Month), 1);
             var endOfMonth = startOfMonth.AddMonths(1).AddDays(-1);
             User userFromDb = await dbContext.Users
-                    .Include(u => u.Expenses.Where(e => e.Date >= startOfMonth && e.Date <= endOfMonth))
+                    .Include(u => u.Expenses.Where(e => e.Date.Date >= startOfMonth && e.Date.Date <= endOfMonth))
                     .ThenInclude(e => e.Category)
-                    .Include(u => u.Incomes.Where(i => i.Date >= startOfMonth && i.Date <= endOfMonth))
+                    .Include(u => u.Expenses.Where(e => e.Date.Date >= startOfMonth && e.Date.Date <= endOfMonth))
+                    .ThenInclude(e => e.CurrencyRate)
+                    .Include(u => u.Incomes.Where(i => i.Date.Date >= startOfMonth && i.Date.Date <= endOfMonth))
                     .ThenInclude(i => i.Category)
+                    .Include(u => u.Incomes.Where(i => i.Date.Date >= startOfMonth && i.Date.Date <= endOfMonth))
+                    .ThenInclude(i => i.CurrencyRate)
                     .Where(u => u.Email.Equals(email))
                     .FirstOrDefaultAsync();
 
@@ -71,7 +80,7 @@ namespace DebtsCompass.DataAccess.Repositories
 
         public async Task Add(User user)
         {
-            if(user is null)
+            if (user is null)
             {
                 throw new ArgumentNullException(nameof(user));
             }
@@ -105,9 +114,9 @@ namespace DebtsCompass.DataAccess.Repositories
                         || (u.UserName.ToUpper() != currentUser.UserName.ToUpper()
                         && u.EmailConfirmed == true
                         && u.UserInfo.LastName.ToUpper().Contains(query.ToUpper())))
-            .OrderBy(u => u.UserInfo.Address.City == currentUser.UserInfo.Address.City ? 0 : 1) 
-            .ThenBy(u => u.UserInfo.Address.County == currentUser.UserInfo.Address.County ? 0 : 1) 
-            .ThenBy(u => u.UserInfo.Address.Country == currentUser.UserInfo.Address.Country ? 0 : 1) 
+            .OrderBy(u => u.UserInfo.Address.City == currentUser.UserInfo.Address.City ? 0 : 1)
+            .ThenBy(u => u.UserInfo.Address.County == currentUser.UserInfo.Address.County ? 0 : 1)
+            .ThenBy(u => u.UserInfo.Address.Country == currentUser.UserInfo.Address.Country ? 0 : 1)
             .ToPagedListAsync(pagedParameters.PageNumber, pagedParameters.PageSize);
         }
 

@@ -73,9 +73,13 @@ export class AddExpenseOrIncomeDialog implements OnInit {
   }
 
   async createExpense(): Promise<void> {
+    const date = new Date(this.form.value.date!.toString());
+    const utcDate = new Date(
+      date.getTime() - date.getTimezoneOffset() * 60000
+    );
     const createExpenseRequest: Expense = Object.assign({
       amount: this.form.value.amount,
-      date: this.form.value.date,
+      date: utcDate.toISOString().split('T', 1)[0],
       category: this.form.value.categorySelect,
       note: this.form.value.note,
     });
@@ -86,10 +90,6 @@ export class AddExpenseOrIncomeDialog implements OnInit {
     switch (response.statusCode) {
       case 201:
         createExpenseRequest.guid = response.payload;
-        const date = new Date(createExpenseRequest.date.toString());
-        const utcDate = new Date(
-          date.getTime() - date.getTimezoneOffset() * 60000
-        );
 
         this.notificationService.showSuccess('Expense added successfully!');
         let expense: EventInput = {
@@ -132,9 +132,13 @@ export class AddExpenseOrIncomeDialog implements OnInit {
   }
 
   async createIncome(): Promise<void> {
+    const date = new Date(this.form.value.date!.toString());
+    const utcDate = new Date(
+      date.getTime() - date.getTimezoneOffset() * 60000
+    );
     const createIncomeRequest: Expense = Object.assign({
       amount: this.form.value.amount,
-      date: this.form.value.date,
+      date: utcDate.toISOString().split('T', 1)[0],
       category: this.form.value.categorySelect,
       note: this.form.value.note,
     });

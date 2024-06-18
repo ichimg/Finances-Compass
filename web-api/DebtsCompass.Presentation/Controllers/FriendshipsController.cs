@@ -6,7 +6,6 @@ using DebtsCompass.Domain.Interfaces;
 using DebtsCompass.Domain.Pagination;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Newtonsoft.Json;
 using System.Net;
 using System.Security.Claims;
 

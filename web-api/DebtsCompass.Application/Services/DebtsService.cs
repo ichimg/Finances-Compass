@@ -17,7 +17,7 @@ namespace DebtsCompass.Application.Services
         private readonly IUserRepository userRepository;
         private readonly INonUserRepository nonUserRepository;
         private readonly IEmailService emailService;
-        private readonly ICurrencyRatesJob currencyRatesJob;
+        private readonly ICurrencyRateRepository currencyRateRepository;
         private readonly IExpenseCategoryRepository expenseCategoryRepository;
         private readonly IIncomeCategoryRepository incomeCategoryRepository;
         private readonly IExpensesService expensesService;
@@ -28,7 +28,7 @@ namespace DebtsCompass.Application.Services
             IUserRepository userRepository,
             INonUserRepository nonUserRepository,
             IEmailService emailService,
-            ICurrencyRatesJob currencyRatesJob,
+            ICurrencyRateRepository currencyRateRepository,
             IDebtRepository debtRepository,
             IExpenseCategoryRepository expenseCategoryRepository,
             IIncomeCategoryRepository incomeCategoryRepository,
@@ -40,7 +40,7 @@ namespace DebtsCompass.Application.Services
             this.userRepository = userRepository;
             this.nonUserRepository = nonUserRepository;
             this.emailService = emailService;
-            this.currencyRatesJob = currencyRatesJob;
+            this.currencyRateRepository = currencyRateRepository;
             this.debtRepository = debtRepository;
             this.expenseCategoryRepository = expenseCategoryRepository;
             this.incomeCategoryRepository = incomeCategoryRepository;
@@ -57,11 +57,11 @@ namespace DebtsCompass.Application.Services
 
             if (user.CurrencyPreference == CurrencyPreference.EUR)
             {
-                debtsFromDb.ForEach(d => d.Debt.Amount = (decimal)(d.Debt.Amount * d.Debt.EurExchangeRate));
+                debtsFromDb.ForEach(d => d.Debt.Amount = (decimal)(d.Debt.Amount * d.Debt.CurrencyRate.EurExchangeRate));
             }
             else if (user.CurrencyPreference == CurrencyPreference.USD)
             {
-                debtsFromDb.ForEach(d => d.Debt.Amount = (decimal)(d.Debt.Amount * d.Debt.UsdExchangeRate));
+                debtsFromDb.ForEach(d => d.Debt.Amount = (decimal)(d.Debt.Amount * d.Debt.CurrencyRate.UsdExchangeRate));
             }
 
             List<DebtDto> debts = debtsFromDb
@@ -79,11 +79,11 @@ namespace DebtsCompass.Application.Services
 
             if (user.CurrencyPreference == CurrencyPreference.EUR)
             {
-                debtsFromDb.ForEach(d => d.Debt.Amount *= (decimal)d.Debt.EurExchangeRate);
+                debtsFromDb.ForEach(d => d.Debt.Amount *= (decimal)d.Debt.CurrencyRate.EurExchangeRate);
             }
             else if (user.CurrencyPreference == CurrencyPreference.USD)
             {
-                debtsFromDb.ForEach(d => d.Debt.Amount *= (decimal)d.Debt.UsdExchangeRate);
+                debtsFromDb.ForEach(d => d.Debt.Amount *= (decimal)d.Debt.CurrencyRate.UsdExchangeRate);
             }
 
             List<DebtDto> debts = debtsFromDb.Select(Mapper.UserDebtAssignmentDbModelToDebtDto).ToList();
@@ -98,15 +98,15 @@ namespace DebtsCompass.Application.Services
 
             bool isUserAccount = existingAccount is not null;
 
-            CurrencyDto currentCurrencies = await currencyRatesJob.GetLatestCurrencyRates();
+            CurrencyRate currentCurrencyRate = await currencyRateRepository.GetLatestInsertedCurrencyRates();
 
             if (creatorUser.CurrencyPreference == CurrencyPreference.EUR)
             {
-                createDebtRequest.Amount /= currentCurrencies.EurExchangeRate;
+                createDebtRequest.Amount /= currentCurrencyRate.EurExchangeRate;
             }
             else if (creatorUser.CurrencyPreference == CurrencyPreference.USD)
             {
-                createDebtRequest.Amount /= currentCurrencies.UsdExchangeRate;
+                createDebtRequest.Amount /= currentCurrencyRate.UsdExchangeRate;
             }
 
             DebtAssignment debtAssignment;
@@ -114,7 +114,7 @@ namespace DebtsCompass.Application.Services
             {
                 User selectedUser = existingAccount;
 
-                debtAssignment = Mapper.CreateDebtRequestToDebtAssignment(createDebtRequest, creatorUser, selectedUser, currentCurrencies);
+                debtAssignment = Mapper.CreateDebtRequestToDebtAssignment(createDebtRequest, creatorUser, selectedUser, currentCurrencyRate);
                 await debtAssignmentRepository.CreateDebt(debtAssignment);
 
                 ReceiverInfoDto receiverInfoDto = Mapper.UserToReceiverInfoDto(debtAssignment.SelectedUser);
@@ -130,14 +130,13 @@ namespace DebtsCompass.Application.Services
 
                 if (existingNonUser is not null)
                 {
-                    debtAssignment = Mapper.CreateDebtRequestToDebtAssignment(createDebtRequest, creatorUser, existingNonUser, currentCurrencies);
+                    debtAssignment = Mapper.CreateDebtRequestToDebtAssignment(createDebtRequest, creatorUser, existingNonUser, currentCurrencyRate);
                 }
                 else
                 {
-                    debtAssignment = Mapper.CreateDebtRequestToDebtAssignment(createDebtRequest, creatorUser, currentCurrencies);
+                    debtAssignment = Mapper.CreateDebtRequestToDebtAssignment(createDebtRequest, creatorUser, currentCurrencyRate);
                 }
                 await debtAssignmentRepository.CreateDebt(debtAssignment);
-
 
                 ReceiverInfoDto receiverInfoDto = Mapper.NonUserToReceiverInfoDto(debtAssignment.NonUser);
                 DebtEmailInfoDto createdDebtEmailInfoDto = Mapper.UserToDebtEmailInfoDto(creatorUser);
@@ -180,47 +179,41 @@ namespace DebtsCompass.Application.Services
             DebtAssignment debtAssignmentFromDb = await debtAssignmentRepository.GetDebtById(editDebtRequest.Guid) ?? throw new EntityNotFoundException();
             User user = await userRepository.GetUserByEmail(email) ?? throw new UserNotFoundException(email);
 
-            CurrencyDto currentCurrencies = await currencyRatesJob.GetLatestCurrencyRates();
+            CurrencyRate currentCurrencyRate = await currencyRateRepository.GetLatestInsertedCurrencyRates();
 
             // convert to base currency RON
             if (user.CurrencyPreference == CurrencyPreference.EUR)
             {
-                editDebtRequest.Amount /= currentCurrencies.EurExchangeRate;
+                editDebtRequest.Amount /= currentCurrencyRate.EurExchangeRate;
             }
             else if (user.CurrencyPreference == CurrencyPreference.USD)
             {
-                editDebtRequest.Amount /= currentCurrencies.UsdExchangeRate;
+                editDebtRequest.Amount /= currentCurrencyRate.UsdExchangeRate;
             }
 
             bool isUserAccount = editDebtRequest.IsUserAccount;
-            bool isDeadlineChanged = false;
             DebtAssignment updatedDebt;
             if (isUserAccount)
             {
                 User selectedUser = await userRepository.GetUserByEmail(editDebtRequest.Email);
-                updatedDebt = Mapper.EditDebtRequestToDebtAssignment(editDebtRequest, selectedUser);
+                updatedDebt = Mapper.EditDebtRequestToDebtAssignment(editDebtRequest, selectedUser, currentCurrencyRate);
+                await debtAssignmentRepository.UpdateDebt(debtAssignmentFromDb, updatedDebt);  
 
-                if (debtAssignmentFromDb.Debt.DeadlineDate != updatedDebt.Debt.DeadlineDate)
-                {
-                    isDeadlineChanged = true;
-                }
-            }
-            else
-            {
-                NonUser nonUser = await nonUserRepository.GetNonUserByEmail(editDebtRequest.Email);
-                updatedDebt = Mapper.EditDebtRequestToDebtAssignment(editDebtRequest, nonUser);
-            }
-
-            await debtAssignmentRepository.UpdateDebt(debtAssignmentFromDb, updatedDebt);
-
-            if (isDeadlineChanged) 
-            {
                 await hangfireService.DeleteScheduledJob(debtAssignmentFromDb.DeadlineReminderJobId!);
 
                 ReceiverInfoDto receiverInfoDto = Mapper.UserToReceiverInfoDto(debtAssignmentFromDb.SelectedUser);
                 string jobId = await hangfireService.ScheduleDeadlineEmails(debtAssignmentFromDb, receiverInfoDto);
                 await debtAssignmentRepository.UpdateDeadlineReminderJobId(debtAssignmentFromDb, jobId);
             }
+            else
+            {
+                NonUser nonUser = await nonUserRepository.GetNonUserByEmail(editDebtRequest.Email);
+                updatedDebt = Mapper.EditDebtRequestToDebtAssignment(editDebtRequest, nonUser, currentCurrencyRate);
+
+
+                await debtAssignmentRepository.UpdateDebt(debtAssignmentFromDb, updatedDebt);
+            }
+
         }
 
         public async Task ApproveDebt(string debtId, string email)
@@ -251,9 +244,9 @@ namespace DebtsCompass.Application.Services
             await debtAssignmentRepository.PayDebt(debtAssignmentFromDb);
 
             await CreateExpenseRelatedToDebt(debtAssignmentFromDb, DateTime.UtcNow, debtAssignmentFromDb.SelectedUser,
-                $"Debt paid to {debtAssignmentFromDb.CreatorUser.UserInfo.FirstName} {debtAssignmentFromDb.CreatorUser.UserInfo.LastName}.");
+                $"Debt paid to {debtAssignmentFromDb.CreatorUser.UserInfo?.FirstName} {debtAssignmentFromDb.CreatorUser.UserInfo?.LastName}.");
             await CreateIncomeRelatedToDebt(debtAssignmentFromDb, DateTime.UtcNow, debtAssignmentFromDb.CreatorUser,
-                $"Debt collected from {debtAssignmentFromDb.SelectedUser.UserInfo.FirstName} {debtAssignmentFromDb.SelectedUser.UserInfo.LastName}.");
+                $"Debt collected from {debtAssignmentFromDb.SelectedUser.UserInfo?.FirstName} {debtAssignmentFromDb.SelectedUser.UserInfo?.LastName}.");
 
             await hangfireService.DeleteScheduledJob(debtAssignmentFromDb.DeadlineReminderJobId!);
 
@@ -269,16 +262,15 @@ namespace DebtsCompass.Application.Services
             loansFromDb = loansFromDb.Where(l => l.Debt.DateOfBorrowing.Year == user.DashboardSelectedYear).ToList();
             debtsFromDb = debtsFromDb.Where(d => d.Debt.DateOfBorrowing.Year == user.DashboardSelectedYear).ToList();
 
-
             if (user.CurrencyPreference == CurrencyPreference.EUR)
             {
-                loansFromDb.ForEach(d => d.Debt.Amount *= (decimal)d.Debt.EurExchangeRate);
-                debtsFromDb.ForEach(d => d.Debt.Amount *= (decimal)d.Debt.EurExchangeRate);
+                loansFromDb.ForEach(d => d.Debt.Amount *= (decimal)d.Debt.CurrencyRate.EurExchangeRate);
+                debtsFromDb.ForEach(d => d.Debt.Amount *= (decimal)d.Debt.CurrencyRate.EurExchangeRate);
             }
             else if (user.CurrencyPreference == CurrencyPreference.USD)
             {
-                loansFromDb.ForEach(d => d.Debt.Amount *= (decimal)d.Debt.UsdExchangeRate);
-                debtsFromDb.ForEach(d => d.Debt.Amount *= (decimal)d.Debt.EurExchangeRate);
+                loansFromDb.ForEach(d => d.Debt.Amount *= (decimal)d.Debt.CurrencyRate.UsdExchangeRate);
+                debtsFromDb.ForEach(d => d.Debt.Amount *= (decimal)d.Debt.CurrencyRate.UsdExchangeRate);
             }
 
             decimal totalLoans = loansFromDb.Sum(e => e.Debt.Amount);
@@ -298,7 +290,7 @@ namespace DebtsCompass.Application.Services
             {
                 Amount = debtAssignment.Debt.Amount,
                 Date = date.ToString(),
-                Category = category.Name,
+                Category = category?.Name,
                 Note = message
             };
 
@@ -312,7 +304,7 @@ namespace DebtsCompass.Application.Services
             {
                 Amount = debtAssignment.Debt.Amount,
                 Date = date.ToString(),
-                Category = category.Name,
+                Category = category?.Name,
                 Note = message
             };
 

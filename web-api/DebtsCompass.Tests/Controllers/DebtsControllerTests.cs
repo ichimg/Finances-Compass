@@ -179,7 +179,7 @@ namespace DebtsCompass.Tests.Controllers
         }
 
         [TestMethod]
-        public async Task EditDebtt_AuthorizedEmail_ReturnStatus201()
+        public async Task EditDebt_AuthorizedEmail_ReturnStatus200()
         {
             string authorizedEmail = "email";
             SetupUser(authorizedEmail);
@@ -189,6 +189,89 @@ namespace DebtsCompass.Tests.Controllers
             var statusCode = ((dynamic)okResult.Value).StatusCode;
 
             Assert.AreEqual(HttpStatusCode.OK, statusCode);
+        }
+
+        [TestMethod]
+        public async Task ApproveDebt_UnauthorizedEmail_ThrowException()
+        {
+            SetupUser("email");
+
+            await Assert.ThrowsExceptionAsync<ForbiddenRequestException>(() => sut.ApproveDebt(It.IsAny<string>(), It.IsAny<string>()));
+        }
+
+        [TestMethod]
+        public async Task ApproveDebt_AuthorizedEmail_ReturnStatus200()
+        {
+            string authorizedEmail = "email";
+            SetupUser(authorizedEmail);
+
+            var returned = await sut.ApproveDebt(It.IsAny<string>(), authorizedEmail);
+            OkObjectResult okResult = returned.Result as OkObjectResult;
+            var statusCode = ((dynamic)okResult.Value).StatusCode;
+
+            Assert.AreEqual(HttpStatusCode.OK, statusCode);
+        }
+
+        [TestMethod]
+        public async Task RejectDebt_UnauthorizedEmail_ThrowException()
+        {
+            SetupUser("email");
+
+            await Assert.ThrowsExceptionAsync<ForbiddenRequestException>(() => sut.RejectDebt(It.IsAny<string>(), It.IsAny<string>()));
+        }
+
+        [TestMethod]
+        public async Task RejectDebt_AuthorizedEmail_ReturnStatus200()
+        {
+            string authorizedEmail = "email";
+            SetupUser(authorizedEmail);
+
+            var returned = await sut.RejectDebt(It.IsAny<string>(), authorizedEmail);
+            OkObjectResult okResult = returned.Result as OkObjectResult;
+            var statusCode = ((dynamic)okResult.Value).StatusCode;
+
+            Assert.AreEqual(HttpStatusCode.OK, statusCode);
+        }
+
+        [TestMethod]
+        public async Task MarkDebtPaid_AuthorizedEmail_ReturnStatus201()
+        {
+            string authorizedEmail = "email";
+            SetupUser(authorizedEmail);
+
+            var returned = await sut.MarkDebtPaid(It.IsAny<string>());
+            OkObjectResult okResult = returned.Result as OkObjectResult;
+            var statusCode = ((dynamic)okResult.Value).StatusCode;
+
+            Assert.AreEqual(HttpStatusCode.OK, statusCode);
+        }
+
+        [TestMethod]
+        public async Task GetLoansAndDebtsTotalCount_UnauthorizedEmail_ThrowException()
+        {
+            SetupUser("email");
+
+            await Assert.ThrowsExceptionAsync<ForbiddenRequestException>(() => sut.GetLoansAndDebtsTotalCount(It.IsAny<string>()));
+        }
+
+        [TestMethod]
+        public async Task GetLoansAndDebtsTotalCount_AuthorizedEmail_ReturnExpectedTotals()
+        {
+            string authorizedEmail = "email";
+            SetupUser(authorizedEmail);
+            var expected = new TotalLoansAndDebtsDto
+            {
+                TotalLoans = 150,
+                TotalDebts = 300
+            };
+
+            mockDebtsService.Setup(s => s.GetLoansAndDebtsTotalCount(It.IsAny<string>())).ReturnsAsync(expected);
+
+            var returned = await sut.GetLoansAndDebtsTotalCount(authorizedEmail);
+            OkObjectResult okResult = returned.Result as OkObjectResult;
+            var result = ((dynamic)okResult.Value).Payload;
+
+            Assert.AreEqual(expected, result);
         }
 
         private void SetupUser(string email)

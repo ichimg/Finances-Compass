@@ -51,7 +51,7 @@ canvas {
 .title {
   text-align: center;
   font-family: "Trebuchet MS", "Lucida Sans Unicode", "Lucida Grande",
-  "Lucida Sans", Arial, sans-serif;
+    "Lucida Sans", Arial, sans-serif;
   font-weight: lighter;
   margin: 0;
   padding: 2px;
@@ -70,15 +70,17 @@ canvas {
   align-items: center;
   -ms-user-select: none;
   user-select: none;
+  padding: 10px;
 }
 
 .select-year {
-  width: 10%;
   border-radius: 50px;
 }
 
 .no-chart-data {
-  box-shadow: rgba(6, 24, 44, 0.4) 0px 0px 0px 2px, rgba(6, 24, 44, 0.65) 0px 4px 6px -1px, rgba(255, 255, 255, 0.08) 0px 1px 0px inset;
+  box-shadow: rgba(6, 24, 44, 0.4) 0px 0px 0px 2px,
+    rgba(6, 24, 44, 0.65) 0px 4px 6px -1px,
+    rgba(255, 255, 255, 0.08) 0px 1px 0px inset;
   padding: 20px;
 }
 
@@ -104,3 +106,76 @@ span.overall-balance-deb {
 span.overall-balance-loa {
   color: #3b444b;
 }
+
+@media screen and (max-width: 1279px) {
+  .annual-expenses-chart {
+    padding: 10px;
+    margin: 5px;
+    align-self: unset;
+    width: unset;
+  }
+
+  .container {
+    display: flex;
+    flex-direction: column;
+  }
+
+  canvas.annual {
+    max-width: 1000px;
+  }
+
+  .overall-balance-chart {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .chart-stats {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 13px;
+  }
+}
+
+@media screen and (max-width: 1100px) {
+  canvas.annual {
+    width: 800px;
+  }
+}
+
+@media screen and (max-width: 768px) {
+  .overall-balance-chart {
+    padding: 0;
+  }
+
+  .annual-expenses-chart {
+    padding: 0;
+  }
+
+  canvas.annual {
+    width: 400px;
+  }
+}
+
+@media screen and (max-width: 500px) {
+  .chart-stats {
+    font-size: 14px;
+  }
+
+  .annual-expenses-chart {
+    padding: 0px;
+    justify-self: unset;
+    align-self: unset;
+    width: 100%;
+    display: block;
+    margin: 0;
+  }
+
+  canvas.annual {
+    width: 200px;
+  }
+}
+
+

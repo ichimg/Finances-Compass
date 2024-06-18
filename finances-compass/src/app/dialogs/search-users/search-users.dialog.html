@@ -20,7 +20,7 @@
   </mat-form-field>
   <mat-card-content>
     <mat-nav-list>
-      <cdk-virtual-scroll-viewport
+      <cdk-virtual-scroll-viewport *ngIf="users?.length !== 0"
         [itemSize]="1"
         class="example-viewport"
         appInfiniteScroll

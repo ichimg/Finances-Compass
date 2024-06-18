@@ -15,15 +15,15 @@ namespace DebtsCompass.Domain
             {
                 Guid = debtAssignment.Id.ToString(),
                 FirstName = debtAssignment.SelectedUser != null ?
-                debtAssignment.SelectedUser.UserInfo.FirstName :
-                debtAssignment.NonUser.PersonFirstName,
+                debtAssignment.SelectedUser?.UserInfo?.FirstName :
+                debtAssignment.NonUser?.PersonFirstName,
 
                 LastName = debtAssignment.SelectedUser != null ?
-                debtAssignment.SelectedUser.UserInfo.LastName :
-                debtAssignment.NonUser.PersonLastName,
+                debtAssignment.SelectedUser?.UserInfo?.LastName :
+                debtAssignment.NonUser?.PersonLastName,
 
-                Email = debtAssignment.SelectedUser != null ? debtAssignment.SelectedUser.Email : debtAssignment.NonUser.PersonEmail,
-                Username = debtAssignment.SelectedUser != null ? debtAssignment.SelectedUser.UserName : null,
+                Email = debtAssignment.SelectedUser != null ? debtAssignment.SelectedUser?.Email : debtAssignment.NonUser?.PersonEmail,
+                Username = debtAssignment.SelectedUser! != null ? debtAssignment.SelectedUser?.UserName : null,
                 Amount = Math.Round(debtAssignment.Debt.Amount, 2),
                 BorrowingDate = debtAssignment.Debt.DateOfBorrowing,
                 Deadline = debtAssignment.Debt.DeadlineDate,
@@ -31,8 +31,8 @@ namespace DebtsCompass.Domain
                 Status = debtAssignment.Debt.Status.ToString(),
                 IsPaid = debtAssignment.Debt.IsPaid,
                 IsUserAccount = debtAssignment.SelectedUser != null,
-                EurExchangeRate = debtAssignment.Debt.EurExchangeRate ?? 0.0m,
-                UsdExchangeRate = debtAssignment.Debt.UsdExchangeRate ?? 0.0m
+                EurExchangeRate = debtAssignment.Debt.CurrencyRate?.EurExchangeRate ?? 0.0m,
+                UsdExchangeRate = debtAssignment.Debt.CurrencyRate?.UsdExchangeRate ?? 0.0m
             };
         }
 
@@ -41,10 +41,10 @@ namespace DebtsCompass.Domain
             return new DebtDto
             {
                 Guid = debtAssignment.Id.ToString(),
-                FirstName = debtAssignment.CreatorUser.UserInfo.FirstName,
-                LastName = debtAssignment.CreatorUser.UserInfo.LastName,
-                Username = debtAssignment.CreatorUser.UserName,
-                Email = debtAssignment.CreatorUser.Email,
+                FirstName = debtAssignment.CreatorUser?.UserInfo.FirstName,
+                LastName = debtAssignment.CreatorUser?.UserInfo.LastName,
+                Username = debtAssignment.CreatorUser?.UserName,
+                Email = debtAssignment.CreatorUser?.Email,
                 Amount = Math.Round(debtAssignment.Debt.Amount, 2),
                 BorrowingDate = debtAssignment.Debt.DateOfBorrowing,
                 Deadline = debtAssignment.Debt.DeadlineDate,
@@ -52,8 +52,8 @@ namespace DebtsCompass.Domain
                 Status = debtAssignment.Debt.Status.ToString(),
                 IsPaid = debtAssignment.Debt.IsPaid,
                 IsUserAccount = debtAssignment.SelectedUser != null,
-                EurExchangeRate = debtAssignment.Debt.EurExchangeRate ?? 0.0m,
-                UsdExchangeRate = debtAssignment.Debt.UsdExchangeRate ?? 0.0m
+                EurExchangeRate = debtAssignment.Debt.CurrencyRate?.EurExchangeRate ?? 0.0m,
+                UsdExchangeRate = debtAssignment.Debt.CurrencyRate?.EurExchangeRate ?? 0.0m
             };
         }
 
@@ -88,8 +88,8 @@ namespace DebtsCompass.Domain
         {
             return new ReceiverInfoDto
             {
-                Firstname = user.UserInfo.FirstName,
-                Lastname = user.UserInfo.LastName,
+                Firstname = user.UserInfo?.FirstName,
+                Lastname = user.UserInfo?.LastName,
                 Email = user.Email
             };
         }
@@ -98,9 +98,9 @@ namespace DebtsCompass.Domain
         {
             return new ReceiverInfoDto
             {
-                Firstname = nonUser.PersonFirstName,
-                Lastname = nonUser.PersonLastName,
-                Email = nonUser.PersonEmail
+                Firstname = nonUser?.PersonFirstName,
+                Lastname = nonUser?.PersonLastName,
+                Email = nonUser?.PersonEmail
             };
         }
 
@@ -108,8 +108,8 @@ namespace DebtsCompass.Domain
         {
             return new UserDto
             {
-                FirstName = user.UserInfo.FirstName,
-                LastName = user.UserInfo.LastName,
+                FirstName = user.UserInfo?.FirstName,
+                LastName = user.UserInfo?.LastName,
                 Username = user.UserName,
                 Email = user.Email,
                 FriendStatus = friendStatus.ToString(),
@@ -118,7 +118,7 @@ namespace DebtsCompass.Domain
         }
 
         public static DebtAssignment CreateDebtRequestToDebtAssignment(CreateDebtRequest createDebtRequest, User creatorUser,
-            User selectedUser, CurrencyDto currentCurrencies)
+            User selectedUser, CurrencyRate currencyRate)
         {
             if (Enum.TryParse(createDebtRequest.Status, out Status debtStatus))
             {
@@ -134,8 +134,7 @@ namespace DebtsCompass.Domain
                         DeadlineDate = DateTime.Parse(createDebtRequest.Deadline),
                         Status = debtStatus,
                         IsPaid = createDebtRequest.IsPaid,
-                        EurExchangeRate = currentCurrencies.EurExchangeRate,
-                        UsdExchangeRate = currentCurrencies.UsdExchangeRate
+                        CurrencyRate = currencyRate
                     }
                 };
             }
@@ -146,7 +145,7 @@ namespace DebtsCompass.Domain
         }
 
         public static DebtAssignment CreateDebtRequestToDebtAssignment(CreateDebtRequest createDebtRequest, User creatorUser,
-            NonUser selectedUser, CurrencyDto currentCurrencies)
+            NonUser selectedUser, CurrencyRate currencyRate)
         {
             if (Enum.TryParse(createDebtRequest.Status, out Status debtStatus))
             {
@@ -162,8 +161,7 @@ namespace DebtsCompass.Domain
                         DeadlineDate = DateTime.Parse(createDebtRequest.Deadline),
                         Status = debtStatus,
                         IsPaid = createDebtRequest.IsPaid,
-                        EurExchangeRate = currentCurrencies.EurExchangeRate,
-                        UsdExchangeRate = currentCurrencies.UsdExchangeRate
+                        CurrencyRate = currencyRate
                     }
                 };
             }
@@ -173,7 +171,7 @@ namespace DebtsCompass.Domain
             }
         }
 
-        public static DebtAssignment CreateDebtRequestToDebtAssignment(CreateDebtRequest createDebtRequest, User creatorUser, CurrencyDto currentCurrencies)
+        public static DebtAssignment CreateDebtRequestToDebtAssignment(CreateDebtRequest createDebtRequest, User creatorUser, CurrencyRate currencyRate)
         {
             if (Enum.TryParse(createDebtRequest.Status, out Status debtStatus))
             {
@@ -194,8 +192,7 @@ namespace DebtsCompass.Domain
                         DeadlineDate = DateTime.Parse(createDebtRequest.Deadline),
                         Status = debtStatus,
                         IsPaid = createDebtRequest.IsPaid,
-                        EurExchangeRate = currentCurrencies.EurExchangeRate,
-                        UsdExchangeRate = currentCurrencies.UsdExchangeRate
+                        CurrencyRate = currencyRate,
                     }
                 };
             }
@@ -205,7 +202,7 @@ namespace DebtsCompass.Domain
             }
         }
 
-        public static DebtAssignment EditDebtRequestToDebtAssignment(EditDebtRequest editDebtRequest, User selectedUser)
+        public static DebtAssignment EditDebtRequestToDebtAssignment(EditDebtRequest editDebtRequest, User selectedUser, CurrencyRate currentCurrencyRate)
         {
             return new DebtAssignment
             {
@@ -216,11 +213,12 @@ namespace DebtsCompass.Domain
                     BorrowReason = editDebtRequest.Reason,
                     DateOfBorrowing = DateTime.Parse(editDebtRequest.BorrowingDate),
                     DeadlineDate = DateTime.Parse(editDebtRequest.Deadline),
+                    CurrencyRate = currentCurrencyRate
                 }
             };
         }
 
-        public static DebtAssignment EditDebtRequestToDebtAssignment(EditDebtRequest editDebtRequest, NonUser selectedUser)
+        public static DebtAssignment EditDebtRequestToDebtAssignment(EditDebtRequest editDebtRequest, NonUser selectedUser, CurrencyRate currentCurrencyRate)
         {
             return new DebtAssignment
             {
@@ -231,6 +229,7 @@ namespace DebtsCompass.Domain
                     BorrowReason = editDebtRequest.Reason,
                     DateOfBorrowing = DateTime.Parse(editDebtRequest.BorrowingDate),
                     DeadlineDate = DateTime.Parse(editDebtRequest.Deadline),
+                    CurrencyRate = currentCurrencyRate
                 }
             };
         }
@@ -239,8 +238,8 @@ namespace DebtsCompass.Domain
         {
             return new DebtEmailInfoDto
             {
-                CreatorFirstName = user.UserInfo.FirstName,
-                CreatorLastName = user.UserInfo.LastName
+                CreatorFirstName = user.UserInfo?.FirstName,
+                CreatorLastName = user.UserInfo?.LastName
             };
         }
 
@@ -248,17 +247,17 @@ namespace DebtsCompass.Domain
         {
             return new DebtEmailInfoDto
             {
-                CreatorFirstName = debtAssignment.CreatorUser.UserInfo.FirstName,
-                CreatorLastName = debtAssignment.CreatorUser.UserInfo.LastName,
+                CreatorFirstName = debtAssignment.CreatorUser.UserInfo?.FirstName,
+                CreatorLastName = debtAssignment.CreatorUser.UserInfo?.LastName,
                 Amount = debtAssignment.SelectedUser.CurrencyPreference == CurrencyPreference.EUR ?
-                (debtAssignment.Debt.Amount * (decimal)debtAssignment.Debt.EurExchangeRate).ToString("#.##") :
+                (debtAssignment.Debt.Amount * (decimal)debtAssignment.Debt.CurrencyRate.EurExchangeRate).ToString("#.##") :
                 debtAssignment.SelectedUser.CurrencyPreference == CurrencyPreference.USD ?
-                (debtAssignment.Debt.Amount * (decimal)debtAssignment.Debt.UsdExchangeRate).ToString("#.##") :
+                (debtAssignment.Debt.Amount * (decimal)debtAssignment.Debt.CurrencyRate.UsdExchangeRate).ToString("#.##") :
                 debtAssignment.Debt.Amount.ToString("#.##"),
-                Reason = debtAssignment.Debt.BorrowReason,
+                Reason = debtAssignment.Debt?.BorrowReason,
                 Currency = debtAssignment.SelectedUser.CurrencyPreference.ToString(),
-                DateOfBorrowing = debtAssignment.Debt.DateOfBorrowing.ToString("dd MMM yyyy"),
-                Deadline = debtAssignment.Debt.DeadlineDate.ToString("dd MMM yyyy")
+                DateOfBorrowing = debtAssignment.Debt?.DateOfBorrowing.ToString("dd MMM yyyy"),
+                Deadline = debtAssignment.Debt?.DeadlineDate.ToString("dd MMM yyyy")
             };
         }
 
@@ -266,13 +265,13 @@ namespace DebtsCompass.Domain
         {
             return new DebtEmailInfoDto
             {
-                CreatorFirstName = debtAssignment.CreatorUser.UserInfo.FirstName,
-                CreatorLastName = debtAssignment.CreatorUser.UserInfo.LastName,
+                CreatorFirstName = debtAssignment.CreatorUser?.UserInfo?.FirstName,
+                CreatorLastName = debtAssignment.CreatorUser?.UserInfo?.LastName,
                 Amount = debtAssignment.Debt.Amount.ToString("#.##"),
-                Reason = debtAssignment.Debt.BorrowReason,
+                Reason = debtAssignment.Debt?.BorrowReason,
                 Currency = CurrencyPreference.RON.ToString(),
-                DateOfBorrowing = debtAssignment.Debt.DateOfBorrowing.ToString("dd MMM yyyy"),
-                Deadline = debtAssignment.Debt.DeadlineDate.ToString("dd MMM yyyy")
+                DateOfBorrowing = debtAssignment.Debt?.DateOfBorrowing.ToString("dd MMM yyyy"),
+                Deadline = debtAssignment.Debt?.DeadlineDate.ToString("dd MMM yyyy")
             };
         }
 
@@ -287,7 +286,7 @@ namespace DebtsCompass.Domain
         }
 
         public static Expense CreateExpenseRequestToExpense(CreateExpenseRequest createExpenseRequest, User user,
-            CurrencyDto currentCurrencies, ExpenseCategory category)
+            CurrencyRate currentCurrencyRate, ExpenseCategory category)
         {
             return new Expense
             {
@@ -296,8 +295,7 @@ namespace DebtsCompass.Domain
                 Category = category,
                 Note = createExpenseRequest.Note,
                 User = user,
-                EurExchangeRate = currentCurrencies.EurExchangeRate,
-                UsdExchangeRate = currentCurrencies.UsdExchangeRate
+                CurrencyRate = currentCurrencyRate
             };
         }
 
@@ -317,17 +315,18 @@ namespace DebtsCompass.Domain
             };
         }
 
-        public static Expense EditExpenseRequestToExpense(EditExpenseRequest editExpenseRequest, ExpenseCategory category)
+        public static Expense EditExpenseRequestToExpense(EditExpenseRequest editExpenseRequest, ExpenseCategory category, CurrencyRate currencyRate)
         {
             return new Expense
             {
                 Amount = editExpenseRequest.Amount,
                 Category = category,
                 Note = editExpenseRequest.Note,
+                CurrencyRate = currencyRate
             };
         }
 
-        public static Income CreateIncomeRequestToIncome(CreateIncomeRequest createIncomeRequest, User user, CurrencyDto currentCurrencies, IncomeCategory category)
+        public static Income CreateIncomeRequestToIncome(CreateIncomeRequest createIncomeRequest, User user, CurrencyRate currentCurrencyRate, IncomeCategory category)
         {
             return new Income
             {
@@ -336,18 +335,18 @@ namespace DebtsCompass.Domain
                 Category = category,
                 Note = createIncomeRequest.Note,
                 User = user,
-                EurExchangeRate = currentCurrencies.EurExchangeRate,
-                UsdExchangeRate = currentCurrencies.UsdExchangeRate
+                CurrencyRate = currentCurrencyRate
             };
         }
 
-        public static Income EditIncomeRequestToIncome(EditIncomeRequest editIncomeRequest, IncomeCategory category)
+        public static Income EditIncomeRequestToIncome(EditIncomeRequest editIncomeRequest, IncomeCategory category, CurrencyRate currentCurrencyRate)
         {
             return new Income
             {
                 Amount = editIncomeRequest.Amount,
                 Category = category,
                 Note = editIncomeRequest.Note,
+                CurrencyRate = currentCurrencyRate
             };
         }
 
@@ -392,9 +391,9 @@ namespace DebtsCompass.Domain
                 DateOfBorrowing = debtAssignment.Debt.DateOfBorrowing.ToString("dd MMM yyyy"),
                 Deadline = debtAssignment.Debt.DeadlineDate.ToString("dd MMM yyyy"),
                 Amount = debtAssignment.CreatorUser.CurrencyPreference == CurrencyPreference.EUR ?
-                (debtAssignment.Debt.Amount * (decimal)debtAssignment.Debt.EurExchangeRate).ToString("#.##") :
+                (debtAssignment.Debt.Amount * (decimal)debtAssignment.Debt.CurrencyRate.EurExchangeRate).ToString("#.##") :
                 debtAssignment.CreatorUser.CurrencyPreference == CurrencyPreference.USD ?
-                (debtAssignment.Debt.Amount * (decimal)debtAssignment.Debt.UsdExchangeRate).ToString("#.##") :
+                (debtAssignment.Debt.Amount * (decimal)debtAssignment.Debt.CurrencyRate.UsdExchangeRate).ToString("#.##") :
                 debtAssignment.Debt.Amount.ToString("#.##"),
             };
         }

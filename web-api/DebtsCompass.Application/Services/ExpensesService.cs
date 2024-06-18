@@ -13,14 +13,14 @@ namespace DebtsCompass.Application.Services
     {
         private readonly IExpenseRepository expenseRepository;
         private readonly IUserRepository userRepository;
-        private readonly ICurrencyRatesJob currencyRatesJob;
+        private readonly ICurrencyRateRepository currencyRateRepository;
         private readonly IExpenseCategoryRepository categoryRepository;
 
-        public ExpensesService(IExpenseRepository expenseRepository, IUserRepository userRepository, ICurrencyRatesJob currencyRatesJob, IExpenseCategoryRepository categoryRepository)
+        public ExpensesService(IExpenseRepository expenseRepository, IUserRepository userRepository, ICurrencyRateRepository currencyRateRepository, IExpenseCategoryRepository categoryRepository)
         {
             this.expenseRepository = expenseRepository;
             this.userRepository = userRepository;
-            this.currencyRatesJob = currencyRatesJob;
+            this.currencyRateRepository = currencyRateRepository;
             this.categoryRepository = categoryRepository;
         }
 
@@ -28,23 +28,23 @@ namespace DebtsCompass.Application.Services
         {
             User user = await userRepository.GetUserByEmail(creatorEmail) ?? throw new UserNotFoundException(creatorEmail);
 
-            CurrencyDto currentCurrencies = await currencyRatesJob.GetLatestCurrencyRates();
+            CurrencyRate currentCurrencyRate = await currencyRateRepository.GetLatestInsertedCurrencyRates();
 
             if (!isRonCurrency)
             {
                 if (user.CurrencyPreference == CurrencyPreference.EUR)
                 {
-                    createExpenseRequest.Amount /= currentCurrencies.EurExchangeRate;
+                    createExpenseRequest.Amount /= currentCurrencyRate.EurExchangeRate;
                 }
                 else if (user.CurrencyPreference == CurrencyPreference.USD)
                 {
-                    createExpenseRequest.Amount /= currentCurrencies.UsdExchangeRate;
+                    createExpenseRequest.Amount /= currentCurrencyRate.UsdExchangeRate;
                 }
             }
 
             ExpenseCategory category = await categoryRepository.GetByName(createExpenseRequest.Category);
 
-            Expense expense = Mapper.CreateExpenseRequestToExpense(createExpenseRequest, user, currentCurrencies, category);
+            Expense expense = Mapper.CreateExpenseRequestToExpense(createExpenseRequest, user, currentCurrencyRate, category);
 
             await expenseRepository.CreateExpense(expense);
 
@@ -73,19 +73,19 @@ namespace DebtsCompass.Application.Services
             User user = await userRepository.GetUserByEmail(email) ?? throw new UserNotFoundException(email);
             Expense expenseFromDb = await expenseRepository.GetExpenseById(editExpenseRequest.Guid) ?? throw new EntityNotFoundException();
 
-            CurrencyDto currentCurrencies = await currencyRatesJob.GetLatestCurrencyRates();
+            CurrencyRate currentCurrencyRate = await currencyRateRepository.GetLatestInsertedCurrencyRates();
 
             if (user.CurrencyPreference == CurrencyPreference.EUR)
             {
-                editExpenseRequest.Amount /= currentCurrencies.EurExchangeRate;
+                editExpenseRequest.Amount /= currentCurrencyRate.EurExchangeRate;
             }
             else if (user.CurrencyPreference == CurrencyPreference.USD)
             {
-                editExpenseRequest.Amount /= currentCurrencies.UsdExchangeRate;
+                editExpenseRequest.Amount /= currentCurrencyRate.UsdExchangeRate;
             }
 
             ExpenseCategory category = await categoryRepository.GetByName(editExpenseRequest.Category);
-            Expense updatedExpense = Mapper.EditExpenseRequestToExpense(editExpenseRequest, category);
+            Expense updatedExpense = Mapper.EditExpenseRequestToExpense(editExpenseRequest, category, currentCurrencyRate);
 
             await expenseRepository.UpdateExpense(expenseFromDb, updatedExpense);
         }
@@ -98,22 +98,22 @@ namespace DebtsCompass.Application.Services
 
             if (user.CurrencyPreference == CurrencyPreference.EUR)
             {
-                expensesFromDb.ForEach(e => e.Amount *= (decimal)e.EurExchangeRate);
+                expensesFromDb.ForEach(e => e.Amount *= e.CurrencyRate.EurExchangeRate);
             }
             else if (user.CurrencyPreference == CurrencyPreference.USD)
             {
-                expensesFromDb.ForEach(e => e.Amount *= (decimal)e.UsdExchangeRate);
+                expensesFromDb.ForEach(e => e.Amount *= e.CurrencyRate.UsdExchangeRate);
             }
             List<ExpenseOrIncomeDto> expenses = expensesFromDb.Select(Mapper.ExpenseToExpenseOrIncomeDto).ToList();
             decimal totalExpenses = expenses.Sum(e => e.Amount);  
 
             if (user.CurrencyPreference == CurrencyPreference.EUR)
             {
-                incomesFromDb.ForEach(i => i.Amount *= (decimal)i.EurExchangeRate);
+                incomesFromDb.ForEach(i => i.Amount *= i.CurrencyRate.EurExchangeRate);
             }
             else if (user.CurrencyPreference == CurrencyPreference.USD)
             {
-                incomesFromDb.ForEach(i => i.Amount *= (decimal)i.UsdExchangeRate);
+                incomesFromDb.ForEach(i => i.Amount *= i.CurrencyRate.UsdExchangeRate);
             }
             List<ExpenseOrIncomeDto> incomes = incomesFromDb.Select(Mapper.IncomeToExpenseOrIncomeDto).ToList();
             decimal totalIncomes = incomes.Sum(i => i.Amount);
@@ -131,13 +131,13 @@ namespace DebtsCompass.Application.Services
 
             if (user.CurrencyPreference == CurrencyPreference.EUR)
             {
-                expensesFromDb.ForEach(e => e.Amount *= (decimal)e.EurExchangeRate);
-                incomesFromDb.ForEach(i => i.Amount *= (decimal)i.EurExchangeRate);
+                expensesFromDb.ForEach(e => e.Amount *= e.CurrencyRate.EurExchangeRate);
+                incomesFromDb.ForEach(i => i.Amount *= i.CurrencyRate.EurExchangeRate);
             }
             else if (user.CurrencyPreference == CurrencyPreference.USD)
             {
-                expensesFromDb.ForEach(e => e.Amount *= (decimal)e.UsdExchangeRate);
-                incomesFromDb.ForEach(i => i.Amount *= (decimal)i.UsdExchangeRate);
+                expensesFromDb.ForEach(e => e.Amount *= e.CurrencyRate.UsdExchangeRate);
+                incomesFromDb.ForEach(i => i.Amount *= i.CurrencyRate.UsdExchangeRate);
             }
 
             decimal totalExpenses = expensesFromDb.Sum(e => e.Amount);
@@ -157,11 +157,11 @@ namespace DebtsCompass.Application.Services
 
             if (user.CurrencyPreference == CurrencyPreference.EUR)
             {
-                expensesFromDb.ForEach(e => e.Amount *= (decimal)e.EurExchangeRate);
+                expensesFromDb.ForEach(e => e.Amount *= e.CurrencyRate.EurExchangeRate);
             }
             else if (user.CurrencyPreference == CurrencyPreference.USD)
             {
-                expensesFromDb.ForEach(e => e.Amount *= (decimal)e.UsdExchangeRate);
+                expensesFromDb.ForEach(e => e.Amount *= e.CurrencyRate.UsdExchangeRate);
             }
 
             var groupedExpenses = expensesFromDb.GroupBy(

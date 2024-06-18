@@ -18,6 +18,7 @@ export class SearchUsersDialog implements OnInit {
   users!: UserModel[] | null;
   usersTotalCount!: number;
   searchedUsers!: any[];
+  lastSearchInput!: string;
 
   @ViewChild('searchInput') searchInput!: ElementRef;
 
@@ -32,6 +33,9 @@ export class SearchUsersDialog implements OnInit {
   ngOnInit(): void {}
 
   searchUsers(searchInput: any): void {
+    if (this.lastSearchInput === searchInput || searchInput === "") {
+      return;
+    }
     this.usersService
       .getUsersBySearchQuery(
         searchInput,
@@ -53,6 +57,7 @@ export class SearchUsersDialog implements OnInit {
           });
 
           this.usersTotalCount = response.payload.totalCount;
+          this.lastSearchInput = searchInput;
         },
         () => {
           this.notificationService.showError('Something went wrong');

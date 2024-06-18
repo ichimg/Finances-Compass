@@ -6,25 +6,26 @@
         <mat-nav-list>
           <a mat-list-item routerLink="/dashboard"
             ><span class="sidebar-item"
-              ><mat-icon matPrefix>home</mat-icon>Dashboard</span
+              ><mat-icon matPrefix class="icon">home</mat-icon>Dashboard</span
             ></a
           >
 
           <a mat-list-item class="sidebar-item" (click)="goToExpenses()"
             ><span class="sidebar-item"
-              ><mat-icon matPrefix>account_balance_wallet</mat-icon
+              ><mat-icon matPrefix class="icon">account_balance_wallet</mat-icon
               >Expenses</span
             ></a
           >
           <a mat-list-item routerLink="/debts" class="sidebar-item"
             ><span class="sidebar-item"
-              ><mat-icon matPrefix>payment</mat-icon>Debts</span
+              ><mat-icon matPrefix class="icon">payment</mat-icon>Debts</span
             ></a
           >
           <mat-divider> </mat-divider>
-          <a mat-list-item (click)="openSettingsDialog()"
+          <a mat-list-item (click)="openSettingsDialog()" class="sidebar-item"
             ><span class="sidebar-item"
-              ><mat-icon matPrefix>settings</mat-icon>Settings</span
+              ><mat-icon matPrefix class="icon">settings</mat-icon
+              >Settings</span
             ></a
           >
         </mat-nav-list>
@@ -43,7 +44,8 @@
                 (click)="openSearchUsersDialog()"
                 class="sidebar-item"
                 ><span class="sidebar-item"
-                  ><mat-icon matPrefix>search</mat-icon>Search users</span
+                  ><mat-icon matPrefix class="icon">search</mat-icon>Search
+                  users</span
                 ></a
               >
               <mat-divider></mat-divider>
@@ -52,15 +54,18 @@
                 class="sidebar-item"
                 (click)="openFriendsDialog()"
                 ><span class="sidebar-item"
-                  ><mat-icon>people</mat-icon>Friends</span
+                  ><mat-icon matPrefix class="icon">people</mat-icon
+                  >Friends</span
                 ></a
               >
-              <a *ngIf="isDataConsent"
+              <a
+                *ngIf="isDataConsent"
                 mat-list-item
                 class="sidebar-item"
                 (click)="openSimilarUsersDialog()"
                 ><span class="sidebar-item"
-                  ><mat-icon>person_outline</mat-icon>See similar users</span
+                  ><mat-icon matPrefix class="icon">person_outline</mat-icon>See
+                  similar users</span
                 ></a
               >
             </mat-nav-list>

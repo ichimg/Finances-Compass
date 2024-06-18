@@ -26,7 +26,7 @@ export class ExpensesComponent implements OnInit {
   calendarOptions: CalendarOptions = {
     initialView: 'dayGridMonth',
     plugins: [dayGridPlugin, interactionPlugin],
-    height: 429,
+    height: window.innerWidth <= 768 ? 520 : 429,
     aspectRatio: 1.5,
     firstDay: 1,
     headerToolbar: {
@@ -79,7 +79,7 @@ export class ExpensesComponent implements OnInit {
   };
 
   options: any = {
-    maintainAspectRatio: true,
+    maintainAspectRatio: false,
     responsive: true,
     indexAxis: 'y',
     scales: {
@@ -232,7 +232,7 @@ export class ExpensesComponent implements OnInit {
     let calendar = this.calendarComponent.getApi();
     const dialogRef = this.dialog
       .open(ViewOrEditExpenseDialog, {
-        width: '25%',
+        width: '400px',
         data: {
           calendarApi: calendar,
           item: info.event,

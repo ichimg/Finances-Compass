@@ -1,11 +1,8 @@
-import { NotificationService } from './../services/notification.service';
 import {
   HttpHandler,
   HttpInterceptor,
   HttpRequest,
 } from '@angular/common/http';
-import { AuthenticationService } from '../services/authentication.service';
-import { Router } from '@angular/router';
 import { Injectable } from '@angular/core';
 
 @Injectable()

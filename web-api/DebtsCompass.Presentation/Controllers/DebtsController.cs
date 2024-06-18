@@ -1,5 +1,4 @@
 ﻿using DebtsCompass.Application.Exceptions;
-using DebtsCompass.Application.Services;
 using DebtsCompass.Domain;
 using DebtsCompass.Domain.Entities.DtoResponses;
 using DebtsCompass.Domain.Entities.Requests;
@@ -182,7 +181,7 @@ namespace DebtsCompass.Presentation.Controllers
         [HttpGet]
         [Route("get-loans-debts-count")]
         [Authorize]
-        public async Task<ActionResult<TotalLoansAndDebtsDto>> GetExpensesAndIncomesTotalCount([FromHeader] string email)
+        public async Task<ActionResult<TotalLoansAndDebtsDto>> GetLoansAndDebtsTotalCount([FromHeader] string email)
         {
             if (!IsRequestFromValidUser(email))
             {
@@ -191,7 +190,7 @@ namespace DebtsCompass.Presentation.Controllers
 
             TotalLoansAndDebtsDto expensesAndIncomes = await debtsService.GetLoansAndDebtsTotalCount(email);
 
-            Response<TotalLoansAndDebtsDto> response = new Response<TotalLoansAndDebtsDto>
+            Response<TotalLoansAndDebtsDto> response = new()
             {
                 Message = null,
                 Payload = expensesAndIncomes,
@@ -200,7 +199,6 @@ namespace DebtsCompass.Presentation.Controllers
 
             return Ok(response);
         }
-
 
         private bool IsRequestFromValidUser(string email)
         {

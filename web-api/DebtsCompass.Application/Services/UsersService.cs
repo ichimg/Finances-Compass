@@ -24,7 +24,6 @@ namespace DebtsCompass.Application.Services
 
             var usersFromDb = await userRepository.GetUsersBySearchQuery(query, currentUser, pagedParameters);
 
-
             var userDtos = new List<UserDto>();
             foreach (var user in usersFromDb.Items)
             {

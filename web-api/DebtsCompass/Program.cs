@@ -1,5 +1,6 @@
 using DebtsCompass;
 using DebtsCompass.Application.Configurations;
+using DebtsCompass.Application.HangfireAuth;
 using DebtsCompass.Application.Jobs;
 using DebtsCompass.Application.Services;
 using DebtsCompass.Application.Validators;
@@ -114,6 +115,7 @@ builder.Services.AddScoped<IExpenseRepository, ExpenseRepository>();
 builder.Services.AddScoped<IExpenseCategoryRepository, ExpenseCategoryRepository>();
 builder.Services.AddScoped<IIncomeRepository, IncomeRepository>();
 builder.Services.AddScoped<IIncomeCategoryRepository, IncomeCategoryRepository>();
+builder.Services.AddScoped<ICurrencyRateRepository, CurrencyRateRepository>();
 
 // Email
 var emailConfig = builder.Configuration.GetSection("EmailConfiguration").Get<EmailConfiguration>();
@@ -168,6 +170,11 @@ app.MapControllers();
 
 app.UseCors();
 
-app.UseHangfireDashboard();
+app.UseHangfireDashboard("/hangfire", new DashboardOptions
+{
+    Authorization = new[] { new AuthorizationFilter() }
+});
+
+app.StartRecurringJobs();
 
 app.Run();
