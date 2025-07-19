@@ -1,0 +1,49 @@
+<mat-card>
+  <h2>Your privacy matters</h2>
+  <mat-card-content class="card-content">
+    <div class="text-container">
+    <p>
+      We at Finances Compass are committed to protecting your privacy. By using
+      our application, you agree to the following:
+    </p>
+    <ul>
+      <li>We collect and process your data to:</li>
+      <ul>
+        <li>
+          Provide you with a personalized experience on our application. (e.g.,
+          recommend similar users based on spending habits)
+        </li>
+        <li>
+          Improve our services. (e.g., analyze user behavior for feature
+          enhancements)
+        </li>
+      </ul>
+      <br />
+      <li>The data we collect may include:</li>
+      <ul>
+        <li>Expenses (anonymized category and amount)</li>
+        <li>Incomes (anonymized category and amount)</li>
+      </ul>
+      <br />
+      <li>
+        Your data will be used only for the purposes mentioned above and will
+        not be shared with third parties without your consent.
+      </li>
+      <br />
+      <li>You have the right to:</li>
+      <ul>
+        <li>Access your data at any time.</li>
+        <li>Request to have your data corrected or deleted.</li>
+        <li>Withdraw your consent to data processing at any time.</li>
+      </ul>
+    </ul>
+    </div>
+  </mat-card-content>
+  <p>
+    <mat-slide-toggle (change)="onToggleChange($event)" color="warn"
+      >I agree to the processing of my personal data as described
+      above.</mat-slide-toggle
+    >
+  </p>
+  <button mat-raised-button (click)="onContinueClick()">Continue</button>
+</mat-card>

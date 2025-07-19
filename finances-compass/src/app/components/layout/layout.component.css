@@ -1,0 +1,51 @@
+mat-sidenav-container {
+  height: fit-content;
+}
+
+.left-sidebar {
+  width: 200px;
+  left: 0;
+}
+
+.right-sidebar {
+  width: 300px;
+  right: 0;
+}
+
+.right-sidebar,
+.left-sidebar {
+  position: fixed;
+  z-index: 2;
+  top: 0;
+  margin-top: 70px;
+}
+
+.sidebar-item {
+  display: flex;
+  font-family: "Trebuchet MS", "Lucida Sans Unicode", "Lucida Grande",
+    "Lucida Sans", Arial, sans-serif;
+  gap: 10px;
+}
+
+@media screen and (max-width: 1030px) {
+  .right-sidebar {
+    width: 150px;
+    padding: 0px;
+  }
+
+  .left-sidebar {
+    width: 115px;
+    padding: 0px;
+  }
+
+  .sidebar-item {
+    gap: 0px;
+    font-size: 12px;
+  }
+}
+
+@media screen and (max-width: 768px) {
+  .icon {
+    transform: scale(0.7);
+  }
+}

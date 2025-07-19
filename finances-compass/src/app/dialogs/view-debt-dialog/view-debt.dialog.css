@@ -1,0 +1,80 @@
+.green-icon {
+  color: green;
+}
+
+.red-icon {
+  color: red;
+}
+
+.title {
+  margin-bottom: 10px;
+  font-family: "Trebuchet MS", "Lucida Sans Unicode", "Lucida Grande",
+    "Lucida Sans", Arial, sans-serif;
+}
+
+.mat-card {
+  max-width: 600px;
+  padding: 20px;
+  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+}
+
+.detail-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+  font-family: system-ui;
+}
+
+.label {
+  font-weight: bold;
+  flex-basis: 40%;
+  color: #504f4f;
+}
+
+.value, .value-warn {
+  flex-basis: 60%;
+  text-align: right;
+}
+
+.value-warn {
+  cursor: help;
+  display: flex;
+  gap: 3px;
+  justify-content: end;
+  color: #f4ca16;
+  font-weight: 600;
+}
+
+.value-warn:hover {
+  color: #8e7814;
+  transition: 0.4s;
+}
+
+.warn-icon {
+  font-size: 20px;
+}
+
+mat-card-content {
+  padding: 15px;
+}
+
+.spaced {
+  display: flex;
+  justify-content: space-between;
+}
+
+.close-icon:hover {
+  color: crimson;
+  cursor: pointer;
+  background-color: lightgray;
+}
+
+.paid-btn {
+  display: block;
+  margin: 0 auto;
+  max-height: 55px;
+  width: 60%;
+  font-size: 20px;
+}

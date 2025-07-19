@@ -1,0 +1,453 @@
+<div class="container">
+  <div>
+    <mat-card class="border">
+      <div class="flex">
+        <div class="btn-items">
+          <div class="text-img" *ngIf="areDebtsToReceive()">
+            <div class="image">
+              <img
+                src="../../assets/images/money-note-icon.png"
+                alt=""
+                width="30"
+                height="20"
+              />
+            </div>
+            <div class="text">
+              <h2 class="to-be-collected">Loans to be collected:</h2>
+            </div>
+          </div>
+          <div
+            class="text-img"
+            *ngIf="!areDebtsToReceive() && isReceivingDebtsLoaded"
+          >
+            <img
+              src="../../assets/images/money-note-icon.png"
+              alt=""
+              width="30"
+              height="20"
+            />
+            <h3 class="to-be-collected">
+              You don't have any loans to collect.
+            </h3>
+          </div>
+          <div class="add-btn" *ngIf="isReceivingDebtsLoaded">
+            <button mat-raised-button color="primary" (click)="addDebt()">
+              <mat-icon>add_circle_outline</mat-icon>DEBT
+            </button>
+          </div>
+        </div>
+
+        <div class="table-size">
+          <table
+            mat-table
+            [dataSource]="dataReceivingDebtsSource"
+            matSort
+            #debtReceivingTbSort="matSort"
+            (matSortChange)="announceReceivingSortChange($event)"
+            class="mat-elevation-z8"
+            *ngIf="areDebtsToReceive()"
+          >
+            <ng-container matColumnDef="name">
+              <th
+                mat-header-cell
+                *matHeaderCellDef
+                mat-sort-header
+                sortActionDescription="Sort by name"
+              >
+                Name
+              </th>
+              <td
+                mat-cell
+                *matCellDef="let element"
+                [ngClass]="
+                  element.status === 'Rejected'
+                    ? 'rejected-debt'
+                    : element.isPaid
+                    ? 'paid-debt'
+                    : ''
+                "
+              >
+                {{ element.firstName + " " + element.lastName }}
+              </td>
+            </ng-container>
+
+            <ng-container matColumnDef="amount">
+              <th
+                mat-header-cell
+                *matHeaderCellDef
+                mat-sort-header
+                sortActionDescription="Sort by amount"
+              >
+                Amount
+              </th>
+              <td
+                mat-cell
+                *matCellDef="let element"
+                [ngClass]="
+                  element.status === 'Rejected'
+                    ? 'rejected-debt'
+                    : element.isPaid
+                    ? 'paid-debt'
+                    : ''
+                "
+              >
+                {{
+                  getCurrency() === "RON"
+                    ? element.amount + " " + getCurrency()
+                    : getCurrency() + element.amount
+                }}
+              </td>
+            </ng-container>
+            <ng-container matColumnDef="deadline">
+              <th
+                mat-header-cell
+                *matHeaderCellDef
+                mat-sort-header
+                sortActionDescription="Sort by deadline"
+              >
+                Deadline
+              </th>
+              <td
+                mat-cell
+                *matCellDef="let element"
+                [ngClass]="
+                  element.status === 'Rejected'
+                    ? 'rejected-debt'
+                    : element.isPaid
+                    ? 'paid-debt'
+                    : ''
+                "
+              >
+                {{ element.deadline | date : "dd MMM yyyy" }}
+              </td>
+            </ng-container>
+
+            <ng-container matColumnDef="reason">
+              <th
+                mat-header-cell
+                *matHeaderCellDef
+                mat-sort-header
+                sortActionDescription="Sort by reason"
+              >
+                Reason
+              </th>
+              <td
+                mat-cell
+                *matCellDef="let element"
+                [ngClass]="
+                  element.status === 'Rejected'
+                    ? 'rejected-debt'
+                    : element.isPaid
+                    ? 'paid-debt'
+                    : ''
+                "
+              >
+                {{ element.reason ? element.reason : "Not provided" }}
+              </td>
+            </ng-container>
+            <ng-container matColumnDef="status">
+              <th
+                mat-header-cell
+                *matHeaderCellDef
+                mat-sort-header
+                sortActionDescription="Sort by status"
+              >
+                Status
+              </th>
+              <td
+                mat-cell
+                *matCellDef="let element"
+                [ngClass]="
+                  element.status === 'Rejected'
+                    ? 'rejected-debt'
+                    : element.isPaid
+                    ? 'paid-debt'
+                    : ''
+                "
+              >
+                {{
+                  element.isPaid
+                    ? "&#x2705; Collected"
+                    : (element.status | statusTransform)
+                }}
+              </td>
+            </ng-container>
+
+            <ng-container matColumnDef="action">
+              <th mat-header-cell *matHeaderCellDef>Action</th>
+              <td
+                mat-cell
+                *matCellDef="let element"
+                [ngClass]="
+                  element.status === 'Rejected'
+                    ? 'rejected-debt'
+                    : element.isPaid
+                    ? 'paid-debt'
+                    : ''
+                "
+              >
+                <div class="action-icons">
+                  <mat-icon
+                    matTooltip="Click to edit"
+                    [matTooltipDisabled]="element.status !== 'Pending'"
+                    matTooltipPosition="left"
+                    [ngClass]="
+                      element.status === 'Pending'
+                        ? 'edit-icon'
+                        : 'edit-icon disabled'
+                    "
+                    (click)="
+                      element.status === 'Pending' &&
+                        openEditDialog($event, element)
+                    "
+                    >border_color</mat-icon
+                  >
+                  <mat-icon
+                    matTooltip="Click to delete"
+                    [matTooltipDisabled]="
+                      element.status !== 'Pending' ||
+                      element.status !== 'Rejected' ||
+                      element.isPaid === false
+                    "
+                    matTooltipPosition="right"
+                    [ngClass]="
+                      element.status === 'Pending' ||
+                      element.status === 'Rejected' ||
+                      element.isPaid === true
+                        ? 'delete-icon'
+                        : 'delete-icon disabled'
+                    "
+                    (click)="
+                      (element.status === 'Pending' ||
+                        element.status === 'Rejected' ||
+                        element.isPaid === true) &&
+                        deleteDebt($event, element)
+                    "
+                    >delete_forever</mat-icon
+                  >
+                </div>
+              </td>
+            </ng-container>
+
+            <tr
+              mat-header-row
+              *matHeaderRowDef="displayedReceivingColumns"
+            ></tr>
+            <tr
+              class="record"
+              mat-row
+              (click)="onLoanClick(row)"
+              *matRowDef="let row; columns: displayedReceivingColumns"
+            ></tr>
+          </table>
+          <mat-paginator
+            [ngClass]="areDebtsToReceive() ? 'block' : 'hidden'"
+            #receivingPaginator
+            [pageSizeOptions]="[5, 10, 15]"
+            showFirstLastButtons
+          ></mat-paginator>
+        </div>
+      </div>
+    </mat-card>
+  </div>
+
+  <div>
+    <mat-card class="border">
+      <div class="flex">
+        <div class="text-img" *ngIf="areDebts()">
+          <div class="image">
+            <img
+              src="../../assets/images/icons8-cash-in-hand-96.png"
+              alt=""
+              width="40"
+              height="40"
+              class="icon"
+            />
+          </div>
+          <div class="text">
+            <h2 class="to-be-collected">Your debts:</h2>
+          </div>
+        </div>
+        <div class="text-img" *ngIf="!areDebts() && isUserDebtsLoaded">
+          <img
+            src="../../assets/images/icons8-cash-in-hand-96.png"
+            alt=""
+            width="40"
+            height="40"
+            class="icon"
+          />
+          <h3 class="to-be-collected">You don't have any debts.</h3>
+        </div>
+
+        <div class="table-size">
+          <table
+            mat-table
+            [dataSource]="dataUserDebtsSource"
+            matSort
+            #debtUserTbSort="matSort"
+            (matSortChange)="announceUserSortChange($event)"
+            class="mat-elevation-z8"
+            *ngIf="areDebts()"
+          >
+            <ng-container matColumnDef="name">
+              <th
+                mat-header-cell
+                *matHeaderCellDef
+                mat-sort-header
+                sortActionDescription="Sort by name"
+              >
+                Name
+              </th>
+              <td
+                mat-cell
+                *matCellDef="let element"
+                [ngClass]="element.isPaid && 'paid-debt'"
+              >
+                {{ element.firstName }} {{ element.lastName }}
+              </td>
+            </ng-container>
+
+            <ng-container matColumnDef="amount">
+              <th
+                mat-header-cell
+                *matHeaderCellDef
+                mat-sort-header
+                sortActionDescription="Sort by amount"
+              >
+                Amount
+              </th>
+              <td
+                mat-cell
+                *matCellDef="let element"
+                [ngClass]="element.isPaid && 'paid-debt'"
+              >
+                {{
+                  getCurrency() === "RON"
+                    ? element.amount + " " + getCurrency()
+                    : getCurrency() + element.amount
+                }}
+              </td>
+            </ng-container>
+            <ng-container matColumnDef="deadline">
+              <th
+                mat-header-cell
+                *matHeaderCellDef
+                mat-sort-header
+                sortActionDescription="Sort by deadline"
+              >
+                Deadline
+              </th>
+              <td
+                mat-cell
+                *matCellDef="let element"
+                [ngClass]="element.isPaid && 'paid-debt'"
+              >
+                {{ element.deadline | date : "dd MMM yyyy" }}
+              </td>
+            </ng-container>
+
+            <ng-container matColumnDef="reason">
+              <th
+                mat-header-cell
+                *matHeaderCellDef
+                mat-sort-header
+                sortActionDescription="Sort by reason"
+              >
+                Reason
+              </th>
+              <td
+                mat-cell
+                *matCellDef="let element"
+                [ngClass]="element.isPaid && 'paid-debt'"
+              >
+                {{ element.reason ? element.reason : "Not provided" }}
+              </td>
+            </ng-container>
+            <ng-container matColumnDef="status">
+              <th
+                mat-header-cell
+                *matHeaderCellDef
+                mat-sort-header
+                sortActionDescription="Sort by status"
+              >
+                Status
+              </th>
+              <td
+                mat-cell
+                *matCellDef="let element"
+                [ngClass]="element.isPaid && 'paid-debt'"
+              >
+                {{
+                  element.isPaid
+                    ? "&#x2705; Paid"
+                    : (element.status | statusTransform)
+                }}
+              </td>
+            </ng-container>
+
+            <ng-container matColumnDef="action">
+              <th mat-header-cell *matHeaderCellDef>Action</th>
+              <td
+                mat-cell
+                *matCellDef="let element"
+                [ngClass]="element.isPaid && 'paid-debt'"
+              >
+                <div class="action-icons">
+                  <mat-icon
+                    *ngIf="
+                      element.status !== 'Accepted' &&
+                      element.status !== 'Rejected'
+                    "
+                    matTooltip="Click to approve"
+                    matTooltipPosition="left"
+                    class="approve-icon"
+                    (click)="approveDebt($event, element)"
+                    >done_outline</mat-icon
+                  >
+                  <mat-icon
+                    matTooltip="Click to reject"
+                    matTooltipPosition="right"
+                    class="delete-icon"
+                    *ngIf="
+                      element.status !== 'Accepted' &&
+                      element.status !== 'Rejected'
+                    "
+                    (click)="rejectDebt($event, element)"
+                    >cancel</mat-icon
+                  >
+                  <button
+                    mat-flat-button
+                    color="warn"
+                    *ngIf="element.status === 'Accepted' && !element.isPaid"
+                    matTooltip="Click to pay"
+                    matTooltipPosition="left"
+                    (click)="onPayClick($event, element)"
+                  >
+                    PAY
+                  </button>
+                </div>
+              </td></ng-container
+            >
+
+            <tr
+              mat-header-row
+              *matHeaderRowDef="displayedReceivingColumns"
+            ></tr>
+            <tr
+              class="record"
+              mat-row
+              (click)="onDebtClick(row)"
+              *matRowDef="let row; columns: displayedReceivingColumns"
+            ></tr>
+          </table>
+          <mat-paginator
+            [ngClass]="areDebts() ? 'block' : 'hidden'"
+            #userPaginator
+            [pageSizeOptions]="[5, 10, 15]"
+            showFirstLastButtons
+          ></mat-paginator>
+        </div>
+      </div>
+    </mat-card>
+  </div>
+</div>

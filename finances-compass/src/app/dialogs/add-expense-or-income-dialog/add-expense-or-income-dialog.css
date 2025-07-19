@@ -1,0 +1,32 @@
+.flex-column {
+  display: flex;
+  flex-direction: column;
+  padding: 10px;
+  width: 400px;
+  align-items: flex;
+}
+
+.mat-dialog-container {
+  overflow-y: auto;
+  max-height: 90vh;
+}
+
+.form-buttons {
+    display: flex;
+    justify-content: flex-end;
+    align-items: flex;
+    gap: 7px;
+    padding-bottom: 10px;
+    padding-right: 10px;
+  }
+
+@media (max-width: 600px) {
+  .mat-dialog-container {
+    max-height: 80vh;
+    overflow-y: auto;
+  }
+
+  .flex-column {
+    width: 250px;
+  }
+}

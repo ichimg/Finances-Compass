@@ -1,0 +1,111 @@
+<div class="container">
+  <mat-card>
+    <mat-card-header class="spaced">
+      <mat-card-title class="title" *ngIf="data.item.extendedProps['isExpense']"
+        ><span class="red-font">Expense </span>from:
+        {{data.titleDate}}</mat-card-title
+      >
+      <mat-card-title
+        class="title"
+        *ngIf="!data.item.extendedProps['isExpense']"
+        ><span class="green-font">Income </span>from:
+        {{data.titleDate}}</mat-card-title
+      >
+      <mat-icon color="warn" class="close-icon" (click)="closeDialog()"
+        >clear</mat-icon
+      >
+    </mat-card-header>
+    <mat-divider></mat-divider>
+    <mat-card-content>
+      <div *ngIf="!isEditingModal">
+        <div class="detail-row">
+          <span class="label">Amount:</span>
+          <span class="value"
+            >{{getCurrency() === 'RON' ? data.item.extendedProps["amount"] + " "
+            + getCurrency() : getCurrency() + data.item.extendedProps["amount"]
+            }}</span
+          >
+        </div>
+        <div class="detail-row">
+          <span class="label">Category:</span>
+          <span class="value">{{data.item.extendedProps["categoryName"]}}</span>
+        </div>
+        <div class="detail-row">
+          <span class="label">Note:</span>
+          <span class="value"
+            >{{data.item.extendedProps["note"] ? data.item.extendedProps["note"]
+            : 'None'}}</span
+          >
+        </div>
+      </div>
+      <div
+        class="form-buttons"
+        *ngIf="!isEditingModal && data.item.extendedProps['categoryName'] !== 'Debts'"
+      >
+        <button mat-raised-button color="primary" (click)="activateEditForm()">
+          Edit
+        </button>
+        <button mat-raised-button color="warn" (click)="delete()">
+          Delete
+        </button>
+      </div>
+      <form [formGroup]="form">
+        <div class="flex-column" *ngIf="isEditingModal">
+          <mat-form-field floatLabel="always" color="accent">
+            <mat-label>Amount</mat-label>
+            <input
+              matInput
+              type="number"
+              class="right-align"
+              placeholder="0"
+              formControlName="amount"
+            />
+            <span matTextPrefix>{{getCurrency()}}&nbsp;</span>
+          </mat-form-field>
+          <mat-form-field>
+            <mat-label>Select category</mat-label>
+            <mat-select name="category" formControlName="categorySelect">
+              <mat-option
+                *ngFor="let category of data.item.extendedProps['isExpense'] ? expenseCategories : incomeCategories"
+                [value]="category.name"
+              >
+                {{category.name}}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+          <mat-form-field>
+            <mat-label>Note</mat-label>
+            <textarea
+              matInput
+              cdkTextareaAutosize
+              #autosize="cdkTextareaAutosize"
+              cdkAutosizeMinRows="1"
+              cdkAutosizeMaxRows="5"
+              name="note"
+              formControlName="note"
+            ></textarea>
+          </mat-form-field>
+        </div>
+      </form>
+      <div class="form-buttons" *ngIf="isEditingModal">
+        <button
+          mat-raised-button
+          color="primary"
+          type="submit"
+          [disabled]="!isEdited || !form.valid"
+          (click)="edit()"
+        >
+          OK
+        </button>
+        <button
+          mat-raised-button
+          color="accent"
+          (click)="closeDialog()"
+          type="button"
+        >
+          Cancel
+        </button>
+      </div>
+    </mat-card-content>
+  </mat-card>
+</div>

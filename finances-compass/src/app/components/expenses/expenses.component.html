@@ -1,0 +1,16 @@
+<div class="container">
+<mat-card class="calendar-container">
+  <mat-card-title class="title" *ngIf="balance !== 0">Balance: <span [ngClass]="balance < 0 ? 'red' : 'green'">{{balanceTitle}}</span></mat-card-title>
+  <mat-card-content>
+    <div class="chart" [ngClass]="balance === 0 ? 'hidden' : ''">
+      <canvas baseChart [type]="'bar'" [options]="options" [data]="data" width="1922" height="70">
+      </canvas>
+    </div>
+    <div class="calendar-buttons">
+    <button mat-raised-button color="warn" class="btn" (click)="addExpense()"> <mat-icon>add_circle_outline</mat-icon>EXPENSE</button>
+    <button mat-raised-button color="primary" class="btn" (click)="addIncome()"> <mat-icon>add_circle_outline</mat-icon>INCOME</button>
+  </div>
+    <full-calendar #calendar [options]="calendarOptions" class="calendar"></full-calendar>
+  </mat-card-content>
+</mat-card>
+</div>

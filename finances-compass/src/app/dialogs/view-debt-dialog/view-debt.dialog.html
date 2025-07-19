@@ -1,0 +1,96 @@
+<div class="container">
+  <mat-card>
+    <mat-card-header class="spaced">
+      <mat-card-title class="title">Debt Details</mat-card-title>
+      <mat-icon color="warn" class="close-icon" (click)="closeDialog()"
+        >clear</mat-icon
+      >
+    </mat-card-header>
+    <mat-divider></mat-divider>
+    <mat-card-content>
+      <div>
+        <div class="detail-row">
+          <span class="label">Name:</span>
+          <span class="value"
+            >{{data.debt.firstName}} {{data.debt.lastName}}</span
+          >
+        </div>
+        <div class="detail-row" *ngIf="data.debt.isUserAccount">
+          <span class="label">Username:</span>
+          <span class="value">{{data.debt.username}}</span>
+        </div>
+        <div class="detail-row">
+          <span class="label">E-mail:</span>
+          <span class="value">{{data.debt.email}}</span>
+        </div>
+        <div class="detail-row">
+          <span class="label">Amount:</span>
+          <span class="value"
+            >{{getCurrency() === 'RON' ? data.debt.amount + " " + getCurrency()
+            : getCurrency() + data.debt.amount }}</span
+          >
+        </div>
+        <div class="detail-row">
+          <span class="label">Date of borrowing:</span>
+          <span class="value"
+            >{{data.debt.borrowingDate | date : "dd MMM yyyy"}}</span
+          >
+        </div>
+        <div class="detail-row">
+          <span class="label">Deadline:</span>
+          <div class="value-warn" *ngIf="isDeadlinePassed(data.debt)" matTooltip="The deadline has passed!"
+            ><mat-icon class="warn-icon">warning</mat-icon>{{data.debt.deadline | date : "dd MMM yyyy"}}</div
+          >
+          <span class="value" *ngIf="!isDeadlinePassed(data.debt)"
+          >{{data.debt.deadline | date : "dd MMM yyyy"}}</span
+        >
+        </div>
+        <div class="detail-row">
+          <span class="label">Reason:</span>
+          <span class="value">{{data.debt.reason ? data.debt.reason : 'Not provided'}}</span>
+        </div>
+        <div class="detail-row">
+          <span class="label">Status:</span>
+          <span class="value">{{data.debt.isPaid
+            ? (!data.isUserDebt ? "&#x2705; Collected" : "&#x2705; Paid")
+            : (data.debt.status | statusTransform)}}</span>
+        </div>
+        <div class="detail-row">
+          <span class="label">Paid:</span>
+          <span class="value">
+            <mat-icon
+              *ngIf="data.debt.isPaid; else uncheckedIcon"
+              class="green-icon"
+              >check_circle</mat-icon
+            >
+            <ng-template #uncheckedIcon>
+              <mat-icon class="red-icon">cancel</mat-icon>
+            </ng-template>
+          </span>
+        </div>
+        <div class="detail-row" *ngIf="!data.isUserDebt">
+          <span class="label">Has account:</span>
+          <span class="value">
+            <mat-icon
+              *ngIf="data.debt.isUserAccount; else uncheckedIcon"
+              class="green-icon"
+              >check_circle</mat-icon
+            >
+            <ng-template #uncheckedIcon>
+              <mat-icon class="red-icon">cancel</mat-icon>
+            </ng-template></span
+          >
+        </div>
+      </div>
+      <button
+        mat-raised-button
+        color="primary"
+        class="paid-btn"
+        *ngIf="!data.isUserDebt && !data.debt.isPaid && data.debt.status === 'Accepted'"
+        (click)="markDebtPaid()"
+      >
+        Mark as paid
+      </button>
+    </mat-card-content>
+  </mat-card>
+</div>

@@ -1,0 +1,72 @@
+mat-card {
+  border-radius: 15px;
+  margin: 15px;
+  width: 45%;
+}
+
+.row {
+  display: flex;
+  padding: 30px;
+  flex-direction: row;
+  justify-content: center;
+}
+
+.btn-container {
+  text-align: center;
+  padding: 0px;
+}
+
+p {
+  text-align: center;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+    Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
+}
+
+.column {
+  display: flex;
+  flex-direction: column;
+  padding: 5px;
+  flex: 50%;
+  padding-top: 10px;
+}
+
+.title-font {
+  font-family: "Trebuchet MS", "Lucida Sans Unicode", "Lucida Grande",
+    "Lucida Sans", Arial, sans-serif;
+  font-size: 1.5rem;
+  margin-bottom: 15px;
+}
+mat-form-field {
+  width: 80%;
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+  padding: 5px;
+}
+
+@media screen and (max-width: 940px) {
+  mat-hint {
+    font-size: 10px;
+  }
+}
+
+@media screen and (max-width: 860px) {
+  mat-hint {
+    visibility: hidden;
+  }
+
+  .column {
+    align-items: center;
+  }
+}
+
+@media screen and (max-width: 480px) {
+  .row {
+    display: flex;
+    flex-direction: column;
+  }
+
+  mat-card {
+    width: 100%;
+  }
+}

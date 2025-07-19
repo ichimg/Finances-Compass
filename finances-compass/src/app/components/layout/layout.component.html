@@ -1,0 +1,81 @@
+<body>
+  <app-header></app-header>
+  <div>
+    <mat-sidenav-container autosize [hasBackdrop]="false">
+      <mat-sidenav #leftSidebar [mode]="sidenavMode" class="left-sidebar">
+        <mat-nav-list>
+          <a mat-list-item routerLink="/dashboard"
+            ><span class="sidebar-item"
+              ><mat-icon matPrefix class="icon">home</mat-icon>Dashboard</span
+            ></a
+          >
+
+          <a mat-list-item class="sidebar-item" (click)="goToExpenses()"
+            ><span class="sidebar-item"
+              ><mat-icon matPrefix class="icon">account_balance_wallet</mat-icon
+              >Expenses</span
+            ></a
+          >
+          <a mat-list-item routerLink="/debts" class="sidebar-item"
+            ><span class="sidebar-item"
+              ><mat-icon matPrefix class="icon">payment</mat-icon>Debts</span
+            ></a
+          >
+          <mat-divider> </mat-divider>
+          <a mat-list-item (click)="openSettingsDialog()" class="sidebar-item"
+            ><span class="sidebar-item"
+              ><mat-icon matPrefix class="icon">settings</mat-icon
+              >Settings</span
+            ></a
+          >
+        </mat-nav-list>
+      </mat-sidenav>
+      <mat-sidenav-content>
+        <mat-sidenav-container autosize [hasBackdrop]="false">
+          <mat-sidenav
+            #rightSidebar
+            [mode]="sidenavMode"
+            position="end"
+            class="right-sidebar"
+          >
+            <mat-nav-list>
+              <a
+                mat-list-item
+                (click)="openSearchUsersDialog()"
+                class="sidebar-item"
+                ><span class="sidebar-item"
+                  ><mat-icon matPrefix class="icon">search</mat-icon>Search
+                  users</span
+                ></a
+              >
+              <mat-divider></mat-divider>
+              <a
+                mat-list-item
+                class="sidebar-item"
+                (click)="openFriendsDialog()"
+                ><span class="sidebar-item"
+                  ><mat-icon matPrefix class="icon">people</mat-icon
+                  >Friends</span
+                ></a
+              >
+              <a
+                *ngIf="isDataConsent"
+                mat-list-item
+                class="sidebar-item"
+                (click)="openSimilarUsersDialog()"
+                ><span class="sidebar-item"
+                  ><mat-icon matPrefix class="icon">person_outline</mat-icon>See
+                  similar users</span
+                ></a
+              >
+            </mat-nav-list>
+          </mat-sidenav>
+          <mat-sidenav-content>
+            <router-outlet></router-outlet>
+            <app-footer></app-footer>
+          </mat-sidenav-content>
+        </mat-sidenav-container>
+      </mat-sidenav-content>
+    </mat-sidenav-container>
+  </div>
+</body>

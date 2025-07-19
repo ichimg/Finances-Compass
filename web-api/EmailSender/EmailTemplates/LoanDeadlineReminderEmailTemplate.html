@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: "Trebuchet MS", "Lucida Sans Unicode", "Lucida Grande", "Lucida Sans", Arial, sans-serif;
+        }
+
+        .first-p {
+            font-size: 24px;
+            margin-bottom: 10px;
+			margin-top: 0;
+        }
+
+        .second-p {
+            font-size: 20px;
+        }
+
+        .third-p {
+            font-size: 10px;
+        }
+
+        .title {
+            font-size: 60px;
+            color: #DC143C;
+        }
+
+        .content {
+            margin: 0 auto;
+            padding: 10px;
+            width: 80%;
+            box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
+        }
+
+        .redirect {
+            background-color: #3b444b;
+            color: #fff !important;
+            padding: 12px 24px;
+            border-radius: 24px;
+            font-size: 16px;
+            text-decoration: none;
+            transition: 0.3s;
+            display: inline-block;
+        }
+
+        .redirect:hover {
+            background-color: #242a2e;
+        }
+
+        .row {
+            margin: 4px;
+        }
+		
+		.row.warn {
+			background-color: #FFDB58;
+		}
+		
+		.inline-div {
+			display: flex;
+			gap: 3px;
+		}
+		
+		.first-p.warn {
+			background-color: #FFDB58;
+			border-radius: 2px;
+			padding: 2px;
+		}
+    </style>
+
+</head>
+<body>
+    <div class="content">
+        <h1 class="title">Finances Compass</h1>
+		<div class="inline-div">
+		<svg xmlns="http://www.w3.org/2000/svg" height="27" width="30" viewBox="0 0 512 512"><!--!Font Awesome Free 6.5.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path fill="#dfbb3a" d="M256 32c14.2 0 27.3 7.5 34.5 19.8l216 368c7.3 12.4 7.3 27.7 .2 40.1S486.3 480 472 480H40c-14.3 0-27.6-7.7-34.7-20.1s-7-27.8 .2-40.1l216-368C228.7 39.5 241.8 32 256 32zm0 128c-13.3 0-24 10.7-24 24V296c0 13.3 10.7 24 24 24s24-10.7 24-24V184c0-13.3-10.7-24-24-24zm32 224a32 32 0 1 0 -64 0 32 32 0 1 0 64 0z"/></svg>
+        <p class="first-p">We wanted to give you a heads-up that a loan to {debtorName} is due on 
+		<span class="first-p warn">{deadline}</span>. </p>
+		</div>
+        <hr />
+        <table>
+            <tr><p class="row">Amount: {amount} {currency}</p></tr>
+            <tr><p class="row">Reason: {reason}</p></tr>
+            <tr><p class="row">Date of borrowing: {dateOfBorrowing}</p></tr>
+            <tr><p class="row warn">Deadline: {deadline}</p></tr>
+        </table>
+        <hr />
+        <p class="second-p">Find out more: </p>
+        <a href="{link}/debts" class="redirect">Click to view my debts</a>
+        <p class="third-p">
+            *If you think you received this e-mail by mistake, simply delete it.
+        </p>
+    </div>
+
+</body>
+</html>

@@ -1,0 +1,38 @@
+<header>
+  <div class="flex-container">
+    <button
+      mat-icon-button
+      (click)="toggleLeftSidebar()"
+      *ngIf="authenticationService.isAuthenticated()"
+    >
+      <mat-icon class="menu-icon" color="accent">menu</mat-icon>
+    </button>
+
+    <div class="logo">
+      <img
+        src="../../assets/images/finances-compass-logo.png"
+        alt="Logo"
+        width="350"
+        height="200"
+        class="logo-image"
+        (click)="onLogoClick()"
+      />
+      <button
+        mat-raised-button
+        color="accent"
+        (click)="logout()"
+        *ngIf="authenticationService.isAuthenticated()"
+        class="btn"
+      >
+        Logout
+      </button>
+    </div>
+    <button
+      mat-icon-button
+      (click)="toggleRightSidebar()"
+      *ngIf="authenticationService.isAuthenticated()"
+    >
+      <mat-icon class="people-icon" color="accent">people</mat-icon>
+    </button>
+  </div>
+</header>

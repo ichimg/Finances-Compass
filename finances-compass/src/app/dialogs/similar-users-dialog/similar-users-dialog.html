@@ -1,0 +1,52 @@
+<mat-card>
+  <div>
+  <mat-card-title class="title">Similar users to you</mat-card-title>
+  <mat-divider></mat-divider>
+  <mat-card-content class="card-content">
+      <mat-card-title
+        *ngIf="users === null || users?.length === 0"
+        class="title"
+        >Kinda quiet around here...</mat-card-title
+      >
+      <mat-nav-list *ngIf="users?.length !== 0 && users !== null">
+        <cdk-virtual-scroll-viewport
+          *ngIf="users !== []"
+          [itemSize]="10"
+          class="example-viewport"
+          appInfiniteScroll
+        >
+          <div class="item" *ngFor="let user of users">
+            <img
+              class="shadow-img"
+              [src]="'https://ui-avatars.com/api/?name=' 
+              + user.firstName[0] + '+' + user.lastName[0] 
+              + '&background=3b444b&color=DC143C&rounded=true&bold=true'"
+              alt=""
+              width="40"
+              height="50"
+            />
+            <mat-list-item class="item"> {{ user.username }} </mat-list-item>
+            <button
+              [style.color]="user.friendStatus === 'Pending' ? 'red' : 'black'"
+              mat-icon-button
+              (click)="addOrCancelFriendRequest(user)"
+            >
+              <mat-icon
+                >{{user.friendStatus === 'Pending' ? 'remove-circle' :
+                'person_add' }}</mat-icon
+              >
+            </button>
+          </div>
+        </cdk-virtual-scroll-viewport>
+      </mat-nav-list>
+    </mat-card-content>
+  </div>
+  <button
+    mat-raised-button
+    color="warn"
+    class="close-btn"
+    (click)="closeDialog()"
+  >
+    Close
+  </button>
+</mat-card>

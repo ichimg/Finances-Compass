@@ -1,0 +1,128 @@
+<div class="mat-dialog-container">
+  <form [formGroup]="debtForm" (ngSubmit)="onSubmit()">
+    <mat-card>
+      <mat-card-header>
+        <mat-card-title *ngIf="this.data.selectedDebt === undefined"
+          >Add debt</mat-card-title
+        >
+        <mat-card-title *ngIf="this.data.selectedDebt !== undefined"
+          >Edit debt</mat-card-title
+        >
+      </mat-card-header>
+      <div class="flex-column">
+        <mat-form-field floatLabel="always" color="accent">
+          <mat-label>Amount</mat-label>
+          <input
+            matInput
+            type="number"
+            class="right-align"
+            placeholder="0"
+            formControlName="amount"
+          />
+          <span matTextPrefix>{{getCurrency()}}&nbsp;</span>
+        </mat-form-field>
+        <mat-form-field>
+          <mat-label>Reason:</mat-label>
+          <input matInput formControlName="reason" />
+        </mat-form-field>
+        <mat-form-field>
+          <mat-label>Borrowing Date</mat-label>
+          <input
+            matInput
+            formControlName="borrowingDate"
+            [max]="maxDate"
+            [matDatepicker]="borrowingPicker"
+            (dateInput)="onBorrowingDateSelected($event.value)"
+          />
+          <mat-hint>DD/MM/YYYY</mat-hint>
+          <mat-datepicker-toggle
+            matIconSuffix
+            [for]="borrowingPicker"
+          ></mat-datepicker-toggle>
+          <mat-datepicker #borrowingPicker></mat-datepicker>
+        </mat-form-field>
+        <mat-form-field>
+          <mat-label>Deadline Date</mat-label>
+          <input
+            matInput
+            formControlName="deadlineDate"
+            [min]="minDeadlineDate"
+            [matDatepicker]="deadlinePicker"
+          />
+          <mat-hint>DD/MM/YYYY</mat-hint>
+
+          <mat-datepicker-toggle
+            matIconSuffix
+            [for]="deadlinePicker"
+          ></mat-datepicker-toggle>
+          <mat-datepicker #deadlinePicker></mat-datepicker>
+        </mat-form-field>
+        <mat-radio-group class="text-left" formControlName="userType">
+          <mat-radio-button
+            *ngFor="let item of userDebtOptions; let itemIndex = index;"
+            value="{{item.name}}"
+            (change)="onItemChange(itemIndex)"
+          >
+            {{item.name}}
+          </mat-radio-button>
+        </mat-radio-group>
+      </div>
+      <div *ngIf="isVisible == 1" class="flex-column">
+        <mat-form-field>
+          <mat-label>E-mail:</mat-label>
+          <input matInput formControlName="email" />
+          <mat-error
+            *ngIf="emailFormControl.hasError('email') && !emailFormControl.hasError('required')"
+          >
+            Please enter a valid e-mail address.
+          </mat-error>
+        </mat-form-field>
+        <mat-form-field>
+          <mat-label>First name:</mat-label>
+          <input matInput formControlName="firstName" />
+        </mat-form-field>
+        <mat-form-field>
+          <mat-label>Last name:</mat-label>
+          <input matInput formControlName="lastName" />
+        </mat-form-field>
+      </div>
+      <mat-form-field
+        [ngClass]="{'flex-column': isVisible === 0,
+    'hide': isVisible !== 0}"
+      >
+        <mat-label>Select user</mat-label>
+        <mat-select
+          class="matSelect"
+          [(ngModel)]="selectedUser"
+          name="friend"
+          formControlName="userSelect"
+        >
+          <mat-option
+            *ngFor="let userFriend of userFriends"
+            [value]="userFriend.email"
+          >
+            {{userFriend.username}}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+      <div class="btn">
+        <button
+          mat-raised-button
+          color="primary"
+          type="submit"
+          [disabled]="!debtForm.valid || this.data.selectedDebt !== undefined && !isDebtEdited"
+        >
+          OK
+        </button>
+        <button
+          mat-raised-button
+          color="accent"
+          (click)="closeDialog()"
+          type="button"
+        >
+          Cancel
+        </button>
+      </div>
+    </mat-card>
+  </form>
+</div>

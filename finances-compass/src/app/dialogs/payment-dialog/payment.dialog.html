@@ -1,0 +1,18 @@
+<div class="container">
+  <mat-card>
+    <mat-card-header class="spaced">
+      <mat-card-title class="title">Choose the payment method:</mat-card-title>
+      <mat-icon color="warn" class="close-icon" (click)="closeDialog()"
+        >clear</mat-icon
+      >
+    </mat-card-header>
+    <mat-divider></mat-divider>
+    <mat-card-content>
+      <div class="card-content">
+        <ngx-paypal [config]="paypalConfig" class="paypal"></ngx-paypal>
+        <p class="info-message">* Please take in mind that payments will be charged with a fee by PayPal.</p>
+        <mat-divider></mat-divider>
+      </div>
+    </mat-card-content>
+  </mat-card>
+</div>

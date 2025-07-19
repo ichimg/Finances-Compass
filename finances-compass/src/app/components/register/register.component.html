@@ -1,0 +1,141 @@
+<body>
+  <app-header></app-header>
+  <form [formGroup]="registerForm" (ngSubmit)="onSubmit()">
+    <div class="row">
+      <mat-card class="center">
+        <mat-card-header>
+          <mat-card-title class="title-font"
+            >Personal Information</mat-card-title
+          >
+        </mat-card-header>
+        <mat-divider></mat-divider>
+        <div class="column">
+          <mat-form-field>
+            <mat-label>First name:</mat-label>
+            <input matInput formControlName="firstName" />
+          </mat-form-field>
+          <mat-form-field>
+            <mat-label>Last name:</mat-label>
+            <input matInput formControlName="lastName" />
+          </mat-form-field>
+          <mat-form-field>
+            <mat-label>Country:</mat-label>
+            <input
+              type="text"
+              placeholder="Pick one"
+              aria-label="Number"
+              matInput
+              [formControl]="countryFormControl"
+              [matAutocomplete]="auto"
+              formControlName="country"
+            />
+            <mat-autocomplete #auto="matAutocomplete">
+              <mat-option
+                *ngFor="let option of filteredOptions | async"
+                [value]="option.name"
+              >
+                {{ option.name }}
+              </mat-option>
+            </mat-autocomplete>
+            <mat-error
+              *ngIf="
+                countryFormControl.hasError('invalidCountry') &&
+                !countryFormControl.hasError('required')
+              "
+            >
+              Please enter a valid country.
+            </mat-error>
+          </mat-form-field>
+          <mat-form-field>
+            <mat-label>State/Province:</mat-label>
+            <input matInput formControlName="state" />
+          </mat-form-field>
+          <mat-form-field>
+            <mat-label>City:</mat-label>
+            <input matInput formControlName="city" />
+          </mat-form-field>
+          <mat-form-field>
+            <mat-label>Street Address:</mat-label>
+            <input matInput formControlName="streetAddress" />
+          </mat-form-field>
+        </div>
+      </mat-card>
+
+      <!-- User Info Form Fields -->
+      <mat-card>
+        <mat-card-header>
+          <mat-card-title class="title-font"
+            >Account Information</mat-card-title
+          >
+        </mat-card-header>
+        <mat-divider></mat-divider>
+        <div class="column">
+          <mat-form-field>
+            <mat-label>Username:</mat-label>
+            <input matInput formControlName="username" />
+          </mat-form-field>
+          <mat-form-field>
+            <mat-label>E-mail:</mat-label>
+            <input matInput formControlName="email" />
+            <mat-error
+              *ngIf="
+                emailFormControl.hasError('email') &&
+                !emailFormControl.hasError('required')
+              "
+            >
+              Please enter a valid e-mail address.
+            </mat-error>
+          </mat-form-field>
+          <mat-form-field>
+            <mat-label>Phone number:</mat-label>
+            <input matInput formControlName="phoneNumber" />
+          </mat-form-field>
+          <mat-form-field>
+            <mat-label>Password:</mat-label>
+            <mat-hint *ngIf="!passwordFormControl.hasError('invalidPassword')"
+              >Minimum 1 digit, 1 uppercase letter, 8 characters long.</mat-hint
+            >
+            <input matInput type="password" formControlName="password" />
+            <mat-error
+              *ngIf="
+                passwordFormControl.hasError('invalidPassword') &&
+                !passwordFormControl.hasError('required')
+              "
+            >
+              Minimum 1 digit, 1 uppercase letter, 8 characters long.
+            </mat-error>
+          </mat-form-field>
+          <mat-form-field>
+            <mat-label>Confirm Password:</mat-label>
+            <input matInput type="password" formControlName="confirmPassword" />
+            <mat-error *ngIf="registerForm.hasError('passwordMismatch')">
+              Passwords do not match.
+            </mat-error>
+          </mat-form-field>
+          <mat-form-field>
+            <mat-label>Currency preference</mat-label>
+            <mat-select formControlName="currencyPreference">
+              <mat-option
+                *ngFor="let currency of currencies"
+                [value]="currency"
+              >
+                {{ currency }}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+          <div class="btn-container">
+            <button
+              mat-raised-button
+              color="accent"
+              type="submit"
+              [disabled]="!registerForm.valid"
+            >
+              Register
+            </button>
+          </div>
+        </div>
+        <p>Already have an account? <a routerLink="/login">Sign in here</a></p>
+      </mat-card>
+    </div>
+  </form>
+</body>
