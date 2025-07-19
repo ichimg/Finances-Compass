@@ -56,6 +56,11 @@ Finances Compass gives you clarity and control over your personal finances — a
 ### Multi currency setting
 <img width="1918" height="1066" alt="image" src="https://github.com/user-attachments/assets/cd4d2279-5066-4036-b3ef-1bd85ab27dc6" />
 
+### PayPal payments
+<img width="1911" height="1069" alt="image" src="https://github.com/user-attachments/assets/24bdc377-73da-4544-acfe-aa8808d6f989" />
+<img width="1896" height="1065" alt="image" src="https://github.com/user-attachments/assets/c82a51bc-239f-4db8-b3c8-3f769076e97c" />
+
+
 ### Scheduled E-mails using Hangfire Jobs and MailKit
 <img src="https://github.com/user-attachments/assets/e4a8f4a6-6438-4ac2-8184-285d60a36bff" width="300"/>
 <img src="https://github.com/user-attachments/assets/83953c01-b2b6-42d4-bf90-5582bbd7567f" width="300"/>
